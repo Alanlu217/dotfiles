@@ -1,10 +1,23 @@
+#!/usr/bin/env bash
+
 # Basic
 sudo apt-get update
-sudo apt install stow
+sudo apt -y install stow
 sudo apt -y install build-essential
+
+# Zsh
+sudo apt install zsh
+
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" # ohmyzsh
+curl -sS https://starship.rs/install.sh | sh # starship prompt
 
 # Github CLI
 sudo apt -y install gh
+
+# Configure git
+git config --global alias.co checkout
+git config --global alias.ci commit
+git config --global alias.st status
 
 # Dotfiles
 gh auth login
