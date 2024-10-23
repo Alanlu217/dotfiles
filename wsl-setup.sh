@@ -6,7 +6,7 @@ sudo apt -y install stow
 sudo apt -y install build-essential
 
 # Zsh
-sudo apt install zsh
+sudo apt install -y zsh
 
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" # ohmyzsh
 curl -sS https://starship.rs/install.sh | sh # starship prompt
@@ -31,8 +31,8 @@ echo 'PATH=$PATH:/opt/nvim-linux64/bin' >> ${HOME}/.profile
 rm -rf nvim-linux64.tar.gz
 
 # Python / Pip
-sudo apt install python3 -y
-sudo apt install python3-pip -y
+sudo apt install -y python3 -y
+sudo apt install -y python3-pip -y
 
 # Golang
 wget https://go.dev/dl/go1.23.2.linux-amd64.tar.gz
