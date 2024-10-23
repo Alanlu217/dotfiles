@@ -18,6 +18,7 @@ sudo apt -y install gh
 git config --global alias.co checkout
 git config --global alias.ci commit
 git config --global alias.st status
+git config --global core.editor "vim"
 
 # Dotfiles
 gh auth login
