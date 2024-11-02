@@ -30,6 +30,11 @@ sudo tar -C /opt -xzf nvim-linux64.tar.gz
 echo 'PATH=$PATH:/opt/nvim-linux64/bin' >> ${HOME}/.profile
 rm -rf nvim-linux64.tar.gz
 
+# Taskfile
+cd ~/.local
+sh -c "$(curl --location https://taskfile.dev/install.sh)" -- -d -b ~/.local/bin
+cd ~
+
 # Python / Pip
 sudo apt install -y python3 -y
 sudo apt install -y python3-pip -y
