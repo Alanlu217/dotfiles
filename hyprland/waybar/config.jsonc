@@ -22,7 +22,8 @@
         "temperature",
         "bluetooth",
         "wireplumber",
-        "tray"
+        "tray",
+        "battery"
     ],
     "memory": {
         "interval": 5,
@@ -73,6 +74,18 @@
     "tray": {
         // "icon-size": 21,
         "spacing": 10
+    },
+    "battery": {
+        "states": {
+            "warning": 30,
+            "critical": 15
+        },
+        "format": "{icon} {capacity}%",
+        "format-charging": "C {capacity}%",
+        "format-plugged": "P {capacity}%",
+        "format-alt": "{time} {icon}",
+        "format-full": "{capacity}%",
+        // "format-icons": ["", "", ""]
     },
     "clock": {
         //"timezone": "America/New_York",
