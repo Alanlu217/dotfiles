@@ -1,9 +1,0 @@
-{
-  "interfaceFontFamily": "JetBrainsMono Nerd Font Mono",
-  "textFontFamily": "JetBrainsMono Nerd Font Mono",
-  "monospaceFontFamily": "JetBrainsMono Nerd Font",
-  "cssTheme": "Catppuccin",
-  "enabledCssSnippets": [
-    "mermaid"
-  ]
-}
