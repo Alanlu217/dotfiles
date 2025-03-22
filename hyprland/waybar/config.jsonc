@@ -46,8 +46,7 @@
 	"clock": {
 		"timezone": "Asia/Tehran",
 		"tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>",
-		"format-alt": " {:%d/%m/%Y}",
-		"format": " {:%H:%M}"
+		"format": " {:%H:%M %d/%m/%Y} "
 	},
 	"backlight": {
 		"device": "nvidia_0",
