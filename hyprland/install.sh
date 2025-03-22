@@ -17,3 +17,6 @@ ln -s "$BASEDIR/rofi" ~/.config/rofi
 
 rm -f ~/.config/waybar
 ln -s "$BASEDIR/waybar" ~/.config/waybar
+
+rm -f ~/.config/wlogout
+ln -s "$BASEDIR/wlogout" ~/.config/wlogout
