@@ -71,7 +71,7 @@
 			"warning": 30,
 			"critical": 15
 		},
-		"format": "{icon}",
+		"format": "{icon}   {capacity}%",
 		"format-charging": "󰂄",
 		"format-plugged": "",
 		"format-alt": "{icon}",
@@ -85,7 +85,7 @@
 	},
 	"pulseaudio": {
 		// "scroll-step": 1, // %, can be a float
-		"format": "{icon} {volume}%",
+		"format": "{icon}  {volume}%",
 		"format-muted": "",
 		"format-icons": {
 			"default": [

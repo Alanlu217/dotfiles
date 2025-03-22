@@ -16,6 +16,11 @@ y = 4
 [selection]
 save_to_clipboard = true
 
+[keyboard]
+bindings = [
+  { key = "Enter", mods = "Super", action = "SpawnNewInstance" }
+]
+
 # Catppuccin theme
 [colors.primary]
 background = "#1e1e2e"
