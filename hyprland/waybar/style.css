@@ -39,7 +39,6 @@
 #custom-music,
 #tray,
 #backlight,
-#clock,
 #battery,
 #pulseaudio,
 #language,
@@ -51,8 +50,10 @@
 
 #clock {
   color: @blue;
-  border-radius: 0px 1rem 1rem 0px;
-  margin-right: 1rem;
+  background-color: @surface0;
+  border-radius: 1rem;
+  margin: 5px;
+  padding:  8px;
 }
 
 #battery {
@@ -71,12 +72,22 @@
   color: @yellow;
 }
 
-#backlight,
-#battery {
+#backlight {
   border-radius: 0;
 }
 
-#custom-lock,
+#battery {
+  border-radius: 0px 1rem 1rem 0px;
+}
+
+#custom-lock {
+  color: @maroon;
+  background-color: @surface0;
+  border-radius: 1rem 0px 0px 1rem;
+  margin: 5px 0px 5px 5px;
+  padding: 0px 5px 0px 10px;
+}
+
 #pulseaudio {
   background-color: @surface0;
   color: @maroon;
@@ -101,6 +112,7 @@
 }
 
 #tray {
+  margin-left: 1rem;
   margin-right: 1rem;
   border-radius: 1rem;
 }

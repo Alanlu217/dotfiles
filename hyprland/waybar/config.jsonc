@@ -1,15 +1,17 @@
 {
 	"layer": "top",
 	"height": 30,
-	"position": "bottom",
+	"position": "top",
 	"modules-left": [
 		"hyprland/workspaces"
+	],
+	"modules-center": [
+		"clock"
 	],
 	"modules-right": [
 		"pulseaudio",
 		"backlight",
 		"battery",
-		"clock",
 		"tray",
 		"custom/lock",
 		"custom/power"
