@@ -11,7 +11,6 @@
 		"battery",
 		"clock",
 		"tray",
-		"hyprland/language",
 		"custom/lock",
 		"custom/power"
 	],
@@ -31,7 +30,7 @@
 		}
 	},
 	"tray": {
-		"icon-size": 21,
+		"icon-size": 12,
 		"spacing": 10
 	},
 	"custom/music": {
@@ -44,7 +43,7 @@
 		"max-length": 50
 	},
 	"clock": {
-		"timezone": "Asia/Tehran",
+		"timezone": "Australia/Sydney",
 		"tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>",
 		"format": " {:%H:%M %d/%m/%Y} "
 	},

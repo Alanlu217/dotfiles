@@ -9,7 +9,7 @@
 #waybar {
   background: transparent;
   color: @text;
-  margin: -2px;
+  margin: -10px;
   padding: 0px;
 }
 
@@ -42,7 +42,6 @@
 #clock,
 #battery,
 #pulseaudio,
-#custom-lock,
 #language,
 #custom-power {
   background-color: @surface0;
@@ -77,7 +76,9 @@
   border-radius: 0;
 }
 
+#custom-lock,
 #pulseaudio {
+  background-color: @surface0;
   color: @maroon;
   border-radius: 1rem 0px 0px 1rem;
   margin-left: 1rem;
