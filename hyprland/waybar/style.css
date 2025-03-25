@@ -20,6 +20,15 @@
   margin-left: 1rem;
 }
 
+#cpu,
+#memory {
+  color: @blue;
+  background-color: @surface0;
+  border-radius: 1rem;
+  margin: 5px;
+  padding: 0.6rem;
+}
+
 #workspaces button {
   color: @lavender;
   border-radius: 1rem;
