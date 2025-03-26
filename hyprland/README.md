@@ -1,16 +1,20 @@
-# Restoring wsl from tar
+# Hyprland conf
 
-```bash
-wsl --import <distribution name in wsl> <location for vhdx> <tar file>
-
-wsl -d <distribution name>
-
-sudo vi /etc/wsl.conf
-```
-
-Then add the following to `wsl.conf`
-
-```toml
-[user]
-default=your_username
-```
+## Package dependencies
+ - hyprland
+ - hyprpaper
+ - hypridle
+ - hyprlock
+ - fish
+ - rofi-wayland
+ - mako
+ - waybar
+ - blueman
+ - wlogout
+ - clipse
+ - fastfetch
+ - hyprcursor-dracula-kde-git
+ - ttf-fira-code
+ - wl-clipboard
+ - roficalc
+ - better-control-git

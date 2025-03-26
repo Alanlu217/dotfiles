@@ -20,6 +20,28 @@
   margin-left: 1rem;
 }
 
+#custom-wifi {
+  color: @blue;
+  background-color: @surface0;
+  border-radius: 1rem 0px 0px 1rem;
+  margin-left: 5px;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 10px;
+}
+
+#custom-bluetooth {
+  color: @blue;
+  background-color: @surface0;
+  border-radius: 0px 1rem 1rem 0px;
+  margin-right: 5px;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
 #cpu,
 #memory {
   color: @blue;
