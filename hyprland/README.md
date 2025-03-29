@@ -13,7 +13,6 @@
  - wlogout
  - clipse
  - fastfetch
- - hyprcursor-dracula-kde-git
  - ttf-fira-code
  - wl-clipboard
  - roficalc
