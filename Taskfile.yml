@@ -1,0 +1,31 @@
+version: 3
+
+tasks:
+  alacritty:
+    cmd: ./sym.sh alacritty
+  fish:
+    cmd: ./sym.sh fish
+
+  hypr:
+    cmd: ./sym.sh hyprland/hypr
+  mako:
+    cmd: ./sym.sh hyprland/mako
+  rofi:
+    cmd: ./sym.sh hyprland/rofi
+  waybar:
+    cmd: ./sym.sh hyprland/waybar
+  wlogout:
+    cmd: ./sym.sh hyprland/wlogout
+
+  all:
+    deps: [alacritty, fish, hypr, mako, rofi, waybar, wlogout]
+
+  removeall:
+    cmds:
+      - rm ~/.config/alacritty
+      - rm ~/.config/fish
+      - rm ~/.config/hypr
+      - rm ~/.config/mako
+      - rm ~/.config/rofi
+      - rm ~/.config/waybar
+      - rm ~/.config/wlogout
