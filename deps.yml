@@ -16,7 +16,7 @@ tasks:
         roficalc \
         wlogout \
         clipse \
-        git \
+        git \ 
         github-cli \
         hyprland \
         hyprpaper \
@@ -29,5 +29,9 @@ tasks:
         blueman \
         fastfetch \
         yaml-language-server \
-        clangd \
+        clang \
+        tectonic \
+        alacritty \
+        nautilus \
+        firefox \
         "
