@@ -1,0 +1,116 @@
+// Zed settings
+//
+// For information on how to configure Zed, see the Zed
+// documentation: https://zed.dev/docs/configuring-zed
+//
+// To see all of Zed's default settings without changing your
+// custom settings, run `zed: open default settings` from the
+// command palette (cmd-shift-p / ctrl-shift-p)
+{
+  "ssh_connections": [
+    {
+      "host": "vlab.cse.unsw.edu.au",
+      "username": "z5693267",
+      "projects": [
+        {
+          "paths": ["~/Documents/1511_code"]
+        }
+      ],
+      "nickname": "1511"
+    }
+  ],
+  "collaboration_panel": {
+    "button": false
+  },
+  "chat_panel": {
+    "button": "never"
+  },
+  "features": {
+    "edit_prediction_provider": "none",
+    "copilot": false
+  },
+  "project_panel": {
+    "dock": "left"
+  },
+  "icon_theme": "Catppuccin Mocha",
+  "vim_mode": true,
+  "ui_font_size": 13,
+  "buffer_font_size": 13,
+  "buffer_font_family": "JetBrainsMono Nerd Font",
+  "buffer_font_features": {
+    "liga": true
+  },
+  "theme": {
+    "mode": "system",
+    "light": "One Light",
+    "dark": "Catppuccin Mocha"
+  },
+  "assistant": {
+    "button": false,
+    "enabled": false,
+    "version": "1"
+  },
+  "format_on_save": "on",
+  "restore_on_startup": "none",
+  "gutter": {
+    "folds": false,
+    "code_actions": false,
+    "runnables": false
+  },
+  "git_panel": {
+    "button": true
+  },
+  "wrap_guides": [80],
+
+  "languages": {
+    "Zig": {
+      // Formatting with ZLS matches `zig fmt`.
+      // The Zig FAQ answers some questions about `zig fmt`:
+      // https://github.com/ziglang/zig/wiki/FAQ
+      "format_on_save": "language_server",
+      // Make sure that zls is the primary language server
+      "language_servers": ["zls", "..."],
+      "code_actions_on_format": {
+        // Run code actions that currently supports adding and removing discards.
+        // "source.fixAll": true,
+        // Run code actions that sorts @import declarations.
+        "source.organizeImports": true
+      }
+    },
+    "LaTeX": {
+      "tab_size": 2
+    }
+  },
+  "lsp": {
+    "zls": {
+      "binary": {
+        // omit the following line if `zls` is in your PATH
+        // "path": "/path/to/zls_executable"
+      },
+      // There are two ways to set config options:
+      //   - edit your `zls.json` that applies to any editor that uses ZLS
+      //   - set in-editor config options with the `initialization_options` field below.
+      //
+      // Further information on how to configure ZLS:
+      // https://zigtools.org/zls/configure/
+      "initialization_options": {
+        // Whether to enable build-on-save diagnostics
+        //
+        // Further information about build-on save:
+        // https://zigtools.org/zls/guides/build-on-save/
+        "enable_build_on_save": true
+        // omit the following line if `zig` is in your PATH
+        // "zig_exe_path": "/path/to/zig_executable"
+      }
+    }
+  },
+  "toolbar": {
+    "breadcrumbs": false,
+    "quick_actions": false
+  },
+  "terminal": {
+    "toolbar": {
+      "breadcrumbs": false
+    }
+  }
+}

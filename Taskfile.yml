@@ -7,18 +7,23 @@ tasks:
     cmd: ./sym.sh fish
 
   hypr:
-    cmd: ./sym.sh hyprland/hypr
+    cmd: ./sym.sh hypr
   mako:
-    cmd: ./sym.sh hyprland/mako
+    cmd: ./sym.sh mako
   rofi:
-    cmd: ./sym.sh hyprland/rofi
+    cmd: ./sym.sh rofi
   waybar:
-    cmd: ./sym.sh hyprland/waybar
+    cmd: ./sym.sh waybar
   wlogout:
-    cmd: ./sym.sh hyprland/wlogout
+    cmd: ./sym.sh wlogout
+  zed:
+    cmd: ./sym.sh zed
 
+  default:
+    deps: [all]
+        
   all:
-    deps: [alacritty, fish, hypr, mako, rofi, waybar, wlogout]
+    deps: [alacritty, fish, hypr, mako, rofi, waybar, wlogout, zed]
 
   removeall:
     cmds:
@@ -29,3 +34,4 @@ tasks:
       - rm ~/.config/rofi
       - rm ~/.config/waybar
       - rm ~/.config/wlogout
+      - rm ~/.config/zed
