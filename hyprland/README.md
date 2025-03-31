@@ -16,4 +16,8 @@
  - ttf-fira-code
  - wl-clipboard
  - roficalc
+
+## AUR
  - better-control-git
+ - catppuccin-cursors-mocha
+catppuccin-cursors-mocha
