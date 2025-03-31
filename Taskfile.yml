@@ -1,4 +1,10 @@
+# yaml-language-server: $schema=https://taskfile.dev/schema.json
 version: 3
+
+includes:
+  deps:
+    taskfile: ./deps.yml
+    flatten: true
 
 tasks:
   alacritty:
