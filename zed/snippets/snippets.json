@@ -1,0 +1,14 @@
+{
+  "1511": {
+    "body": [
+      "// ${1:filename}",
+      "//",
+      "// This program was written by Alan Lu (z5693267)",
+      "// on ${2:date}",
+      "//",
+      "// ${3:description}",
+      "$0"
+    ],
+    "description": "1511 Header comment"
+  }
+}
