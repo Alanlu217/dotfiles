@@ -13,6 +13,9 @@ tasks:
   all:
     deps: [galias, config:all]
 
+  purge:
+    cmd: yay -Rsn $(yay -Qdtq)
+
   galias:
     cmds:
       - git config --global alias.co checkout
