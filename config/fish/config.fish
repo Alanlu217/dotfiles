@@ -11,3 +11,5 @@ abbr -a -- hx helix
 abbr -a -- zed zeditor
 
 alias task="go-task"
+
+starship init fish | source
