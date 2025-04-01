@@ -1,5 +1,9 @@
 @import "catppuccin-mocha"
 
+configuration {
+  font: "FreeMono 18";
+}
+
 * {
   selected-active-foreground:  @background;
   lightfg:                     @text;
