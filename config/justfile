@@ -1,0 +1,35 @@
+all:
+    #!/usr/bin/env bash
+
+    SCRIPT={{justfile()}}
+    BASEDIR=$(dirname "$SCRIPT")
+
+    function sym {
+        CONF=$1
+        CONF_BASE=$(basename "$CONF")
+    
+        if [ -L ~/.config/$CONF_BASE ]; then
+            echo "rm -rf ~/.config/$CONF_BASE"
+            rm -rf ~/.config/$CONF_BASE
+        fi
+
+    
+        echo "ln -s $BASEDIR/$CONF ~/.config/$CONF_BASE"
+        ln -s $BASEDIR/$CONF ~/.config/$CONF_BASE
+    }
+
+    confs=(*/)
+
+    for i in "${confs[@]}"; do
+        sym "$i"
+    done
+
+rm:
+    #!/usr/bin/env bash
+
+    confs=(*/)
+
+    for i in "${confs[@]}"; do
+        echo "rm -rf ~/.config/$(basename "$i")"
+        rm -rf ~/.config/$(basename "$i")
+    done
