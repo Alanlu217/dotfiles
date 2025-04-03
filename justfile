@@ -23,6 +23,11 @@ deps:
       wlogout # logout menu
       clipse # clipboard manager
 
+      # for screenshotting
+      wl-clipboard
+      grim
+      slurp
+
       fastfetch # info
 
       # Lsp
