@@ -11,5 +11,6 @@ abbr -a -- hx helix
 abbr -a -- zed zeditor
 
 alias task="go-task"
+alias tex="tectonic -X"
 
 starship init fish | source

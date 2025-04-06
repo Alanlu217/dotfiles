@@ -11,17 +11,32 @@ deps:
       hypridle # idler
       hyprlock # lock screen
 
+      # Audio stuff
+      pipewire
+      pipewire-alsa
+      pipewire-pulse
+      pwvucontrol
+      
+      networkmanager # network manager
+      bluez # bluetooth
+      bluez-utils # bluetooth utils
+      network-manager-applet # nm-applet
+      blueman # blueman-applet
+
+      adwaita-dark # theme
+
       fish # better shell
       starship # prompt
 
       rofi-wayland # application launcher
-      roficalc # calculator for rofi
+      rofi-calc # calculator for rofi
       mako # notification launcher
       waybar # info bar
       blueman # bluetooth
-      better-control-git # Better status
       wlogout # logout menu
       clipse # clipboard manager
+
+      nerd-fonts # Fonts
 
       # for screenshotting
       wl-clipboard
@@ -34,11 +49,15 @@ deps:
       yaml-language-server
       clang
       tectonic
+      tex-fmt
 
       # Applications
       alacritty
       nautilus
       firefox
+      evince
+      steam
+      vesktop
 
       catppuccin-cursors-mocha # cursors
     )

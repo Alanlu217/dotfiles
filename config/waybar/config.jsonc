@@ -15,8 +15,6 @@
 		"backlight",
 		"battery",
 		"tray",
-		"custom/wifi",
-		"custom/bluetooth",
 		"custom/lock",
 		"custom/power"
 	],
@@ -36,10 +34,10 @@
 		}
 	},
 	"cpu": {
-		"format": "    {usage}%"
+		"format": " {usage}%"
 	},
 	"memory": {
-		"format": "  {percentage}%"
+		"format": " {percentage}%"
 	},
 	"tray": {
 		"icon-size": 14,
@@ -48,7 +46,7 @@
 	"clock": {
 		"timezone": "Australia/Sydney",
 		"tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>",
-		"format": " {:%H:%M          %d/%m/%Y}"
+		"format": " {:%H:%M   %d/%m/%Y}"
 	},
 	"backlight": {
 		"device": "nvidia_0",
@@ -95,15 +93,7 @@
 				" "
 			]
 		},
-		"on-click": "better-control --volume"
-	},
-	"custom/wifi": {
-		"format": "",
-		"on-click": "better-control --wifi"
-	},
-	"custom/bluetooth": {
-		"format": "",
-		"on-click": "better-control --bluetooth"
+		"on-click": "pwvucontrol"
 	},
 	"custom/lock": {
 		"tooltip": false,
