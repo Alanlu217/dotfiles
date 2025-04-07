@@ -1,7 +1,7 @@
 @import url("./catppuccin/themes/mocha.css");
 
 * {
-  font-family: "Jetbrains Mono Nerd Font Mono";
+  font-family: "Fira Code";
   font-size: 12px;
   min-height: 0;
 }

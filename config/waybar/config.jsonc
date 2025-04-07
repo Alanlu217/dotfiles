@@ -90,7 +90,7 @@
 			"default": [
 				"",
 				"",
-				" "
+				""
 			]
 		},
 		"on-click": "pwvucontrol"
