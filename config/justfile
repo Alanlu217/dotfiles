@@ -8,10 +8,8 @@ all:
         CONF=$1
         CONF_BASE=$(basename "$CONF")
     
-        if [ -L ~/.config/$CONF_BASE ]; then
-            echo "rm -rf ~/.config/$CONF_BASE"
-            rm -rf ~/.config/$CONF_BASE
-        fi
+        echo "rm -rf ~/.config/$CONF_BASE"
+        rm -rf ~/.config/$CONF_BASE
 
     
         echo "ln -s $BASEDIR/$CONF ~/.config/$CONF_BASE"
