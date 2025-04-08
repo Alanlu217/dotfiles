@@ -7,9 +7,7 @@ set SAL_USE_VCLPLUGIN gtk4
 export PATH="$HOME/.cargo/bin:$PATH"
 
 # Abbreviations
-abbr -a -- hx helix
-abbr -a -- zed zeditor
-
+alias hx="helix"
 alias task="go-task"
 alias tex="tectonic -X"
 
