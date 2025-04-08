@@ -26,12 +26,12 @@ deps:
 
       fish # better shell
       starship # prompt
+      watchexec
 
       rofi-wayland # application launcher
       rofi-calc # calculator for rofi
       mako # notification launcher
       waybar # info bar
-      blueman # bluetooth
       wlogout # logout menu
       clipse # clipboard manager
 
@@ -45,7 +45,6 @@ deps:
       fastfetch # info
 
       # Lsp
-      yaml-language-server
       clang
       tectonic
       tex-fmt
@@ -56,7 +55,6 @@ deps:
       firefox
       evince
       steam
-      vesktop
 
       catppuccin-cursors-mocha # cursors
     )
