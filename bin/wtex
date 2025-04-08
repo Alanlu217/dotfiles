@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+pdf=($(find . -name "*.pdf"))
+evince "${pdf[0]}" &
+
+watchexec -e tex -- "tex-fmt **/*.tex && tex build"

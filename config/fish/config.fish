@@ -5,6 +5,7 @@ end
 set SAL_USE_VCLPLUGIN gtk4
 
 export PATH="$HOME/.cargo/bin:$PATH"
+export PATH="$HOME/dotfiles/bin:$PATH"
 
 # Abbreviations
 alias hx="helix"
