@@ -46,7 +46,7 @@
 	"clock": {
 		"timezone": "Australia/Sydney",
 		"tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>",
-		"format": " {:%H:%M   %d/%m/%Y}"
+		"format": "  {:%H:%M    %d/%m/%Y}"
 	},
 	"backlight": {
 		"device": "nvidia_0",
