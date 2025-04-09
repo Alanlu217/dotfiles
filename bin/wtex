@@ -3,4 +3,4 @@
 pdf=($(find . -name "*.pdf"))
 evince "${pdf[0]}" &
 
-watchexec -e tex -- "tex-fmt **/*.tex && tex build"
+tectonic -X watch
