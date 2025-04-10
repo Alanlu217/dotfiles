@@ -34,7 +34,7 @@
 		}
 	},
 	"cpu": {
-		"format": " {usage}%"
+		"format": "   {usage}%"
 	},
 	"memory": {
 		"format": " {percentage}%"
