@@ -52,7 +52,7 @@ deps:
       # Applications
       alacritty
       nautilus
-      firefox
+      zen-browser-bin
       evince
       steam
 
