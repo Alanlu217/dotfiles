@@ -4,6 +4,11 @@ theme = "catppuccin_mocha"
 line-number = "relative"
 cursorline = true
 color-modes = true
+end-of-line-diagnostics = "error"
+
+
+[editor.inline-diagnostics]
+cursor-line = "hint"
 
 [editor.cursor-shape]
 insert = "bar"

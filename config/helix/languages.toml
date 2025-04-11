@@ -12,4 +12,9 @@ language-servers = ["tinymist"]
 formatter = { command = 'typstyle' }
 auto-format = true
 
+[[language]]
+name = "cpp"
+formatter = { command = 'clang-format' }
+auto-format = true
+
 
