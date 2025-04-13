@@ -43,11 +43,16 @@ deps:
       slurp
 
       fastfetch # info
+      eza # Better ls
 
-      # Lsp
-      clang
+      # Latex
       tectonic
       tex-fmt
+
+      # Dev
+      zig
+      clang
+      openssh
 
       # Applications
       alacritty
