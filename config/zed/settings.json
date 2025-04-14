@@ -53,7 +53,7 @@
   "format_on_save": "on",
   "restore_on_startup": "none",
   "gutter": {
-    "folds": false,
+    "folds": true,
     "code_actions": false,
     "runnables": false
   },

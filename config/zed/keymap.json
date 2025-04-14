@@ -16,7 +16,12 @@
     }
   },
   {
-    "context": "Workspace",
-    "bindings": {}
+    "context": "Editor",
+    "bindings": {
+      "alt-{": "editor::FoldAll",
+      "alt-}": "editor::UnfoldAll",
+      "alt-[": "editor::Fold",
+      "alt-]": "editor::UnfoldRecursive"
+    }
   }
 ]

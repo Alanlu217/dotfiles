@@ -1,12 +1,26 @@
+rwal:
+    #!/usr/bin/env bash
+    wall="$(pwd)/wallpapers/$(ls wallpapers | shuf -n 1)"
+    hyprctl hyprpaper preload "$wall"
+    hyprctl hyprpaper wallpaper ",$wall"
+    hyprctl hyprpaper unload all
+
+swal:
+    #!/usr/bin/env bash
+    wall="$(pwd)/wallpapers/$(ls wallpapers | rofi -dmenu)"
+    hyprctl hyprpaper preload "$wall"
+    hyprctl hyprpaper wallpaper ",$wall"
+    hyprctl hyprpaper unload all
+
 deps:
     #!/usr/bin/env bash
 
     pkgs=(
       # Git stuff
-      git 
+      git
       github-cli
 
-      hyprland 
+      hyprland
       hyprpaper # background
       hypridle # idler
       hyprlock # lock screen
@@ -15,7 +29,7 @@ deps:
       pipewire
       pipewire-alsa
       pipewire-pulse
-      
+
       networkmanager # network manager
       bluez # bluetooth
       bluez-utils # bluetooth utils
@@ -54,6 +68,10 @@ deps:
       clang
       openssh
 
+      # Data / Math
+      python-sympy
+      python-matplotlib
+
       # Applications
       alacritty
       nautilus
@@ -73,5 +91,3 @@ git-setup:
 
     git config --global alias.co checkout
     git config --global alias.st status
-
-
