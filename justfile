@@ -1,18 +1,18 @@
 rwal:
     #!/usr/bin/env bash
     wall="$(pwd)/wallpapers/$(ls wallpapers | shuf -n 1)"
-    hyprctl hyprpaper preload "$wall"
-    hyprctl hyprpaper wallpaper ",$wall"
-    hyprctl hyprpaper unload all
+    hyprctl hyprpaper reload ",$wall"
+    rm -rf ~/.curr_bg
+    ln -s "$wall" ~/.curr_bg
 
 swal:
     #!/usr/bin/env bash
     wall="$(pwd)/wallpapers/$(ls wallpapers | rofi -dmenu)"
-    hyprctl hyprpaper preload "$wall"
-    hyprctl hyprpaper wallpaper ",$wall"
-    hyprctl hyprpaper unload all
+    hyprctl hyprpaper reload ",$wall"
+    rm -rf ~/.curr_bg
+    ln -s "$wall" ~/.curr_bg
 
-setup: deps git-setup
+setup: deps git-setup desktop bg-setup
 
 git-setup:
     git config --global user.email "alanlu2468@gmail.com"
@@ -31,6 +31,10 @@ desktop:
         echo "ln -s $(pwd)/$f ~/.local/share/applications"
         ln -s "$(pwd)/$f" ~/.local/share/applications
     done
+
+bg-setup:
+    rm -rf ~/.curr_bg
+    ln -s ~/dotfiles/wallpapers/dark-flowers.png ~/.curr_bg
 
 deps:
     #!/usr/bin/env bash
