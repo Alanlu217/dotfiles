@@ -12,6 +12,26 @@ swal:
     hyprctl hyprpaper wallpaper ",$wall"
     hyprctl hyprpaper unload all
 
+setup: deps git-setup
+
+git-setup:
+    git config --global user.email "alanlu2468@gmail.com"
+    git config --global user.name "alanlu"
+    git config --global core.editor "vim"
+
+    git config --global alias.co checkout
+    git config --global alias.st status
+
+desktop:
+    #!/usr/bin/env bash
+
+    cd desktop
+    for f in *; do
+        rm -rf ~/.local/share/applications/$f
+        echo "ln -s $(pwd)/$f ~/.local/share/applications"
+        ln -s "$(pwd)/$f" ~/.local/share/applications
+    done
+
 deps:
     #!/usr/bin/env bash
 
@@ -83,11 +103,3 @@ deps:
     )
 
     yay -S ${pkgs[@]}
-
-git-setup:
-    git config --global user.email "alanlu2468@gmail.com"
-    git config --global user.name "alanlu"
-    git config --global core.editor "vim"
-
-    git config --global alias.co checkout
-    git config --global alias.st status
