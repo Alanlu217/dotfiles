@@ -7,7 +7,9 @@ rwal:
 
 swal:
     #!/usr/bin/env bash
-    wall="$(pwd)/wallpapers/$(ls wallpapers | rofi -dmenu)"
+    name="$(ls wallpapers | rofi -dmenu)"
+    if [ "${name}" == "" ]; then exit; fi
+    wall="$(pwd)/wallpapers/$name"
     hyprctl hyprpaper reload ",$wall"
     rm -rf ~/.curr_bg
     ln -s "$wall" ~/.curr_bg
