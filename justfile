@@ -91,6 +91,7 @@ deps:
       zig
       clang
       openssh
+      htop
 
       # Data / Math
       python-sympy
@@ -100,6 +101,7 @@ deps:
       alacritty
       nautilus
       zen-browser-bin
+      eog
       evince
       steam
 
