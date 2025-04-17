@@ -1,0 +1,8 @@
+desktop:
+    #!/usr/bin/env bash
+
+    for f in *.desktop; do
+        rm -rf ~/.local/share/applications/$f
+        echo "ln -s $(pwd)/$f ~/.local/share/applications"
+        ln -s "$(pwd)/$f" ~/.local/share/applications
+    done

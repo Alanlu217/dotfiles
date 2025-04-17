@@ -1,8 +1,7 @@
 all:
     #!/usr/bin/env bash
 
-    SCRIPT={{justfile()}}
-    BASEDIR=$(dirname "$SCRIPT")
+    BASEDIR=$(pwd)
 
     function sym {
         CONF=$1

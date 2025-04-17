@@ -1,6 +1,6 @@
 [Desktop Entry]
 Name=Select Wallpaper
-Exec=bash -c "just -f ~/dotfiles/justfile swal"
+Exec=bash -c "just -f ~/dotfiles/justfile wall select"
 Type=Application
 Terminal=False
 
