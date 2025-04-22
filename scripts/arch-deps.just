@@ -21,6 +21,7 @@ deps:
     bluez-utils # bluetooth utils
     network-manager-applet # nm-applet
     blueman # blueman-applet
+    brightnessctl
 
     adwaita-dark # theme
 
