@@ -1,5 +1,5 @@
-mod arch "scripts/arch-deps.just"
-mod wall "scripts/wallpaper.just"
+mod arch "scripts/arch.just"
+mod alpine "scripts/alpine.just"
 mod config
 mod desktop
 
