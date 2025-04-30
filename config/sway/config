@@ -86,6 +86,9 @@ input "1739:52992:SYNA2BA6:00_06CB:CF00_Touchpad" {
     # Swaylock
     bindsym $mod+l exec "swaylock -l -i ~/.curr_bg --effect-blur 2x2 --clock --indicator -C .config/sway/lockconfig"
 
+    # Wlogout
+    bindsym $mod+Shift+l exec "wlogout"
+
     # Drag floating windows by holding down $mod and left mouse button.
     # Resize them with right mouse button + $mod.
     # Despite the name, also works for non-floating windows.
@@ -113,10 +116,10 @@ input "1739:52992:SYNA2BA6:00_06CB:CF00_Touchpad" {
     bindsym $mod+Right focus right
 
     # Move the focused window with the same, but add Shift
-    bindsym $mod+Shift+$left move left
-    bindsym $mod+Shift+$down move down
-    bindsym $mod+Shift+$up move up
-    bindsym $mod+Shift+$right move right
+    # bindsym $mod+Shift+$left move left
+    # bindsym $mod+Shift+$down move down
+    # bindsym $mod+Shift+$up move up
+    # bindsym $mod+Shift+$right move right
     # Ditto, with arrow keys
     bindsym $mod+Shift+Left move left
     bindsym $mod+Shift+Down move down
