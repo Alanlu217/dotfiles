@@ -21,7 +21,8 @@
       "alt-{": "editor::FoldAll",
       "alt-}": "editor::UnfoldAll",
       "alt-[": "editor::Fold",
-      "alt-]": "editor::UnfoldRecursive"
+      "alt-]": "editor::UnfoldRecursive",
+      "alt-o": "editor::SwitchSourceHeader"
     }
   }
 ]

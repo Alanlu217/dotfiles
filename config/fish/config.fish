@@ -6,7 +6,7 @@ export PATH="$HOME/.cargo/bin:$PATH"
 export PATH="$HOME/dotfiles/bin:$PATH"
 
 # Abbreviations
-alias l="eza -l"
+alias l="eza -l --git --no-user --no-permissions"
 # alias hx="helix"
 alias task="go-task"
 alias tex="tectonic -X"
