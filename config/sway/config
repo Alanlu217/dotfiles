@@ -249,6 +249,6 @@ focus_follows_mouse yes
 
 default_border pixel 2
 
-seat seat0 xcursor_theme Adwaita 48
+seat seat0 xcursor_theme Adwaita 24
 
 include /etc/sway/config.d/*
