@@ -53,7 +53,8 @@ deps:
     brightnessctl
 
     # Applications
-    dolphin
+    thunar
+    evince
     alacritty
     firefox
 
@@ -75,7 +76,7 @@ deps:
     rustup
     wget
     zig
-
+    tectonic
   )
 
   doas apk add ${pkgs[@]}
