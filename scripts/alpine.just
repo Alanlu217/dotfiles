@@ -15,6 +15,9 @@ setup:
   doas rc-update add dbus
   doas rc-update add bluetooth
 
+  doas rc-update del elogind
+  doas apk del elogind
+
 deps:
   #!/usr/bin/env sh
 
@@ -25,20 +28,28 @@ deps:
     mesa-dri-gallium mesa-va-gallium intel-media-driver
 
     # System
-    dbus
-    fastfetch
     e2fsprogs
-    gcompat
-    fish
-    linux-pam
-    pam-rundir
-    polkit
     lsblk
+
     seatd
-    shadow
-    shadow-login
-    starship
+    dbus dbus-x11
+    linux-pam pam-rundir
+    shadow shadow-login
+    polkit
+
+    fastfetch
+    gcompat
     neovim
+    fish starship
+
+    # Misc
+    btop
+    build-base
+    cmake ninja
+    eza zoxide
+    git github-cli
+    wget curl
+    just
 
     # Audio
     pipewire wireplumber pipewire-pulse pipewire-alsa pavucontrol
@@ -46,15 +57,20 @@ deps:
     # Bluetooth
     bluez bluez-openrc pipewire-spa-bluez blueman
 
+    # Dev
+    zig
+    tectonic
+    rust cargo rust-analyzer
+
     # Sway
-    xdg-utils
-    xwayland
+    sway swaybg swayidle swaylock swaylock-effects
+    libxcursor xdg-utils xwayland
     rofi-wayland
     mako
-    sway
     wlogout
     wlr-randr
     brightnessctl
+    grim slurp
 
     # Applications
     thunar
@@ -66,23 +82,9 @@ deps:
     adwaita-icon-theme
     font-fira-code-nerd
     font-terminus
-
-    # Dev
-    btop
-    build-base
-    cmake
-    eza
-    git
-    github-cli
-    grim
-    just
-    ninja
-    rustup
-    wget
-    zig
-    tectonic
   )
 
+  doas apk del util-linux-login
   doas apk add ${pkgs[@]}
 
 rwall:

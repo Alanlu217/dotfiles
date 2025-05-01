@@ -1,65 +1,33 @@
 @import url("./catppuccin/themes/mocha.css");
 
 * {
+  background-color: @surface0;
   font-family: "Fira Code";
   font-size: 12px;
   min-height: 0;
 }
 
 #waybar {
-  background: transparent;
   color: @text;
-  margin: -10px;
   padding: 0px;
 }
 
 #workspaces {
-  border-radius: 1rem;
-  margin: 5px;
   background-color: @surface0;
-  margin-left: 1rem;
-}
-
-#custom-wifi {
-  color: @blue;
-  background-color: @surface0;
-  border-radius: 1rem 0px 0px 1rem;
-  margin-left: 5px;
-  margin-top: 5px;
-  margin-bottom: 5px;
-  padding-left: 5px;
-  padding-right: 10px;
-}
-
-#custom-bluetooth {
-  color: @blue;
-  background-color: @surface0;
-  border-radius: 0px 1rem 1rem 0px;
-  margin-right: 5px;
-  margin-top: 5px;
-  margin-bottom: 5px;
-  padding-left: 5px;
-  padding-right: 5px;
-}
-
-#cpu,
-#memory {
-  color: @blue;
-  background-color: @surface0;
-  border-radius: 1rem;
-  margin: 5px;
-  padding: 0.6rem;
 }
 
 #workspaces button {
   color: @lavender;
-  border-radius: 1rem;
-  padding: 0.4rem;
+  padding-left: 0.4rem;
+  padding-right: 0.4rem;
 }
 
 #workspaces button.active {
   color: @sky;
-  border-radius: 1rem;
+}
+
+#workspaces button.focused {
+  color: @sky;
 }
 
 #workspaces button:hover {
@@ -67,24 +35,43 @@
   border-radius: 1rem;
 }
 
-#custom-music,
-#tray,
-#backlight,
-#battery,
-#pulseaudio,
-#language,
-#custom-power {
+#cpu {
+  color: @blue;
   background-color: @surface0;
-  padding: 0.5rem 1rem;
-  margin: 5px 0;
+  padding-left: 1.2rem;
+  padding-right: 0.6rem;
+}
+
+#memory {
+  color: @blue;
+  background-color: @surface0;
+  padding-right: 0.6rem;
 }
 
 #clock {
   color: @blue;
   background-color: @surface0;
-  border-radius: 1rem;
   margin: 5px;
-  padding:  8px;
+  padding-left:  8px;
+  padding-right:  8px;
+}
+
+#pulseaudio {
+  background-color: @surface0;
+  color: @maroon;
+  border-radius: 1rem 0px 0px 1rem;
+  margin-left: 1rem;
+}
+
+#tray,
+#backlight,
+#battery,
+#pulseaudio,
+#custom-power {
+  background-color: @surface0;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  margin: 5px 0;
 }
 
 #battery {
@@ -103,37 +90,12 @@
   color: @yellow;
 }
 
-#backlight {
-  border-radius: 0;
-}
-
-#battery {
-  border-radius: 0px 1rem 1rem 0px;
-}
-
 #custom-lock {
   color: @maroon;
   background-color: @surface0;
   border-radius: 1rem 0px 0px 1rem;
   margin: 5px 0px 5px 5px;
   padding: 0px 5px 0px 10px;
-}
-
-#pulseaudio {
-  background-color: @surface0;
-  color: @maroon;
-  border-radius: 1rem 0px 0px 1rem;
-  margin-left: 1rem;
-}
-
-#custom-music {
-  color: @mauve;
-  border-radius: 1rem;
-}
-
-#language {
-  border-radius: 1rem 0px 0px 1rem;
-  color: @lavender;
 }
 
 #custom-power {
