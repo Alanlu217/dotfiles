@@ -31,3 +31,5 @@ alias gcl="git clone"
 
 starship init fish | source
 zoxide init fish | source
+
+source ~/.profile.fish

@@ -71,6 +71,7 @@ deps:
     wlr-randr
     brightnessctl
     grim slurp
+    wl-clipboard
 
     # Applications
     thunar
