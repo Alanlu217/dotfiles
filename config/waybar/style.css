@@ -1,19 +1,22 @@
 @import url("./catppuccin/themes/mocha.css");
 
 * {
-  background-color: @surface0;
-  font-family: "Fira Code";
+  font-family: "Fira Code Nerd Font";
   font-size: 12px;
   min-height: 0;
 }
 
 #waybar {
+  background: transparent;
+  background-color: @surface0;
+  border-radius: 8px;
   color: @text;
   padding: 0px;
 }
 
 #workspaces {
   background-color: @surface0;
+  border-radius: 8px;
 }
 
 #workspaces button {
@@ -32,7 +35,6 @@
 
 #workspaces button:hover {
   color: @sapphire;
-  border-radius: 1rem;
 }
 
 #cpu {
@@ -59,7 +61,6 @@
 #pulseaudio {
   background-color: @surface0;
   color: @maroon;
-  border-radius: 1rem 0px 0px 1rem;
   margin-left: 1rem;
 }
 
@@ -93,21 +94,18 @@
 #custom-lock {
   color: @maroon;
   background-color: @surface0;
-  border-radius: 1rem 0px 0px 1rem;
   margin: 5px 0px 5px 5px;
   padding: 0px 5px 0px 10px;
 }
 
 #custom-power {
   margin-right: 1rem;
-  border-radius: 0px 1rem 1rem 0px;
   color: @red;
 }
 
 #tray {
   margin-left: 1rem;
   margin-right: 1rem;
-  border-radius: 1rem;
 }
 
 #workspaces button.urgent {
