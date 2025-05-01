@@ -13,18 +13,16 @@ setup:
   doas rc-update add seatd
   doas rc-update add polkit
   doas rc-update add dbus
+  doas rc-update add bluetooth
 
 deps:
   #!/usr/bin/env sh
 
   pkgs=(
     # Drivers / firmware
-    intel-media-driver
     intel-ucode
-    linux-firmware
-    sof-firmware
-    mesa-dri-gallium
-    mesa-va-gallium
+    linux-firmware sof-firmware
+    mesa-dri-gallium mesa-va-gallium intel-media-driver
 
     # System
     dbus
@@ -41,6 +39,12 @@ deps:
     shadow-login
     starship
     neovim
+
+    # Audio
+    pipewire wireplumber pipewire-pulse pipewire-alsa pavucontrol
+
+    # Bluetooth
+    bluez bluez-openrc pipewire-spa-bluez blueman
 
     # Sway
     xdg-utils

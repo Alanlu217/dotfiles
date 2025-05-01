@@ -28,7 +28,4 @@ text-caps-lock-color=fab387
 text-ver-color=89b4fa
 text-wrong-color=eba0ac
 
-clock
-timestr=%R
-datestr=%a, %e of %B
 
