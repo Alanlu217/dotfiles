@@ -14,8 +14,12 @@ setup:
   doas rc-update add polkit
   doas rc-update add dbus
   doas rc-update add bluetooth
+  doas rc-update add networkmanager
 
   doas rc-update del elogind
+  doas rc-update del networking
+  doas rc-update del wpa_supplicant
+  
   doas apk del elogind
 
 deps:
@@ -57,6 +61,9 @@ deps:
 
     # Bluetooth
     bluez bluez-openrc pipewire-spa-bluez blueman
+
+    # Wifi
+    networkmanager networkmanager-tui networkmanager-applet
 
     # Dev
     zig

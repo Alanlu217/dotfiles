@@ -14,6 +14,8 @@ git-setup:
     git config --global alias.co checkout
     git config --global alias.st status
 
+    git config --global commit.verbose true
+
 setup:
     just git-setup
     just desktop::desktop
