@@ -40,6 +40,7 @@ deps:
     fastfetch
     gcompat
     neovim
+    bash
     fish starship
 
     # Misc
