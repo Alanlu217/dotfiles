@@ -63,7 +63,7 @@ deps:
     bluez bluez-openrc pipewire-spa-bluez blueman
 
     # Wifi
-    networkmanager networkmanager-tui networkmanager-applet
+    networkmanager networkmanager-wifi networkmanager-tui networkmanager-applet
 
     # Dev
     zig
