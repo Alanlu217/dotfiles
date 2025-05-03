@@ -88,8 +88,11 @@ input "type:keyboard" {
     bindsym $mod+b exec $browser
 
     # Wallpapers
-    bindsym $mod+z exec "just -f ~/dotfiles/scripts/alpine.just rwall"
-    bindsym $mod+Shift+z exec "just -f ~/dotfiles/scripts/alpine.just swall"
+    bindsym $mod+w exec "just -f ~/dotfiles/scripts/alpine.just rwall"
+    bindsym $mod+Shift+w exec "just -f ~/dotfiles/scripts/alpine.just swall"
+
+        # Toggle waybar
+    bindsym $mod+z exec "pkill -SIGUSR1 '^waybar$'"
 
     # Swaylock
     bindsym $mod+l exec "swaylock -l -i ~/.curr_bg --effect-blur 2x2 --clock --indicator -C .config/sway/lockconfig"
