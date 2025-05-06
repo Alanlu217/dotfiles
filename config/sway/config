@@ -10,6 +10,7 @@
 set $mod Mod4
 set $term alacritty
 set $menu rofi -show drun
+set $wmenu rofi -show window
 set $browser firefox
 
 ### Output configuration
@@ -71,6 +72,10 @@ input "type:keyboard" {
     xkb_options caps:escape
 }
 
+input "5426:145:Razer_Razer_Viper_8KHz" {
+    pointer_accel -0.5
+}
+
 ### Key bindings
 #
 # Basics:
@@ -83,6 +88,7 @@ input "type:keyboard" {
 
     # Start your launcher
     bindsym $mod+space exec $menu
+    bindsym Alt+space exec $wmenu
 
     # Start firefox
     bindsym $mod+b exec $browser
