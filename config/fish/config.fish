@@ -32,4 +32,6 @@ alias gcl="git clone"
 starship init fish | source
 zoxide init fish | source
 
+enable_transience
+
 source ~/.profile.fish
