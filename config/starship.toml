@@ -1,3 +1,31 @@
+format = """
+$username\
+$hostname\
+$localip\
+$shlvl\
+$directory\
+$vcsh\
+$git_branch\
+$git_commit\
+$git_state\
+$git_metrics\
+$git_status\
+$direnv\
+$env_var\
+$custom\
+$sudo\
+$cmd_duration\
+$line_break\
+$jobs\
+$battery\
+$time\
+$status\
+$os\
+$container\
+$netns\
+$shell\
+$character"""
+
 [character]
 success_symbol = "[>](bold green)"
 error_symbol = "[x](bold red)"
