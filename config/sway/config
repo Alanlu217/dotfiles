@@ -39,9 +39,11 @@ output DP-3 resolution 3840x2160@59.997Hz scale 2 position 1536,-120
 # This will lock your screen after 300 seconds of inactivity, then turn off
 # your displays after another 300 seconds, and turn your screens back on when
 # resumed. It will also lock your screen before your computer goes to sleep.
+
 exec swayidle -w \
-         timeout 300 'swaylock -l -i ~/.curr_bg --effect-blur 2x2 --clock --indicator -C .config/sway/lockconfig' \
-         timeout 600 'swaymsg "output * power off"' resume 'swaymsg "output * power on"' \
+         timeout 100 'brightnessctl set 5' resume 'brightnessctl set 80%' \
+         timeout 200 'swaylock -l -i ~/.curr_bg --effect-blur 2x2 --clock --indicator -C .config/sway/lockconfig' \
+         timeout 300 'swaymsg "output * power off"' resume 'swaymsg "output * power on"' \
          before-sleep 'swaylock -l -i ~/.curr_bg --effect-blur 2x2 --clock --indicator -C .config/sway/lockconfig'
 
 ### Input configuration
@@ -104,7 +106,7 @@ input "5426:145:Razer_Razer_Viper_8KHz" {
     bindsym $mod+l exec "swaylock -l -i ~/.curr_bg --effect-blur 2x2 --clock --indicator -C .config/sway/lockconfig"
 
     # Wlogout
-    bindsym $mod+Shift+l exec "wlogout"
+    bindsym $mod+Shift+l exec "doas wlogout"
 
     # Screenshot
     bindsym $mod+p exec "grim -g "$(slurp -d)" - | wl-copy"
@@ -174,9 +176,9 @@ input "5426:145:Razer_Razer_Viper_8KHz" {
     bindsym $mod+comma splitv
 
     # Switch the current container between different layout styles
-    # bindsym $mod+s layout stacking
-    # bindsym $mod+w layout tabbed
-    # bindsym $mod+e layout toggle split
+    bindsym $mod+bracketleft layout stacking
+    bindsym $mod+bracketright layout tabbed
+    bindsym $mod+backslash layout toggle split
 
     # Make the current focus fullscreen
     bindsym $mod+f fullscreen
@@ -228,8 +230,8 @@ bindsym $mod+r mode "resize"
     bindsym --locked XF86AudioRaiseVolume exec pactl set-sink-volume \@DEFAULT_SINK@ +5%
     bindsym --locked XF86AudioMicMute exec pactl set-source-mute \@DEFAULT_SOURCE@ toggle
     # Special keys to adjust brightness via brightnessctl
-    bindsym --locked XF86MonBrightnessDown exec brightnessctl set 5%-
-    bindsym --locked XF86MonBrightnessUp exec brightnessctl set 5%+
+    bindsym --locked XF86MonBrightnessDown exec brightnessctl set 10%-
+    bindsym --locked XF86MonBrightnessUp exec brightnessctl set 10%+
     # Special key to take a screenshot with grim
     bindsym Print exec grim
 

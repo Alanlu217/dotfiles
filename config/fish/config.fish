@@ -14,6 +14,7 @@ alias l="eza -l --git --no-user --no-permissions"
 alias vi="nvim"
 alias task="go-task"
 alias tex="tectonic -X"
+alias y="yazi"
 
 alias gs="git status --short"
 alias gd="git diff"
