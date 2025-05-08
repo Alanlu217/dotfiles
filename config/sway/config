@@ -13,6 +13,11 @@ set $menu rofi -show drun
 set $wmenu rofi -show window
 set $browser firefox
 
+set $left h
+set $down j
+set $up k
+set $right l
+
 ### Output configuration
 #
 # Default wallpaper (more resolutions are available in /usr/share/backgrounds/sway/)
@@ -63,7 +68,7 @@ exec swayidle -w \
 input "type:touchpad" {
     accel_profile flat
     pointer_accel 0.5
-    dwt enabled
+    dwt disabled
     tap disabled
     natural_scroll enabled
     middle_emulation enabled
@@ -71,7 +76,7 @@ input "type:touchpad" {
 }
 
 input "type:keyboard" {
-    xkb_options caps:escape
+    xkb_options caps:escape,grp:rctrl_switch
 }
 
 input "5426:145:Razer_Razer_Viper_8KHz" {
@@ -99,17 +104,22 @@ input "5426:145:Razer_Razer_Viper_8KHz" {
     bindsym $mod+w exec "just -f ~/dotfiles/scripts/alpine.just rwall"
     bindsym $mod+Shift+w exec "just -f ~/dotfiles/scripts/alpine.just swall"
 
-        # Toggle waybar
+    # Toggle waybar
     bindsym $mod+z exec "pkill -SIGUSR1 '^waybar$'"
 
     # Swaylock
-    bindsym $mod+l exec "swaylock -l -i ~/.curr_bg --effect-blur 2x2 --clock --indicator -C .config/sway/lockconfig"
+    bindsym $mod+n exec "swaylock -l -i ~/.curr_bg --effect-blur 2x2 --clock --indicator -C .config/sway/lockconfig"
 
-    # Wlogout
-    bindsym $mod+Shift+l exec "doas wlogout"
+    #  wlogout
+    bindsym $mod+Shift+n exec "doas wlogout"
 
     # Screenshot
     bindsym $mod+p exec "grim -g "$(slurp -d)" - | wl-copy"
+
+    # Keyboard Variants
+
+    bindsym $mod+d exec "swaymsg input type:keyboard xkb_layout us && swaymsg input type:keyboard xkb_variant dvorak"
+    bindsym $mod+Shift+e exec "swaymsg input type:keyboard xkb_layout us &&swaymsg input type:keyboard xkb_variant basic"
 
     # Drag floating windows by holding down $mod and left mouse button.
     # Resize them with right mouse button + $mod.
@@ -130,11 +140,21 @@ input "5426:145:Razer_Razer_Viper_8KHz" {
     bindsym $mod+Up focus up
     bindsym $mod+Right focus right
 
+    bindsym $mod+$left focus left
+    bindsym $mod+$down focus down
+    bindsym $mod+$up focus up
+    bindsym $mod+$right focus right
+
     # Move the focused window with the same, but add Shift
     bindsym $mod+Shift+Left move left
     bindsym $mod+Shift+Down move down
     bindsym $mod+Shift+Up move up
     bindsym $mod+Shift+Right move right
+
+    bindsym $mod+Shift+$left move left
+    bindsym $mod+Shift+$down move down
+    bindsym $mod+Shift+$up move up
+    bindsym $mod+Shift+$right move right
 
     # Three finger swipe
     bindgesture swipe:right workspace prev
@@ -215,6 +235,11 @@ mode "resize" {
     bindsym Down resize grow height 10px
     bindsym Up resize shrink height 10px
     bindsym Right resize grow width 10px
+
+    bindsym $left resize shrink width 10px
+    bindsym $down resize grow height 10px
+    bindsym $up resize shrink height 10px
+    bindsym $right resize grow width 10px
 
     # Return to default mode
     bindsym Return mode "default"
