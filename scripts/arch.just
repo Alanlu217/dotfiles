@@ -11,10 +11,13 @@ deps:
     hypridle # idler
     hyprlock # lock screen
 
+    tlp
+
     # Audio stuff
     pipewire
     pipewire-alsa
     pipewire-pulse
+    pavucontrol
 
     networkmanager # network manager
     bluez # bluetooth
@@ -45,6 +48,8 @@ deps:
 
     fastfetch # info
     eza # Better ls
+    zoxide # Better cd
+    yazi # File manager
 
     # Latex
     tectonic
@@ -54,7 +59,8 @@ deps:
     zig
     clang
     openssh
-    htop
+    btop
+    go gopls
 
     # Data / Math
     python-sympy
@@ -62,8 +68,8 @@ deps:
 
     # Applications
     alacritty
+    firefox
     nautilus
-    zen-browser-bin
     eog
     evince
     steam
