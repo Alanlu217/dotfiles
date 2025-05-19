@@ -33,7 +33,7 @@ deps:
     rofi-calc # calculator for rofi
     mako # notification launcher
     waybar # info bar
-    wlogout # logout menu
+    # wlogout # logout menu
     clipse # clipboard manager
 
     nerd-fonts # Fonts
@@ -71,7 +71,7 @@ deps:
     catppuccin-cursors-mocha # cursors
   )
 
-  yay -S ${pkgs[@]}
+  paru -S ${pkgs[@]}
 
 rwall:
     #!/usr/bin/env bash
