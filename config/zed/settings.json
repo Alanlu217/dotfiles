@@ -7,6 +7,10 @@
 // custom settings, run `zed: open default settings` from the
 // command palette (cmd-shift-p / ctrl-shift-p)
 {
+  "telemetry": {
+    "metrics": false,
+    "diagnostics": false
+  },
   "show_edit_predictions": false,
   "edit_predictions": {
     "mode": "subtle",
@@ -14,7 +18,7 @@
       "proxy": null,
       "proxy_no_verify": null
     },
-    "enabled_in_assistant": false
+    "enabled_in_text_threads": false
   },
   "ssh_connections": [
     {
@@ -54,7 +58,7 @@
     "light": "One Light",
     "dark": "Catppuccin Mocha"
   },
-  "assistant": {
+  "agent": {
     "button": false,
     "enabled": false,
     "version": "1"

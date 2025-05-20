@@ -73,6 +73,7 @@ deps:
     eog
     evince
     steam
+    spotify-player
 
     catppuccin-cursors-mocha # cursors
   )
