@@ -9,10 +9,7 @@ default:
 git-setup:
     git config --global user.email "alanlu2468@gmail.com"
     git config --global user.name "alanlu"
-    git config --global core.editor "vi"
-
-    git config --global alias.co checkout
-    git config --global alias.st status
+    git config --global core.editor "nvim"
 
     git config --global commit.verbose true
 
