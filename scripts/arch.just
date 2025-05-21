@@ -11,7 +11,7 @@ deps:
     hypridle # idler
     hyprlock # lock screen
 
-    tlp
+    tlp # Battery Saver
 
     # Audio stuff
     pipewire
@@ -39,7 +39,7 @@ deps:
     # wlogout # logout menu
     clipse # clipboard manager
 
-    nerd-fonts # Fonts
+    ttf-firacode-nerd # Fonts
 
     # for screenshotting
     wl-clipboard
@@ -56,10 +56,11 @@ deps:
     tex-fmt
 
     # Dev
-    zig
+    zig zls
     clang
     openssh
     btop
+    rustup rust-analyzer
     go gopls
 
     # Data / Math
@@ -74,8 +75,6 @@ deps:
     evince
     steam
     spotify-player
-
-    catppuccin-cursors-mocha # cursors
   )
 
   paru -S ${pkgs[@]}
