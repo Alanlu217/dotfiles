@@ -15,19 +15,24 @@ all:
         ln -s $BASEDIR/$CONF ~/.config/$CONF_BASE
     }
 
-    confs=(*/)
+    confs=(
+        */
+        starship.toml
+        spotify-launcher.conf
+    )
 
     for i in "${confs[@]}"; do
         sym "$i"
     done
 
-    rm -rf ~/.config/starship.toml
-    ln -s $BASEDIR/starship.toml ~/.config/starship.toml
-
 rm:
     #!/usr/bin/env bash
 
-    confs=(*/)
+    confs=(
+        */
+        starship.toml
+        spotify-launcher.conf
+    )
 
     for i in "${confs[@]}"; do
         echo "rm -rf ~/.config/$(basename "$i")"
