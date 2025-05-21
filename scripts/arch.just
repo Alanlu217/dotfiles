@@ -74,7 +74,7 @@ deps:
     eog
     evince
     steam
-    spotify-player
+    spotify-launcher
   )
 
   paru -S ${pkgs[@]}
