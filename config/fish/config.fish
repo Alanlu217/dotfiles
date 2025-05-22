@@ -6,8 +6,8 @@ export PATH="$HOME/dotfiles/bin:$PATH"
 
 set -gx GTK_THEME Adwaita:dark
 
-set -gx PAGER "nvim +Man!"
-set -gx MANPAGER "nvim +Man!"
+set -gx PAGER less
+set -gx MANPAGER less
 
 # Abbreviations
 alias l="eza -l --git --no-user --no-permissions"
@@ -29,6 +29,8 @@ alias gb="git branch"
 
 alias gi="git init"
 alias gcl="git clone"
+
+alias edot='helix $(fzf --walker-root ~/dotfiles)'
 
 starship init fish | source
 zoxide init fish | source

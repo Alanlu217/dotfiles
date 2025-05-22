@@ -50,6 +50,8 @@ deps:
     eza # Better ls
     zoxide # Better cd
     yazi # File manager
+    fzf
+    helix 
 
     # Latex
     tectonic
