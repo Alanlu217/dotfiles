@@ -5,6 +5,7 @@
 	"modules-left": [
 		"hyprland/workspaces",
 		"sway/workspaces",
+		"custom/hypridle",
 		"cpu",
 		"memory"
 	],
@@ -61,6 +62,13 @@
       "default": "",
     },
   },
+	"custom/hypridle": {
+		"format": "󰤄 {text}",
+		"exec": "just -f ~/dotfiles/scripts/idle.just running",
+		"on-click": "just -f ~/dotfiles/scripts/idle.just toggle",
+		"interval": 60,
+		"signal": 1
+	},
 	"cpu": {
 		"format": "  {usage}%"
 	},

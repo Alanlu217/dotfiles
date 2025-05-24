@@ -50,6 +50,12 @@
   padding-right: 0.6rem;
 }
 
+#custom-hypridle {
+  color: @blue;
+  padding-left: 0.6rem;
+  background-color: @surface0;
+}
+
 #clock {
   color: @blue;
   background-color: @surface0;
