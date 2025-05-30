@@ -42,5 +42,10 @@ alias gcl = git clone
 
 alias edot = helix (fzf --walker-root ~/dotfiles)
 
+$env.TRANSIENT_PROMPT_COMMAND = ""
+
+$env.config.show_banner = false
+
 source ~/.config/nushell/zoxide.nu
 source ~/.config/nushell/starship.nu
+source ~/.config/nushell/carapace.nu
