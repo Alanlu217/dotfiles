@@ -36,7 +36,7 @@ deps:
     rofi-calc # calculator for rofi
     mako # notification launcher
     waybar # info bar
-    # wlogout # logout menu
+    wlogout # logout menu
     clipse # clipboard manager
 
     ttf-firacode-nerd # Fonts
@@ -44,7 +44,7 @@ deps:
     # for screenshotting
     wl-clipboard
     grim
-    slurp
+    slurpjapanese fonts
 
     fastfetch # info
     eza # Better ls
@@ -52,10 +52,6 @@ deps:
     yazi # File manager
     fzf
     helix 
-
-    # Latex
-    tectonic
-    tex-fmt
 
     # Dev
     zig zls
@@ -75,11 +71,37 @@ deps:
     nautilus
     eog
     evince
-    steam
-    spotify-launcher
   )
 
-  paru -S ${pkgs[@]}
+  paru -Syu ${pkgs[@]}
+
+  sudo systemctl enable bluetooth
+  sudo systemctl enable tlp
+
+paru:
+    #!/usr/bin/env bash
+    sudo pacman -S --needed base-devel rustup
+    rustup toolchain install stable
+    git clone https://aur.archlinux.org/paru.git
+    cd paru
+    makepkg -si
+    cd ..
+    rm -rf paru
+
+extra:
+    #!/usr/bin/env bash
+
+    pkgs=(
+        noto-fonts-cjk
+        steam
+        spotify-launcher
+
+        # Latex
+        tectonic
+        tex-fmt
+    )
+
+    paru -Syu ${pkgs[@]}
 
 rwall:
     #!/usr/bin/env bash

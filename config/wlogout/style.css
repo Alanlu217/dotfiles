@@ -27,25 +27,25 @@ button:focus, button:active, button:hover {
 }
 
 #lock {
-    background-image: url("/home/alanlu/.config/wlogout/lock.svg");
+    background-image: url("~/.config/wlogout/lock.svg");
 }
 
 #logout {
-    background-image: url("/home/alanlu/.config/wlogout/logout.svg");
+    background-image: url("~/.config/wlogout/logout.svg");
 }
 
 #suspend {
-    background-image: url("/home/alanlu/.config/wlogout/suspend.svg");
+    background-image: url("~/.config/wlogout/suspend.svg");
 }
 
 #hibernate {
-    background-image: url("/home/alanlu/.config/wlogout/hibernate.svg");
+    background-image: url("~/.config/wlogout/hibernate.svg");
 }
 
 #shutdown {
-    background-image: url("/home/alanlu/.config/wlogout/shutdown.svg");
+    background-image: url("~/.config/wlogout/shutdown.svg");
 }
 
 #reboot {
-    background-image: url("/home/alanlu/.config/wlogout/reboot.svg");
+    background-image: url("~/.config/wlogout/reboot.svg");
 }
