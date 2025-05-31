@@ -20,6 +20,8 @@
 $env.config.buffer_editor = "helix"
 $env.config.edit_mode = 'vi'
 
+alias hx = helix
+
 alias l = eza -l --git --no-user --no-permissions
 alias vi = nvim
 alias task = go-task
