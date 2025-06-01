@@ -44,7 +44,7 @@ deps:
     # for screenshotting
     wl-clipboard
     grim
-    slurpjapanese fonts
+    slurp
 
     fastfetch # info
     eza # Better ls

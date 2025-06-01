@@ -6,6 +6,7 @@ cursorline = true
 color-modes = true
 end-of-line-diagnostics = "error"
 soft-wrap.enable = true
+gutters = ["diff", "line-numbers", "spacer"]
 
 [editor.inline-diagnostics]
 cursor-line = "hint"
