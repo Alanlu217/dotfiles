@@ -26,10 +26,27 @@
       "username": "z5693267",
       "projects": [
         {
-          "paths": ["~/Documents/1511_code"]
+          "paths": [
+            "/import/glass/6/z5693267/1531_code"
+          ]
+        },
+        {
+          "paths": [
+            "/import/glass/6/z5693267/2521_code"
+          ]
+        },
+        {
+          "paths": [
+            "~/Documents/1511_code"
+          ]
         }
       ],
       "nickname": "1511"
+    },
+    {
+      "host": "vlab.cse.unsw.edu.au",
+      "username": "z5693267",
+      "projects": []
     }
   ],
   "collaboration_panel": {
@@ -49,9 +66,9 @@
   "vim_mode": true,
   "ui_font_size": 14,
   "buffer_font_size": 14,
-  "buffer_font_family": "JetBrainsMono Nerd Font",
+  "buffer_font_family": "Iosevka Nerd Font",
   "buffer_font_features": {
-    "liga": true
+    "ligatures": false
   },
   "theme": {
     "mode": "dark",
