@@ -26,6 +26,7 @@ alias gu="git pull"
 
 alias gl="git log"
 alias gb="git branch"
+alias gco="git checkout"
 
 alias gi="git init"
 alias gcl="git clone"

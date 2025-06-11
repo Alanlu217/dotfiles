@@ -1,5 +1,0 @@
-[Desktop Entry]
-Name=Random Wallpaper
-Exec=bash -c "just -f ~/dotfiles/justfile wall random"
-Type=Application
-Terminal=False

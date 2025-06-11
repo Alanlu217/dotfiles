@@ -15,6 +15,5 @@ git-setup:
 
 setup:
     just git-setup
-    just desktop::desktop
     just wall::setup
     just config::all
