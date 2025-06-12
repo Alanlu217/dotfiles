@@ -26,12 +26,14 @@ indent = { tab-width = 4, unit = "   " }
 
 [[language]]
 name = "typescript"
+language-servers = ["eslint", "typescript-language-server"]
 auto-format = true
 formatter = { command = "prettier", args = ["--parser", "typescript"] }
 indent = { tab-width = 4, unit = "   " }
 
 [[language]]
 name = "javascript"
+language-servers = ["eslint", "typescript-language-server"]
 auto-format = true
 formatter = { command = "prettier", args = ["--parser", "typescript"] }
 indent = { tab-width = 4, unit = "   " }
@@ -55,4 +57,4 @@ formatter = { command = "prettier", args = ["--parser", "json"] }
 name = "markdown"
 auto-format = true
 formatter = { command = "prettier", args = ["--parser", "markdown"] }
-
+indent = { tab-width = 4, unit = "   " }

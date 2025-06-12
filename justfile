@@ -1,7 +1,6 @@
 mod arch "scripts/arch.just"
 mod alpine "scripts/alpine.just"
 mod config
-mod desktop
 
 default:
     just -l
