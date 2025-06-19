@@ -26,19 +26,13 @@
       "username": "z5693267",
       "projects": [
         {
-          "paths": [
-            "/import/glass/6/z5693267/1531_code"
-          ]
+          "paths": ["/import/glass/6/z5693267/1531_code"]
         },
         {
-          "paths": [
-            "/import/glass/6/z5693267/2521_code"
-          ]
+          "paths": ["/import/glass/6/z5693267/2521_code"]
         },
         {
-          "paths": [
-            "~/Documents/1511_code"
-          ]
+          "paths": ["~/Documents/1511_code"]
         }
       ],
       "nickname": "1511"
@@ -109,6 +103,15 @@
     },
     "LaTeX": {
       "tab_size": 2
+    },
+    "JavaScript": {
+      "tab_size": 4,
+      "formatter": {
+        "external": {
+          "command": "prettier",
+          "arguments": ["--stdin-filepath", "{buffer_path}"]
+        }
+      }
     }
   },
   "lsp": {
