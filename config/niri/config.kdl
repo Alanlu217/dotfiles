@@ -258,7 +258,7 @@ layout {
 // This line starts waybar, a commonly used bar for Wayland compositors.
 spawn-at-startup "waybar"
 
-spawn-at-startup "hyprpaper"
+spawn-at-startup "~/dotfiles/scripts/swayrwall.sh"
 
 spawn-at-startup "xwayland-satellite" ":12"
 
@@ -368,6 +368,8 @@ binds {
     Mod+X hotkey-overlay-title="Open a Terminal: alacritty" { spawn "alacritty"; }
     Mod+Space hotkey-overlay-title="Run an Application: rofi" { spawn "rofi" "-show" "drun"; }
     Mod+B hotkey-overlay-title="Run an Application: firefox" { spawn "firefox"; }
+    Mod+S { spawn "~/dotfiles/scripts/swayrwall.sh";}
+    Mod+Shift+S { spawn "~/dotfiles/scripts/swayswall.sh";}
     Super+Alt+L hotkey-overlay-title="Lock the Screen: hyprlock" { spawn "hyprlock"; }
 
     // You can also use a shell. Do this if you need pipes, multiple commands, etc.
