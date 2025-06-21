@@ -6,6 +6,7 @@ deps:
     git
     github-cli
 
+    niri
     hyprland
     hyprpaper # background
     hypridle # idler
@@ -71,6 +72,7 @@ deps:
     nautilus
     eog
     evince
+    xwayland-satellite
   )
 
   paru -Syu ${pkgs[@]}
