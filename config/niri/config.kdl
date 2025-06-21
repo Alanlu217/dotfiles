@@ -269,6 +269,14 @@ environment {
     ELECTRON_OZONE_PLATFORM_HINT "auto"
 }
 
+// Cursor Settings
+cursor {
+    xcursor-size 20
+
+    hide-when-typing
+    hide-after-inactive-ms 1000
+}
+
 // Uncomment this line to ask the clients to omit their client-side decorations if possible.
 // If the client will specifically ask for CSD, the request will be honored.
 // Additionally, clients will be informed that they are tiled, removing some client-side rounded corners.
@@ -335,6 +343,10 @@ window-rule {
 /-window-rule {
     geometry-corner-radius 12
     clip-to-geometry true
+}
+
+hotkey-overlay {
+    skip-at-startup
 }
 
 binds {
@@ -573,6 +585,7 @@ binds {
     // Mod+Space       { switch-layout "next"; }
     // Mod+Shift+Space { switch-layout "prev"; }
 
+    Mod+P { spawn "~/dotfiles/scripts/screenshot.sh"; }
     Print { screenshot; }
     Ctrl+Print { screenshot-screen; }
     Alt+Print { screenshot-window; }
