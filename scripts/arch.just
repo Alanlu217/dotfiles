@@ -7,6 +7,7 @@ deps:
     github-cli
 
     niri
+    swaybg
     hyprland
     hyprpaper # background
     hypridle # idler
