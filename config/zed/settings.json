@@ -105,7 +105,7 @@
       "tab_size": 2
     },
     "JavaScript": {
-      "tab_size": 4,
+      "tab_size": 2,
       "formatter": {
         "external": {
           "command": "prettier",

@@ -5,6 +5,7 @@
 	"modules-left": [
 		"hyprland/workspaces",
 		"sway/workspaces",
+		"niri/workspaces",
 		"custom/hypridle",
 		"cpu",
 		"memory"
