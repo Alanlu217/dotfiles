@@ -9,12 +9,20 @@ set -gx GTK_THEME Adwaita:dark
 set -gx PAGER less
 set -gx MANPAGER less
 
+function f
+    set tmp (mktemp -t "yazi-cwd.XXXXXX")
+    yazi $argv --cwd-file="$tmp"
+    if read -z cwd <"$tmp"; and [ -n "$cwd" ]; and [ "$cwd" != "$PWD" ]
+        builtin cd -- "$cwd"
+    end
+    rm -f -- "$tmp"
+end
+
 # Abbreviations
 alias l="eza -l --git --no-user --no-permissions"
 alias vi="nvim"
 alias task="go-task"
 alias tex="tectonic -X"
-alias y="yazi"
 
 alias gs="git status --short"
 alias gd="git diff"
