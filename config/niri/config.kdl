@@ -18,6 +18,9 @@ input {
             options "caps:swapescape"
         }
 
+        repeat-delay 300
+        repeat-rate 30
+
         // Enable numlock on startup, omitting this setting disables it.
         numlock
     }
@@ -54,7 +57,7 @@ input {
         // accel-profile "flat"
         // scroll-method "on-button-down"
         // scroll-button 273
-        // middle-emulation
+        middle-emulation
     }
 
     // Uncomment this to make the mouse warp to the center of newly focused windows.
