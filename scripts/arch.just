@@ -7,10 +7,11 @@ deps:
     github-cli
 
     niri
+    xwayland-satellite
     swaybg
-    hyprland
-    hyprpaper # background
-    hypridle # idler
+    rofi-wayland # application launcher
+    mako # notification launcher
+    waybar # info bar
     hyprlock # lock screen
 
     tlp # Battery Saver
@@ -34,13 +35,6 @@ deps:
     starship # prompt
     watchexec
 
-    rofi-wayland # application launcher
-    rofi-calc # calculator for rofi
-    mako # notification launcher
-    waybar # info bar
-    wlogout # logout menu
-    clipse # clipboard manager
-
     ttf-firacode-nerd # Fonts
 
     # for screenshotting
@@ -63,17 +57,12 @@ deps:
     rustup rust-analyzer
     go gopls
 
-    # Data / Math
-    python-sympy
-    python-matplotlib
-
     # Applications
     alacritty
     firefox
     nautilus
     eog
     evince
-    xwayland-satellite
   )
 
   paru -Syu ${pkgs[@]}

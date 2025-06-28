@@ -19,7 +19,8 @@ function f
 end
 
 # Abbreviations
-alias l="eza -l --git --no-user --no-permissions"
+alias ls="eza --icons --git"
+alias l="eza --icons -l --git --no-user --no-permissions"
 alias vi="nvim"
 alias task="go-task"
 alias tex="tectonic -X"
