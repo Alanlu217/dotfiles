@@ -6,6 +6,8 @@ deps:
     git
     github-cli
 
+    ly
+
     niri
     xwayland-satellite
     swaybg
@@ -30,6 +32,7 @@ deps:
     network-manager-applet # nm-applet
     blueman # blueman-applet
     brightnessctl
+    avahi nss-mdns
 
     fish # better shell
     starship # prompt
@@ -64,12 +67,15 @@ deps:
     nautilus
     eog
     evince
+    zed gnu-netcat vulkan-intel
   )
 
   sudo pacman -S ${pkgs[@]}
 
   sudo systemctl enable bluetooth
   sudo systemctl enable tlp
+  sudo systemctl enable ly
+  sudo systemctl enable avahi-daemon
 
 paru:
     #!/usr/bin/env bash

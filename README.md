@@ -16,4 +16,5 @@ See [justfile](justfile)
 --use-gl=desktop --ozone-platform-hint=wayland
 ```
 
-ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILqBIc+2of0E8TCKsOCGjT2SKHQcnZRpiW2dOnW6d1pV
+## Xwayland-satellite Steam
+Turn off web gpu in steam settings (top left is settings)
