@@ -15,3 +15,5 @@ See [justfile](justfile)
 ```
 --use-gl=desktop --ozone-platform-hint=wayland
 ```
+
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHyfAHMpGvwli5Awi6QllEZWJmeQHRhs4JqkK1YksOX/
