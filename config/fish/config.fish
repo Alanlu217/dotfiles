@@ -44,7 +44,6 @@ alias edot='helix $(fzf --walker-root ~/dotfiles)'
 
 starship init fish | source
 zoxide init fish | source
-carapace _carapace | source
 
 enable_transience
 

@@ -17,9 +17,11 @@ deps:
     tlp # Battery Saver
 
     # Audio stuff
+    wireplumber
     pipewire
     pipewire-alsa
     pipewire-pulse
+    pipewire-jack
     pavucontrol
 
     networkmanager # network manager
@@ -29,13 +31,12 @@ deps:
     blueman # blueman-applet
     brightnessctl
 
-    adwaita-dark # theme
-
     fish # better shell
     starship # prompt
     watchexec
 
-    ttf-firacode-nerd # Fonts
+    ttf-iosevka-nerd # Fonts
+    noto-fonts
 
     # for screenshotting
     wl-clipboard
@@ -65,7 +66,7 @@ deps:
     evince
   )
 
-  paru -Syu ${pkgs[@]}
+  sudo pacman -S ${pkgs[@]}
 
   sudo systemctl enable bluetooth
   sudo systemctl enable tlp
