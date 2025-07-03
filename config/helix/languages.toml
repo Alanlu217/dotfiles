@@ -29,7 +29,7 @@ name = "typescript"
 language-servers = ["eslint", "typescript-language-server"]
 auto-format = true
 formatter = { command = "prettier", args = ["--parser", "typescript"] }
-indent = { tab-width = 4, unit = "   " }
+indent = { tab-width = 2, unit = " " }
 
 [[language]]
 name = "javascript"

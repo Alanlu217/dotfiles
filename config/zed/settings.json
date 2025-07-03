@@ -60,7 +60,7 @@
   "vim_mode": true,
   "ui_font_size": 14,
   "buffer_font_size": 14,
-  "buffer_font_family": "Iosevka Nerd Font",
+  "buffer_font_family": "JetBrainsMono Nerd Font",
   "buffer_font_features": {
     "ligatures": false
   },
@@ -77,9 +77,11 @@
   "format_on_save": "on",
   "restore_on_startup": "none",
   "gutter": {
-    "folds": true,
+    "folds": false,
     "code_actions": false,
-    "runnables": false
+    "runnables": false,
+    "breakpoints": false,
+    "min_line_number_digits": 0
   },
   "git_panel": {
     "button": true

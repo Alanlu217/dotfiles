@@ -64,6 +64,7 @@ deps:
     # Applications
     alacritty
     firefox
+    thunderbird
     nautilus
     eog
     evince
