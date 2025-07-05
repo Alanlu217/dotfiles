@@ -160,7 +160,7 @@ layout {
     // You can change how the focus ring looks.
     focus-ring {
         // Uncomment this line to disable the focus ring.
-        // off
+        off
 
         // How many logical pixels the ring extends out from the windows.
         width 2
@@ -196,10 +196,10 @@ layout {
     border {
         // The settings are the same as for the focus ring.
         // If you enable the border, you probably want to disable the focus ring.
-        off
+        // off
 
         width 2
-        active-color "#ffc87f"
+        active-color "#7fc8ff"
         inactive-color "#505050"
 
         // Color of the border around windows that request your attention.
@@ -354,6 +354,11 @@ window-rule {
     clip-to-geometry true
 }
 
+window-rule {
+    match app-id=r#"Alacritty"#
+    draw-border-with-background false
+}
+
 hotkey-overlay {
     skip-at-startup
 }
@@ -381,8 +386,8 @@ binds {
     Mod+X hotkey-overlay-title="Open a Terminal: alacritty" { spawn "alacritty"; }
     Mod+Space hotkey-overlay-title="Run an Application: rofi" { spawn "rofi" "-show" "drun"; }
     Mod+B hotkey-overlay-title="Run an Application: firefox" { spawn "firefox"; }
-    Mod+S { spawn "~/dotfiles/scripts/nirirwall.sh";}
-    Mod+Shift+S { spawn "~/dotfiles/scripts/niriswall.sh";}
+    Mod+W { spawn "~/dotfiles/scripts/nirirwall.sh";}
+    Mod+Shift+W { spawn "~/dotfiles/scripts/niriswall.sh";}
     Super+Alt+L hotkey-overlay-title="Lock the Screen: hyprlock" { spawn "hyprlock"; }
 
     // You can also use a shell. Do this if you need pipes, multiple commands, etc.
@@ -597,7 +602,7 @@ binds {
     // Toggle tabbed column display mode.
     // Windows in this column will appear as vertical tabs,
     // rather than stacked on top of each other.
-    Mod+W { toggle-column-tabbed-display; }
+    Mod+T { toggle-column-tabbed-display; }
 
     // Actions to switch layouts.
     // Note: if you uncomment these, make sure you do NOT have
@@ -607,10 +612,9 @@ binds {
     // Mod+Space       { switch-layout "next"; }
     // Mod+Shift+Space { switch-layout "prev"; }
 
-    Mod+P { spawn "~/dotfiles/scripts/screenshot.sh"; }
-    Print { screenshot; }
-    Ctrl+Print { screenshot-screen; }
-    Alt+Print { screenshot-window; }
+    Mod+S { screenshot; }
+    Mod+Shift+S { screenshot-screen; }
+    Mod+Shift+Alt+S { screenshot-window; }
 
     // Applications such as remote-desktop clients and software KVM switches may
     // request that niri stops processing the keyboard shortcuts defined here
