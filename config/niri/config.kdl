@@ -269,6 +269,8 @@ spawn-at-startup "waybar"
 
 spawn-at-startup "~/dotfiles/scripts/swayrwall.sh"
 
+spawn-at-startup "~/dotfiles/scripts/niriidle.sh"
+
 spawn-at-startup "xwayland-satellite" ":12"
 
 // Environment Settings
