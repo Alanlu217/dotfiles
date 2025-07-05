@@ -30,7 +30,7 @@ input {
     touchpad {
         // off
         tap
-        // dwt
+        dwt
         // dwtp
         // drag false
         // drag-lock
@@ -306,7 +306,7 @@ screenshot-path "~/Pictures/Screenshots/Screenshot from %Y-%m-%d %H-%M-%S.png"
 // https://github.com/YaLTeR/niri/wiki/Configuration:-Animations
 animations {
     // Uncomment to turn off all animations.
-    // off
+    off
 
     // Slow down all animations by this factor. Values below 1 speed them up instead.
     slowdown 0.8
@@ -381,8 +381,8 @@ binds {
     Mod+X hotkey-overlay-title="Open a Terminal: alacritty" { spawn "alacritty"; }
     Mod+Space hotkey-overlay-title="Run an Application: rofi" { spawn "rofi" "-show" "drun"; }
     Mod+B hotkey-overlay-title="Run an Application: firefox" { spawn "firefox"; }
-    Mod+S { spawn "~/dotfiles/scripts/swayrwall.sh";}
-    Mod+Shift+S { spawn "~/dotfiles/scripts/swayswall.sh";}
+    Mod+S { spawn "~/dotfiles/scripts/nirirwall.sh";}
+    Mod+Shift+S { spawn "~/dotfiles/scripts/niriswall.sh";}
     Super+Alt+L hotkey-overlay-title="Lock the Screen: hyprlock" { spawn "hyprlock"; }
 
     // You can also use a shell. Do this if you need pipes, multiple commands, etc.

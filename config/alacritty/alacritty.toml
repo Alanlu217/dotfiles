@@ -6,7 +6,7 @@ family = "Zed Mono Nerd Font"
 style = "Regular"
 
 [window]
-opacity = 0.9
+opacity = 1
 decorations = "None"
 
 [window.padding]
