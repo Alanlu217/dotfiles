@@ -1,28 +1,28 @@
 running:
     #!/usr/bin/env bash
 
-    if [ "$(pidof hypridle)" == "" ]; then
+    if [ "$(pidof swayidle)" == "" ]; then
         echo off
     else
         echo on
     fi
 
 start:
-    hyprctl dispatch exec hypridle
+    bash ~/dotfiles/scripts/niriidle.sh &
     pkill -RTMIN+1 waybar
 
 stop:
-    killall hypridle
+    killall swayidle
     pkill -RTMIN+1 waybar
 
 toggle:
     #!/usr/bin/env bash
 
-    if [ "$(pidof hypridle)" == "" ]; then
-        hyprctl dispatch exec hypridle
+    if [ "$(pidof swayidle)" == "" ]; then
+        bash ~/dotfiles/scripts/niriidle.sh &
         pkill -RTMIN+1 waybar
     else
-        killall hypridle
+        killall swayidle
         pkill -RTMIN+1 waybar
     fi
     
