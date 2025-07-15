@@ -6,6 +6,9 @@ auto-format = true
 [language-server.tinymist]
 command = "tinymist"
 
+[language-server.zls]
+config.enable_build_on_save = true
+
 [[language]]
 name = "typst"
 language-servers = ["tinymist"]
