@@ -40,6 +40,9 @@ alias gco="git checkout"
 alias gi="git init"
 alias gcl="git clone"
 
+alias d="docker"
+alias dc="docker compose"
+
 alias edot='helix $(fzf --walker-root ~/dotfiles)'
 
 starship init fish | source

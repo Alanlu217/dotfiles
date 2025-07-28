@@ -3,4 +3,4 @@
 pdf=($(find . -name "*.pdf"))
 evince "${pdf[0]}" &
 
-tectonic -X watch
+typst watch

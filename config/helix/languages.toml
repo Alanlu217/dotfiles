@@ -19,13 +19,18 @@ auto-format = true
 name = "cpp"
 formatter = { command = 'clang-format' }
 auto-format = true
-indent = { tab-width = 4, unit = "   " }
+indent = { tab-width = 4, unit = "    " }
 
 [[language]]
 name = "c"
 formatter = { command = 'clang-format' }
 auto-format = true
-indent = { tab-width = 4, unit = "   " }
+indent = { tab-width = 4, unit = "    " }
+
+[[language]]
+name = "go"
+auto-format = true
+formatter = { command = "goimports" }
 
 [[language]]
 name = "typescript"
@@ -39,7 +44,7 @@ name = "javascript"
 language-servers = ["eslint", "typescript-language-server"]
 auto-format = true
 formatter = { command = "prettier", args = ["--parser", "typescript"] }
-indent = { tab-width = 4, unit = "   " }
+indent = { tab-width = 4, unit = " " }
 
 [[language]]
 name = "css"
