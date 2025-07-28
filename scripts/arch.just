@@ -62,7 +62,7 @@ deps:
     go gopls
 
     # Applications
-    alacritty
+    ghostty
     firefox
     thunderbird
     nautilus
