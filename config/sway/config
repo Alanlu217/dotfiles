@@ -8,7 +8,7 @@
 #
 # Logo key. Use Mod1 for Alt.
 set $mod Mod4
-set $term alacritty
+set $term ghostty
 set $menu rofi -show drun
 set $wmenu rofi -show window
 set $browser firefox
@@ -283,6 +283,8 @@ bindsym $mod+r mode "resize"
 
 
 exec /usr/libexec/pipewire-launcher
+
+exec swww-daemon
 
 exec waybar
 

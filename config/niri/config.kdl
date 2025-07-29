@@ -267,7 +267,9 @@ layout {
 // This line starts waybar, a commonly used bar for Wayland compositors.
 spawn-at-startup "waybar"
 
-spawn-at-startup "~/dotfiles/scripts/swayrwall.sh"
+spawn-at-startup "swww-daemon"
+
+// spawn-at-startup "~/dotfiles/scripts/swayrwall.sh"
 
 spawn-at-startup "~/dotfiles/scripts/niriidle.sh"
 
@@ -390,8 +392,8 @@ binds {
     Mod+Space hotkey-overlay-title="Run an Application: rofi drun" { spawn "rofi" "-show" "drun"; }
     Alt+Space hotkey-overlay-title="Run an Application: rofi window" { spawn "rofi" "-show" "window"; }
     Mod+B hotkey-overlay-title="Run an Application: firefox" { spawn "firefox"; }
-    Mod+W { spawn "~/dotfiles/scripts/nirirwall.sh";}
-    Mod+Shift+W { spawn "~/dotfiles/scripts/niriswall.sh";}
+    Mod+W { spawn "~/dotfiles/scripts/swwwrwall.sh";}
+    Mod+Shift+W { spawn "~/dotfiles/scripts/swwwswall.sh";}
     Super+Alt+L hotkey-overlay-title="Lock the Screen: hyprlock" { spawn "hyprlock"; }
 
     // You can also use a shell. Do this if you need pipes, multiple commands, etc.

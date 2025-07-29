@@ -53,6 +53,8 @@ background-blur = true
 window-inherit-working-directory = true
 window-decoration = none
 
+mouse-scroll-multiplier = 0.6
+
 shell-integration-features = cursor
 
 keybind = super+enter=new_window

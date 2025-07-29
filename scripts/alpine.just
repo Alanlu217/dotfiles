@@ -99,8 +99,7 @@ deps:
 rwall:
     #!/usr/bin/env sh
     wall="$(pwd)/../wallpapers/$(ls ../wallpapers | shuf -n 1)"
-    pkill swaybg
-    swaybg -i "$wall" &
+    swww img --transition-duration 1 "$wall" &
     rm -rf ~/.curr_bg
     ln -s "$wall" ~/.curr_bg
 
@@ -109,8 +108,7 @@ swall:
     name="$(ls ../wallpapers | rofi -dmenu)"
     if [ "${name}" == "" ]; then exit; fi
     wall="$(pwd)/../wallpapers/$name"
-    pkill swaybg
-    swaybg -i "$wall" &
+    swww img --transition-duration 1 "$wall" &
     rm -rf ~/.curr_bg
     ln -s "$wall" ~/.curr_bg
 
