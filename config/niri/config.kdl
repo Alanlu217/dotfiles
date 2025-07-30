@@ -310,7 +310,7 @@ screenshot-path "~/Pictures/Screenshots/Screenshot from %Y-%m-%d %H-%M-%S.png"
 // https://github.com/YaLTeR/niri/wiki/Configuration:-Animations
 animations {
     // Uncomment to turn off all animations.
-    // off
+    off
 
     // Slow down all animations by this factor. Values below 1 speed them up instead.
     slowdown 0.8
@@ -388,13 +388,13 @@ binds {
     Mod+Shift+Slash { show-hotkey-overlay; }
 
     // Suggested binds for running programs: terminal, app launcher, screen locker.
-    Mod+X hotkey-overlay-title="Open a Terminal: ghostty" { spawn "ghostty"; }
-    Mod+Space hotkey-overlay-title="Run an Application: rofi drun" { spawn "rofi" "-show" "drun"; }
-    Alt+Space hotkey-overlay-title="Run an Application: rofi window" { spawn "rofi" "-show" "window"; }
-    Mod+B hotkey-overlay-title="Run an Application: firefox" { spawn "firefox"; }
-    Mod+W { spawn "~/dotfiles/scripts/swwwrwall.sh";}
-    Mod+Shift+W { spawn "~/dotfiles/scripts/swwwswall.sh";}
-    Super+Alt+L hotkey-overlay-title="Lock the Screen: hyprlock" { spawn "hyprlock"; }
+    Mod+X repeat=false hotkey-overlay-title="Open a Terminal: ghostty" { spawn "ghostty"; }
+    Mod+Space repeat=false hotkey-overlay-title="Run an Application: rofi drun" { spawn "rofi" "-show" "drun"; }
+    Alt+Space repeat=false hotkey-overlay-title="Run an Application: rofi window" { spawn "rofi" "-show" "window"; }
+    Mod+B repeat=false hotkey-overlay-title="Run an Application: firefox" { spawn "firefox"; }
+    Mod+W repeat=false { spawn "~/dotfiles/scripts/swwwrwall.sh";}
+    Mod+Shift+W repeat=false { spawn "~/dotfiles/scripts/swwwswall.sh";}
+    Super+Alt+L repeat=false hotkey-overlay-title="Lock the Screen: hyprlock" { spawn "hyprlock"; }
 
     // You can also use a shell. Do this if you need pipes, multiple commands, etc.
     // Note: the entire command goes as a single argument in the end.
@@ -418,8 +418,9 @@ binds {
     // You can also move the mouse into the top-left hot corner,
     // or do a four-finger swipe up on a touchpad.
     Mod+O repeat=false { toggle-overview; }
+    Mod+Alt+Space repeat=false { toggle-overview; }
 
-    Mod+Q { close-window; }
+    Mod+Shift+Q { close-window; }
 
     Mod+Left  { focus-column-left; }
     Mod+Down  { focus-window-down; }
