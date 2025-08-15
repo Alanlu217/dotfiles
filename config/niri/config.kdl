@@ -199,13 +199,13 @@ layout {
         // off
 
         width 1
-        // active-color "#7fc8ff"
-        // inactive-color "#505050"
+        active-color "#888888"
+        inactive-color "#505050"
 
         // Color of the border around windows that request your attention.
         urgent-color "#9b0000"
 
-        active-gradient from="#33ccff" to="#00ff99" angle=45 relative-to="workspace-view"
+        active-gradient from="#33ccffAA" to="#00ff99AA" angle=45 relative-to="workspace-view"
         inactive-gradient from="#595959" to="#595959" angle=45 relative-to="workspace-view"
     }
 
@@ -322,7 +322,7 @@ screenshot-path "~/Pictures/Screenshots/Screenshot from %Y-%m-%d %H-%M-%S.png"
 // https://github.com/YaLTeR/niri/wiki/Configuration:-Animations
 animations {
     // Uncomment to turn off all animations.
-    // off
+    off
 
     // Slow down all animations by this factor. Values below 1 speed them up instead.
     slowdown 0.8
@@ -482,6 +482,16 @@ binds {
     Mod+Shift+Ctrl+J     { move-column-to-monitor-down; }
     Mod+Shift+Ctrl+K     { move-column-to-monitor-up; }
     Mod+Shift+Ctrl+L     { move-column-to-monitor-right; }
+
+    
+    Mod+Ctrl+Alt+Left  { move-workspace-to-monitor-left; }
+    Mod+Ctrl+Alt+Down  { move-workspace-down; }
+    Mod+Ctrl+Alt+Up    { move-workspace-up; }
+    Mod+Ctrl+Alt+Right { move-workspace-to-monitor-right; }
+    Mod+Ctrl+Alt+H     { move-workspace-to-monitor-left; }
+    Mod+Ctrl+Alt+J     { move-workspace-down; }
+    Mod+Ctrl+Alt+K     { move-workspace-up; }
+    Mod+Ctrl+Alt+L     { move-workspace-to-monitor-right; }
 
     // Alternatively, there are commands to move just a single window:
     // Mod+Shift+Ctrl+Left  { move-window-to-monitor-left; }

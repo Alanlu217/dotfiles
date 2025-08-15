@@ -50,9 +50,9 @@ workspace 1 output eDP-1
 
 exec swayidle -w \
          timeout 100 'brightnessctl set 5' resume 'brightnessctl set 80%' \
-         timeout 200 'swaylock -l -i ~/.curr_bg --effect-blur 2x2 --clock --indicator -C .config/sway/lockconfig' \
-         timeout 300 'swaymsg "output * power off"' resume 'swaymsg "output * power on"' \
-         before-sleep 'swaylock -l -i ~/.curr_bg --effect-blur 2x2 --clock --indicator -C .config/sway/lockconfig'
+         timeout 110 'swaymsg "output * power off"' resume 'swaymsg "output * power on"' \
+         timeout 120 'hyprlock' \
+         before-sleep 'hyprlock'
 
 ### Input configuration
 #
@@ -111,7 +111,7 @@ input "5426:145:Razer_Razer_Viper_8KHz" {
     bindsym $mod+z exec "pkill -SIGUSR1 '^waybar$'"
 
     # Swaylock
-    bindsym $mod+n exec "swaylock -l -i ~/.curr_bg --effect-blur 2x2 --clock --indicator -C .config/sway/lockconfig"
+    bindsym $mod+n exec "hyprlock"
 
     #  wlogout
     bindsym $mod+Shift+n exec "doas wlogout"
