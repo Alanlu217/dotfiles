@@ -30,7 +30,7 @@ input {
     touchpad {
         // off
         tap
-        dwt
+        // dwt
         // dwtp
         // drag false
         // drag-lock
@@ -322,7 +322,7 @@ screenshot-path "~/Pictures/Screenshots/Screenshot from %Y-%m-%d %H-%M-%S.png"
 // https://github.com/YaLTeR/niri/wiki/Configuration:-Animations
 animations {
     // Uncomment to turn off all animations.
-    off
+    // off
 
     // Slow down all animations by this factor. Values below 1 speed them up instead.
     slowdown 0.8
@@ -465,33 +465,17 @@ binds {
     Mod+Ctrl+Home { move-column-to-first; }
     Mod+Ctrl+End  { move-column-to-last; }
 
-    Mod+Ctrl+Left  { focus-monitor-left; }
-    Mod+Ctrl+Down  { focus-monitor-down; }
-    Mod+Ctrl+Up    { focus-monitor-up; }
-    Mod+Ctrl+Right { focus-monitor-right; }
-    Mod+Ctrl+H     { focus-monitor-left; }
-    Mod+Ctrl+J     { focus-monitor-down; }
-    Mod+Ctrl+K     { focus-monitor-up; }
-    Mod+Ctrl+L     { focus-monitor-right; }
+    Mod+Period { focus-monitor-previous; }
+    Mod+Comma { focus-monitor-next; }
 
-    Mod+Shift+Ctrl+Left  { move-column-to-monitor-left; }
-    Mod+Shift+Ctrl+Down  { move-column-to-monitor-down; }
-    Mod+Shift+Ctrl+Up    { move-column-to-monitor-up; }
-    Mod+Shift+Ctrl+Right { move-column-to-monitor-right; }
-    Mod+Shift+Ctrl+H     { move-column-to-monitor-left; }
-    Mod+Shift+Ctrl+J     { move-column-to-monitor-down; }
-    Mod+Shift+Ctrl+K     { move-column-to-monitor-up; }
-    Mod+Shift+Ctrl+L     { move-column-to-monitor-right; }
+    Mod+Shift+Period { move-column-to-monitor-previous; }
+    Mod+Shift+Comma { move-column-to-monitor-next; }
 
     
-    Mod+Ctrl+Alt+Left  { move-workspace-to-monitor-left; }
-    Mod+Ctrl+Alt+Down  { move-workspace-down; }
-    Mod+Ctrl+Alt+Up    { move-workspace-up; }
-    Mod+Ctrl+Alt+Right { move-workspace-to-monitor-right; }
-    Mod+Ctrl+Alt+H     { move-workspace-to-monitor-left; }
-    Mod+Ctrl+Alt+J     { move-workspace-down; }
-    Mod+Ctrl+Alt+K     { move-workspace-up; }
-    Mod+Ctrl+Alt+L     { move-workspace-to-monitor-right; }
+    Mod+Ctrl+Alt+Comma  { move-workspace-to-monitor-previous; }
+    Mod+Ctrl+Alt+Down   { move-workspace-down; }
+    Mod+Ctrl+Alt+Up     { move-workspace-up; }
+    Mod+Ctrl+Alt+Period { move-workspace-to-monitor-next; }
 
     // Alternatively, there are commands to move just a single window:
     // Mod+Shift+Ctrl+Left  { move-window-to-monitor-left; }
@@ -591,9 +575,9 @@ binds {
     Mod+BracketRight { consume-or-expel-window-right; }
 
     // Consume one window from the right to the bottom of the focused column.
-    Mod+Comma  { consume-window-into-column; }
+    Mod+Semicolon { consume-window-into-column; }
     // Expel the bottom window from the focused column to the right.
-    Mod+Period { expel-window-from-column; }
+    Mod+Apostrophe { expel-window-from-column; }
 
     Mod+R { switch-preset-column-width; }
     Mod+Shift+R { switch-preset-window-height; }

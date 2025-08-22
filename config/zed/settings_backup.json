@@ -50,7 +50,8 @@
     "button": "never"
   },
   "features": {
-    "edit_prediction_provider": "none"
+    "edit_prediction_provider": "none",
+    "copilot": false
   },
   "project_panel": {
     "dock": "left"
@@ -70,12 +71,14 @@
   },
   "agent": {
     "button": false,
-    "enabled": false
+    "enabled": false,
+    "version": "1"
   },
   "format_on_save": "on",
   "restore_on_startup": "none",
   "gutter": {
     "folds": false,
+    "code_actions": false,
     "runnables": false,
     "breakpoints": false,
     "min_line_number_digits": 0
@@ -99,6 +102,9 @@
         // Run code actions that sorts @import declarations.
         "source.organizeImports": true
       }
+    },
+    "LaTeX": {
+      "tab_size": 2
     },
     "JavaScript": {
       "tab_size": 2,
@@ -150,6 +156,5 @@
     "toolbar": {
       "breadcrumbs": false
     }
-  },
-  "soft_wrap": "editor_width"
+  }
 }
