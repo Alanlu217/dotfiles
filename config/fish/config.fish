@@ -6,6 +6,8 @@ export PATH="$HOME/dotfiles/bin:$PATH"
 
 set -gx GTK_THEME Adwaita:dark
 
+set -gx ELECTRON_OZONE_PLATFORM_HINT auto
+
 set -gx PAGER less
 set -gx MANPAGER less
 
@@ -45,10 +47,10 @@ alias dc="docker compose"
 
 alias edot='helix $(fzf --walker-root ~/dotfiles)'
 
-starship init fish | source
+# starship init fish | source
 zoxide init fish | source
 
-enable_transience
+# enable_transience
 
 source ~/.profile.fish
 

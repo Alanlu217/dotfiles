@@ -198,15 +198,15 @@ layout {
         // If you enable the border, you probably want to disable the focus ring.
         // off
 
-        width 1
-        active-color "#888888"
-        inactive-color "#505050"
+        width 1.5
+        active-color "#8888ff"
+        inactive-color "#595959"
 
         // Color of the border around windows that request your attention.
         urgent-color "#9b0000"
 
-        active-gradient from="#33ccffAA" to="#00ff99AA" angle=45 relative-to="workspace-view"
-        inactive-gradient from="#595959" to="#595959" angle=45 relative-to="workspace-view"
+        // active-gradient from="#33ccffAA" to="#00ff99AA" angle=45 relative-to="workspace-view"
+        // inactive-gradient from="#595959" to="#595959" angle=45 relative-to="workspace-view"
     }
 
     // You can enable drop shadows for windows.
@@ -281,8 +281,6 @@ spawn-at-startup "waybar"
 
 spawn-at-startup "swww-daemon"
 
-// spawn-at-startup "~/dotfiles/scripts/swayrwall.sh"
-
 spawn-at-startup "~/dotfiles/scripts/niriidle.sh"
 
 spawn-at-startup "xwayland-satellite" ":12"
@@ -332,16 +330,6 @@ animations {
 // Find more information on the wiki:
 // https://github.com/YaLTeR/niri/wiki/Configuration:-Window-Rules
 
-// Work around WezTerm's initial configure bug
-// by setting an empty default-column-width.
-window-rule {
-    // This regular expression is intentionally made as specific as possible,
-    // since this is the default config, and we want no false positives.
-    // You can get away with just app-id="wezterm" if you want.
-    match app-id=r#"^org\.wezfurlong\.wezterm$"#
-    default-column-width {}
-}
-
 // Open the Firefox picture-in-picture player as floating by default.
 window-rule {
     // This app-id regular expression will work for both:
@@ -351,28 +339,34 @@ window-rule {
     open-floating true
 }
 
-// Example: block out two password managers from screen capture.
-// (This example rule is commented out with a "/-" in front.)
-/-window-rule {
-    match app-id=r#"^org\.keepassxc\.KeePassXC$"#
-    match app-id=r#"^org\.gnome\.World\.Secrets$"#
-
-    block-out-from "screen-capture"
-
-    // Use this instead if you want them visible on third-party screenshot tools.
-    // block-out-from "screencast"
-}
-
 // Example: enable rounded corners for all windows.
 // (This example rule is commented out with a "/-" in front.)
 window-rule {
-    geometry-corner-radius 8
+    geometry-corner-radius 6
     clip-to-geometry true
 }
 
 window-rule {
     match app-id=r#"Alacritty"#
     match app-id=r#"ghostty"#
+    draw-border-with-background false
+}
+
+window-rule {
+    match app-id=r#"Minecraft"#
+
+    open-maximized true
+    open-floating true
+    open-fullscreen true
+
+    border {
+        off
+    }
+}
+
+window-rule {
+    match app-id=r#"spotify"#
+
     draw-border-with-background false
 }
 
@@ -404,10 +398,10 @@ binds {
     Mod+Space repeat=false hotkey-overlay-title="Run an Application: rofi drun" { spawn "rofi" "-show" "drun"; }
     Alt+Space repeat=false hotkey-overlay-title="Run an Application: rofi window" { spawn "rofi" "-show" "window"; }
     Mod+B repeat=false hotkey-overlay-title="Run an Application: firefox" { spawn "firefox"; }
-    Mod+W repeat=false { spawn "~/dotfiles/scripts/swwwrwall.sh";}
-    Mod+Shift+W repeat=false { spawn "~/dotfiles/scripts/swwwswall.sh";}
-    Super+Alt+L repeat=false hotkey-overlay-title="Lock the Screen: hyprlock" { spawn "hyprlock"; }
-    Mod+Shift+C repeat=false { spawn "~/dotfiles/scripts/show_time.sh"; }
+    Mod+Grave repeat=false { spawn "~/dotfiles/scripts/swwwrwall.sh";}
+    Mod+Shift+Grave repeat=false { spawn "~/dotfiles/scripts/swwwswall.sh";}
+    Mod+M repeat=false hotkey-overlay-title="Lock the Screen: hyprlock" { spawn "hyprlock"; }
+    // Mod+Shift+C repeat=false { spawn "~/dotfiles/scripts/show_time.sh"; }
 
     // You can also use a shell. Do this if you need pipes, multiple commands, etc.
     // Note: the entire command goes as a single argument in the end.
@@ -433,12 +427,16 @@ binds {
     Mod+O repeat=false { toggle-overview; }
     Mod+Alt+Space repeat=false { toggle-overview; }
 
-    Mod+Shift+Q { close-window; }
+    Mod+Q { close-window; }
 
     Mod+Left  { focus-column-left; }
     Mod+Down  { focus-window-down; }
     Mod+Up    { focus-window-up; }
     Mod+Right { focus-column-right; }
+    Mod+A     { focus-column-left; }
+    Mod+S     { focus-window-down; }
+    Mod+W     { focus-window-up; }
+    Mod+D     { focus-column-right; }
     Mod+H     { focus-column-left; }
     Mod+J     { focus-window-down; }
     Mod+K     { focus-window-up; }
@@ -448,6 +446,10 @@ binds {
     Mod+Shift+Down  { move-window-down; }
     Mod+Shift+Up    { move-window-up; }
     Mod+Shift+Right { move-column-right; }
+    Mod+Shift+A     { move-column-left; }
+    Mod+Shift+S     { move-window-down; }
+    Mod+Shift+W     { move-window-up; }
+    Mod+Shift+D     { move-column-right; }
     Mod+Shift+H     { move-column-left; }
     Mod+Shift+J     { move-window-down; }
     Mod+Shift+K     { move-window-up; }
@@ -465,11 +467,11 @@ binds {
     Mod+Ctrl+Home { move-column-to-first; }
     Mod+Ctrl+End  { move-column-to-last; }
 
-    Mod+Period { focus-monitor-previous; }
-    Mod+Comma { focus-monitor-next; }
+    Mod+Z { focus-monitor-previous; }
+    Mod+C { focus-monitor-next; }
 
-    Mod+Shift+Period { move-column-to-monitor-previous; }
-    Mod+Shift+Comma { move-column-to-monitor-next; }
+    Mod+Shift+Z { move-column-to-monitor-previous; }
+    Mod+Shift+C { move-column-to-monitor-next; }
 
     
     Mod+Ctrl+Alt+Comma  { move-workspace-to-monitor-previous; }
@@ -589,7 +591,7 @@ binds {
     // Makes the column "fill the rest of the space".
     Mod+Ctrl+F { expand-column-to-available-width; }
 
-    Mod+C { center-column; }
+    // Mod+C { center-column; }
 
     // Center all fully visible columns on screen.
     Mod+Ctrl+C { center-visible-columns; }
@@ -626,9 +628,9 @@ binds {
     // Mod+Space       { switch-layout "next"; }
     // Mod+Shift+Space { switch-layout "prev"; }
 
-    Mod+S { screenshot; }
-    Mod+Shift+S { screenshot-screen; }
-    Mod+Shift+Alt+S { screenshot-window; }
+    Mod+G { screenshot; }
+    Mod+Shift+G { screenshot-screen; }
+    Mod+Shift+Alt+G { screenshot-window; }
 
     // Applications such as remote-desktop clients and software KVM switches may
     // request that niri stops processing the keyboard shortcuts defined here

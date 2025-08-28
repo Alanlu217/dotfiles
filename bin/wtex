@@ -1,6 +1,0 @@
-#!/usr/bin/env bash
-
-pdf=($(find . -name "*.pdf"))
-evince "${pdf[0]}" &
-
-typst watch

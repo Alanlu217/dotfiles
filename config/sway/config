@@ -13,15 +13,7 @@ set $menu rofi -show drun
 set $wmenu rofi -show window
 set $browser firefox
 
-set $left h
-set $down j
-set $up k
-set $right l
-
 ### Output configuration
-#
-# Default wallpaper (more resolutions are available in /usr/share/backgrounds/sway/)
-# output * bg /usr/share/backgrounds/sway/Sway_Wallpaper_Blue_1920x1080.png fill
 #
 # Example configuration:
 #
@@ -106,25 +98,14 @@ input "5426:145:Razer_Razer_Viper_8KHz" {
     bindsym $mod+b exec $browser
 
     # Wallpapers
-    bindsym $mod+w exec "just -f ~/dotfiles/scripts/alpine.just rwall"
-    bindsym $mod+Shift+w exec "just -f ~/dotfiles/scripts/alpine.just swall"
-
-    # Toggle waybar
-    bindsym $mod+z exec "pkill -SIGUSR1 '^waybar$'"
+    bindsym $mod+t exec "just -f ~/dotfiles/scripts/alpine.just rwall"
+    bindsym $mod+Shift+t exec "just -f ~/dotfiles/scripts/alpine.just swall"
 
     # Swaylock
-    bindsym $mod+n exec "hyprlock"
-
-    #  wlogout
-    bindsym $mod+Shift+n exec "doas wlogout"
+    bindsym $mod+l exec "hyprlock"
 
     # Screenshot
     bindsym $mod+p exec "grim -g "$(slurp -d)" - | wl-copy"
-
-    # Keyboard Variants
-
-    bindsym $mod+d exec "swaymsg input type:keyboard xkb_layout us && swaymsg input type:keyboard xkb_variant dvorak"
-    bindsym $mod+Shift+e exec "swaymsg input type:keyboard xkb_layout us &&swaymsg input type:keyboard xkb_variant basic"
 
     # Drag floating windows by holding down $mod and left mouse button.
     # Resize them with right mouse button + $mod.
@@ -132,7 +113,7 @@ input "5426:145:Razer_Razer_Viper_8KHz" {
     floating_modifier $mod normal
 
     # Reload the configuration file
-    bindsym $mod+Shift+c reload
+    bindsym $mod+Ctrl+c reload
 
     # Exit sway (logs you out of your Wayland session)
     bindsym $mod+Shift+m exec swaymsg exit
@@ -145,10 +126,10 @@ input "5426:145:Razer_Razer_Viper_8KHz" {
     bindsym $mod+Up focus up
     bindsym $mod+Right focus right
 
-    bindsym $mod+$left focus left
-    bindsym $mod+$down focus down
-    bindsym $mod+$up focus up
-    bindsym $mod+$right focus right
+    bindsym $mod+a focus left
+    bindsym $mod+s focus down
+    bindsym $mod+w focus up
+    bindsym $mod+d focus right
 
     # Move the focused window with the same, but add Shift
     bindsym $mod+Shift+Left move left
@@ -156,10 +137,15 @@ input "5426:145:Razer_Razer_Viper_8KHz" {
     bindsym $mod+Shift+Up move up
     bindsym $mod+Shift+Right move right
 
-    bindsym $mod+Shift+$left move left
-    bindsym $mod+Shift+$down move down
-    bindsym $mod+Shift+$up move up
-    bindsym $mod+Shift+$right move right
+    bindsym $mod+Shift+a move left
+    bindsym $mod+Shift+s move down
+    bindsym $mod+Shift+w move up
+    bindsym $mod+Shift+d move right
+
+    bindsym $mod+z focus output left
+    bindsym $mod+c focus output right
+    bindsym $mod+Shift+z move workspace to output left
+    bindsym $mod+Shift+c move workspace to output right
 
     # Three finger swipe
     bindgesture swipe:right workspace prev
@@ -241,10 +227,10 @@ mode "resize" {
     bindsym Up resize shrink height 10px
     bindsym Right resize grow width 10px
 
-    bindsym $left resize shrink width 10px
-    bindsym $down resize grow height 10px
-    bindsym $up resize shrink height 10px
-    bindsym $right resize grow width 10px
+    bindsym a resize shrink width 10px
+    bindsym s resize grow height 10px
+    bindsym w resize shrink height 10px
+    bindsym d resize grow width 10px
 
     # Return to default mode
     bindsym Return mode "default"
@@ -266,21 +252,16 @@ bindsym $mod+r mode "resize"
     bindsym Print exec grim
 
 
-exec /usr/libexec/pipewire-launcher
-
 exec swww-daemon
-
 exec waybar
 
-exec nm-applet
-
-exec blueman-applet
-
-exec "just -f ~/dotfiles/scripts/alpine.just rwall"
-
 focus_follows_mouse yes
+default_border pixel 1
 
-default_border pixel 2
+client.focused #8888ff #8888ff #ffffff #4444ff #8888ff
+client.unfocused #595959 #595959 #ffffff #595959 #595959
+
+smart_borders on
 
 seat seat0 xcursor_theme Adwaita 20
 
