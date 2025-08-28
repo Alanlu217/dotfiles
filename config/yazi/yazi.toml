@@ -1,14 +1,5 @@
 [opener]
 edit = [
-	{ run = '/usr/bin/helix "$@"', block = true },
+	{ run = 'hx "$@"', block = true },
 ]
 
-[[plugin.prepend_fetchers]]
-id   = "git"
-name = "*"
-run  = "git"
-
-[[plugin.prepend_fetchers]]
-id   = "git"
-name = "*/"
-run  = "git"
