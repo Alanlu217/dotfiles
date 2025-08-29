@@ -57,7 +57,7 @@
     waybar
     swww mako
     rofi-wayland
-    pavucontrol
+    pavucontrol networkmanagerapplet
     adwaita-icon-theme
 
     alacritty

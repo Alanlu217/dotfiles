@@ -45,7 +45,7 @@ alias gcl="git clone"
 alias d="docker"
 alias dc="docker compose"
 
-alias edot='helix $(fzf --walker-root ~/dotfiles)'
+alias edot='hx $(fzf --walker-root ~/dotfiles)'
 
 # starship init fish | source
 zoxide init fish | source
