@@ -8,24 +8,25 @@
   outputs =
     { nixpkgs, ... }:
     {
-      nixosConfigurations.nixos =
+      nixosConfigurations.nixriver =
         let
           system = "x86_64-linux";
         in
         nixpkgs.lib.nixosSystem {
           inherit system;
           modules = [
-            # ./devices/<device>/configuration.nix
+            ./devices/nixriver/configuration.nix
 
-            # ./spkgs.nix
+            ./spkgs.nix
 
-            # ./modules/enableflakes.nix
-            # ./modules/shell.nix
-            # ./modules/devtools.nix
+            ./modules/enableflakes.nix
+            ./modules/shell.nix
+            ./modules/devtools.nix
+            ./modules/distrobox.nix
 
-            # ./modules/niri.nix
-            # ./modules/steam.nix
-            # ./modules/libreoffice.nix
+            ./modules/niri.nix
+            ./modules/steam.nix
+            ./modules/libreoffice.nix
           ];
         };
     };
