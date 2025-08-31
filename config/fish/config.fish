@@ -45,6 +45,9 @@ alias gcl="git clone"
 alias d="docker"
 alias dc="docker compose"
 
+alias nixup="sudo nixos-rebuild switch --flake ~/dotfiles/nixos/"
+alias nd="nix develop"
+
 alias edot='hx $(fzf --walker-root ~/dotfiles)'
 
 # starship init fish | source
