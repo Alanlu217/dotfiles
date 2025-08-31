@@ -69,3 +69,8 @@ name = "markdown"
 auto-format = true
 formatter = { command = "prettier", args = ["--parser", "markdown"] }
 indent = { tab-width = 4, unit = "   " }
+
+[[language]]
+name = "nix"
+auto-format = true
+formatter = { command = "nixfmt" }

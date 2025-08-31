@@ -12,7 +12,7 @@ start:
     pkill -RTMIN+1 waybar
 
 stop:
-    killall swayidle
+    pkill swayidle
     pkill -RTMIN+1 waybar
 
 toggle:
@@ -21,8 +21,10 @@ toggle:
     if [ "$(pidof swayidle)" == "" ]; then
         bash ~/dotfiles/scripts/niriidle.sh &
         pkill -RTMIN+1 waybar
+        pkill -RTMIN+1 .waybar-wrapped
     else
         killall swayidle
         pkill -RTMIN+1 waybar
+        pkill -RTMIN+1 .waybar-wrapped
     fi
     
