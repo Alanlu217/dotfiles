@@ -4,6 +4,7 @@
   programs.fish.enable = true;
   programs.git.enable = true;
   programs.zoxide.enable = true;
+  programs.nix-ld.enable = true;
 
   environment.systemPackages = with pkgs; [
     vim
