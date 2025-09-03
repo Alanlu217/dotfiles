@@ -73,4 +73,4 @@ indent = { tab-width = 4, unit = "   " }
 [[language]]
 name = "nix"
 auto-format = true
-formatter = { command = "nixfmt" }
+formatter = { command = "alejandra" }

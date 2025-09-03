@@ -46,14 +46,14 @@ alias d="docker"
 alias dc="docker compose"
 
 alias nixup="sudo nixos-rebuild switch --flake ~/dotfiles/nixos/"
-alias nd="nix develop"
+alias nd="nix develop --command fish"
 
 alias edot='hx $(fzf --walker-root ~/dotfiles)'
 
-# starship init fish | source
+starship init fish | source
 zoxide init fish | source
 
-# enable_transience
+enable_transience
 
 source ~/.profile.fish
 
