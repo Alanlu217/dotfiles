@@ -5,6 +5,9 @@ vim.g.mapleader = " "
 vim.g.loaded_netrw = 1
 vim.g.loaded_netrwPlugin = 1
 
+-- disable swapfiles
+vim.opt.swapfile = false
+
 -- indent
 vim.opt.autoindent = true
 vim.opt.expandtab = true
