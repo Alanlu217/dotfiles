@@ -14,7 +14,7 @@ vim.opt.tabstop = 4
 
 -- wrapping
 vim.opt.shiftround = true
-vim.opt.wrap = false
+vim.opt.wrap = true
 vim.opt.signcolumn = "yes"
 vim.opt.winborder = "double"
 
@@ -25,6 +25,7 @@ vim.opt.ruler = true
 
 -- fold settings
 vim.o.foldcolumn = "1"
+vim.opt.foldlevel = 99
 vim.o.foldenable = true
 
 -- search
