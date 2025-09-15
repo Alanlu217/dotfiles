@@ -30,7 +30,7 @@ input {
     touchpad {
         // off
         tap
-        // dwt
+        dwt
         // dwtp
         // drag false
         // drag-lock
@@ -539,6 +539,10 @@ binds {
     // touchpads by default.
     Mod+TouchpadScrollDown { spawn "wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "0.02+"; }
     Mod+TouchpadScrollUp   { spawn "wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "0.02-"; }
+
+    Mod+Ctrl+Space { spawn "playerctl" "play-pause"; }
+    Mod+Ctrl+Left { spawn "playerctl" "previous"; }
+    Mod+Ctrl+Right { spawn "playerctl" "next"; }
 
     // You can refer to workspaces by index. However, keep in mind that
     // niri is a dynamic workspace system, so these commands are kind of

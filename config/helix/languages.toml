@@ -13,6 +13,11 @@ command = "tinymist"
 config.enable_build_on_save = true
 
 [[language]]
+name = "python"
+formatter = { command = "ruff", args = ["format", "--stdin-filename", "{file}"] }
+auto-format = true
+
+[[language]]
 name = "typst"
 language-servers = ["tinymist"]
 formatter = { command = 'typstyle' }
