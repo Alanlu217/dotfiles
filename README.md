@@ -3,9 +3,8 @@
 Clone into home directory.
 
 ## Computer Audio Issues yoga9
-cat /etc/modprobe.d/sound.conf
 ```
-options snd-sof-intel-hda-generic hda_model=alc287-yoga9-bass-spk-pin
+echo "options snd-sof-intel-hda-generic hda_model=alc287-yoga9-bass-spk-pin" > /etc/modprobe.d/sound.conf
 ```
 
 ## Package dependencies
