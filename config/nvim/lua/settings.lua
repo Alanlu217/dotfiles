@@ -27,9 +27,9 @@ vim.opt.relativenumber = true
 vim.opt.ruler = true
 
 -- fold settings
-vim.o.foldcolumn = "1"
+vim.opt.foldcolumn = "0"
 vim.opt.foldlevel = 99
-vim.o.foldenable = true
+vim.opt.foldenable = true
 
 -- search
 vim.opt.hlsearch = true

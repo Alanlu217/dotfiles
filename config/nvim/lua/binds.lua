@@ -7,13 +7,15 @@ vim.keymap.set({ "n", "v", "x" }, "<leader>d", '"+d<CR>')
 vim.keymap.set({ "n", "v", "x" }, "<leader>w", ":w<CR>")
 vim.keymap.set({ "n", "v", "x" }, "<leader>q", ":q<CR>")
 
--- panes
+-- windows
 vim.keymap.set("n", "<leader>x", ":only<CR>")
 
 -- pickers
 vim.keymap.set("n", "<leader>f", ":Pick files<CR>")
 vim.keymap.set("n", "<leader>e", ":Oil --float<CR>")
 vim.keymap.set("n", "<leader>h", ":Pick help<CR>")
+vim.keymap.set("n", "<leader>s", ':Pick lsp scope="document_symbol"<CR>')
+vim.keymap.set("n", "<leader>S", ':Pick lsp scope="workspace_symbol"<CR>')
 
 -- lsp
 vim.keymap.set("n", "gd", vim.lsp.buf.definition)

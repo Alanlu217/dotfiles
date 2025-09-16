@@ -4,7 +4,7 @@ vim.pack.add({
 	"https://github.com/stevearc/conform.nvim",
 })
 
-vim.lsp.enable({ "gopls", "clangd", "zls", "rust-analyzer" })
+vim.lsp.enable({ "gopls", "clangd", "zls", "rust_analyzer" })
 
 require("blink.cmp").setup({
 	keymap = {
