@@ -4,7 +4,7 @@ vim.pack.add({
 	"https://github.com/stevearc/conform.nvim",
 })
 
-vim.lsp.enable({ "gopls", "clangd", "zls", "rust_analyzer", "texlab" })
+vim.lsp.enable({ "gopls", "clangd", "zls", "rust_analyzer", "texlab", "tinymist" })
 
 require("blink.cmp").setup({
 	keymap = {
@@ -25,4 +25,11 @@ require("blink.cmp").setup({
 		default = { "lsp", "path", "snippets", "buffer" },
 	},
 	fuzzy = { implementation = "lua" },
+})
+
+vim.api.nvim_create_autocmd("FileType", {
+	pattern = "typst",
+	callback = function()
+		MiniPairs.map("i", "$", { action = "closeopen", pair = "$$", neigh_pattern = "[^\\]." })
+	end,
 })

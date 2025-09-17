@@ -6,6 +6,7 @@ require("conform").setup({
 		go = { "goimports" },
 		rust = { "rustfmt" },
 		zig = { "zigfmt" },
+		typst = { "typstyle" },
 	},
 })
 
