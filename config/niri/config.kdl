@@ -288,6 +288,8 @@ spawn-at-startup "~/dotfiles/scripts/niriidle.sh"
 
 spawn-at-startup "xwayland-satellite" ":12"
 
+spawn-sh-at-startup "gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'"
+
 // Environment Settings
 environment {
     DISPLAY ":12"

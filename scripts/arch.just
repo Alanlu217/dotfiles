@@ -76,6 +76,7 @@ deps:
   sudo systemctl enable bluetooth
   sudo systemctl enable tlp
   sudo systemctl enable ly
+  sudo systemctl enable dbus
   sudo systemctl enable avahi-daemon
 
 paru:
