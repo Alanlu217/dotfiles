@@ -1,8 +1,8 @@
 [font]
-size = 11.0
+size = 12.0
 
 [font.normal]
-family = "JetBrainsMono Nerd Font"
+family = "Iosevka Nerd Font"
 style = "Regular"
 
 [window]

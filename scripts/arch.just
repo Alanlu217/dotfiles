@@ -10,7 +10,7 @@ deps:
 
     niri
     xwayland-satellite
-    swaybg
+    swww
     rofi-wayland # application launcher
     mako # notification launcher
     waybar # info bar
@@ -68,7 +68,7 @@ deps:
     nautilus
     eog
     evince
-    zed gnu-netcat vulkan-intel
+    zed vulkan-intel
   )
 
   sudo pacman -S ${pkgs[@]}
