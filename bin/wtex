@@ -7,9 +7,9 @@ filename="${file%%.*}"
 echo $filename
 
 if [ ! -f $filename ]; then
-  tectonic -X compile $file
+  tectonic -X compile -Z search-path=$HOME/dotfiles/twemojis $file
 fi
 
 evince "${filename}.pdf" &> /dev/null & disown
 
-watchexec -c -w $file -- tectonic -X compile $file
+watchexec -c -w $file -- tectonic -X compile -Z search-path=$HOME/dotfiles/twemojis $file
