@@ -60,6 +60,10 @@ enable_transience
 # source ~/.local/share/bob/env/env.fish
 source ~/.profile.fish
 
+if [ -f ~/.local/share/bob/env/env.fish ]
+    source ~/.local/share/bob/env/env.fish
+end
+
 # ZVM
 set -gx ZVM_INSTALL "$HOME/.zvm/self"
 set -gx PATH $PATH "$HOME/.zvm/bin"

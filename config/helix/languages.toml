@@ -3,6 +3,13 @@ name = "latex"
 formatter = { command = 'tex-fmt', args = ["-s"] }
 auto-format = true
 
+[[language]]
+name = "rust"
+language-servers = ["ra-multiplex"]
+
+[language-server.ra-multiplex]
+command = "ra-multiplex"
+
 [language-server.rust-analyzer.config.check]
 command = "clippy"
 
@@ -21,11 +28,13 @@ auto-format = true
 name = "typst"
 language-servers = ["tinymist"]
 formatter = { command = 'typstyle' }
+indent = { tab-width = 2, unit = "  " }
 auto-format = true
 
 [[language]]
 name = "cpp"
 formatter = { command = 'clang-format' }
+file-types = ["cpp", "hpp", "ino"]
 auto-format = true
 indent = { tab-width = 4, unit = "    " }
 
@@ -38,7 +47,7 @@ indent = { tab-width = 4, unit = "    " }
 [[language]]
 name = "go"
 auto-format = true
-formatter = { command = "goimports" }
+formatter = { command = "golines" }
 
 [[language]]
 name = "typescript"

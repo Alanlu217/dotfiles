@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+file="$1"
+filename="${file%%.*}"
+
+extension="${file##*.}"
+if [[ -z extension || "$file" == "$extension" ]]; then
+    file="${file}.typ"
+fi
+
+if [ ! -f $filename ]; then
+  typst c "$file"
+fi
+
+evince "${filename}.pdf" &> /dev/null & disown
+
+typst w "$file"

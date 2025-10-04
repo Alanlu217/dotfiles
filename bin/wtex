@@ -12,4 +12,4 @@ fi
 
 evince "${filename}.pdf" &> /dev/null & disown
 
-watchexec -c -w $file -- tectonic -X compile -Z search-path=$HOME/dotfiles/twemojis $file
+watchexec -c -i '*.pdf' -- tectonic -X compile -Z search-path=$HOME/dotfiles/twemojis $file
