@@ -22,7 +22,10 @@ vim.keymap.set("n", "<leader>h", ":Pick help<CR>")
 
 vim.keymap.set("n", "<leader>s", ':Pick lsp scope="document_symbol"<CR>')
 vim.keymap.set("n", "<leader>S", ':Pick lsp scope="workspace_symbol"<CR>')
-vim.keymap.set("n", "<leader>d", ":Pick diagnostic<CR>")
+vim.keymap.set("n", "<leader>D", ":Pick diagnostic<CR>")
+vim.keymap.set("n", "<leader>d", ":lua vim.diagnostic.open_float()<CR>")
+
+vim.keymap.set("n", "<leader>C", ":Pick commands<CR>")
 
 -- lsp
 vim.keymap.set("n", "gd", vim.lsp.buf.definition)

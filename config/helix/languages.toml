@@ -3,13 +3,6 @@ name = "latex"
 formatter = { command = 'tex-fmt', args = ["-s"] }
 auto-format = true
 
-[[language]]
-name = "rust"
-language-servers = ["ra-multiplex"]
-
-[language-server.ra-multiplex]
-command = "ra-multiplex"
-
 [language-server.rust-analyzer.config.check]
 command = "clippy"
 
