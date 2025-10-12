@@ -39,6 +39,7 @@ deps:
     watchexec
 
     ttf-iosevka-nerd # Fonts
+    ttf-jetbrains-mono-nerd # Fonts
     noto-fonts
 
     # for screenshotting
@@ -62,7 +63,7 @@ deps:
     go gopls
 
     # Applications
-    alacritty
+    kitty
     firefox
     thunderbird
     nautilus
