@@ -63,7 +63,7 @@ deps:
     go gopls
 
     # Applications
-    kitty
+    alacritty
     firefox
     thunderbird
     nautilus
