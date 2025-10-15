@@ -11,6 +11,8 @@ set -gx ELECTRON_OZONE_PLATFORM_HINT auto
 set -gx PAGER less
 set -gx MANPAGER less
 
+set -gx QT_QPA_PLATFORMTHEME qt6ct
+
 function f
     set tmp (mktemp -t "yazi-cwd.XXXXXX")
     yazi $argv --cwd-file="$tmp"
