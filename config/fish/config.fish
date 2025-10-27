@@ -26,7 +26,6 @@ end
 alias ls="eza --icons --git"
 alias l="eza --icons -l --git --no-user --no-permissions"
 alias vi="nvim"
-alias task="go-task"
 alias tex="tectonic -X"
 
 alias gs="git status --short"
@@ -44,8 +43,10 @@ alias gco="git checkout"
 alias gi="git init"
 alias gcl="git clone"
 
-alias d="docker"
-alias dc="docker compose"
+abbr d docker
+abbr dc "docker compose"
+
+abbr py python3
 
 alias nixup="sudo nixos-rebuild switch --flake ~/dotfiles/nixos/"
 alias nd="nix develop --command fish"
@@ -54,10 +55,10 @@ alias hx="helix"
 
 alias edot='helix $(fzf --walker-root ~/dotfiles)'
 
-starship init fish | source
+# starship init fish | source
 zoxide init fish | source
 
-enable_transience
+# enable_transience
 
 # source ~/.local/share/bob/env/env.fish
 source ~/.profile.fish

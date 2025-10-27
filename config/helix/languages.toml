@@ -12,9 +12,13 @@ command = "tinymist"
 [language-server.zls]
 config.enable_build_on_save = true
 
+[language-server.ty]
+command = "ty"
+args = ["server"]
+
 [[language]]
 name = "python"
-formatter = { command = "ruff", args = ["format", "--stdin-filename", "{file}"] }
+language-servers = ["ty", "ruff"]
 auto-format = true
 
 [[language]]

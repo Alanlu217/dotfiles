@@ -21,6 +21,8 @@ all:
         spotify-launcher.conf
     )
 
+    echo "set blink-matching-paren off" > ~/.inputrc
+
     for i in "${confs[@]}"; do
         sym "$i"
     done
