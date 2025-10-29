@@ -283,6 +283,7 @@ spawn-at-startup "blueman-applet"
 spawn-at-startup "nm-applet"
 
 spawn-at-startup "swww-daemon"
+spawn-at-startup "swww-daemon -n overlay"
 
 spawn-at-startup "~/dotfiles/scripts/niriidle.sh"
 
@@ -376,6 +377,11 @@ window-rule {
     match app-id=r#"spotify"#
 
     draw-border-with-background false
+}
+
+layer-rule {
+    match namespace="^swww-daemonoverlay"
+    place-within-backdrop true
 }
 
 hotkey-overlay {

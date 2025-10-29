@@ -7,6 +7,7 @@ require("conform").setup({
 		rust = { "rustfmt" },
 		zig = { "zigfmt" },
 		typst = { "typstyle" },
+		python = { "ruff_format" }
 	},
 })
 
