@@ -7,6 +7,25 @@
 // custom settings, run `zed: open default settings` from the
 // command palette (cmd-shift-p / ctrl-shift-p)
 {
+  "disable_ai": true,
+  "inlay_hints": {
+    "enabled": false,
+    "show_value_hints": true,
+    "show_type_hints": true,
+    "show_parameter_hints": true,
+    "show_other_hints": true,
+    "show_background": false,
+    "edit_debounce_ms": 700,
+    "scroll_debounce_ms": 50,
+    "toggle_on_modifiers_press": {
+      "control": false,
+      "alt": false,
+      "shift": false,
+      "platform": false,
+      "function": false
+    }
+  },
+  "ui_font_family": "JetBrainsMono Nerd Font",
   "telemetry": {
     "metrics": false,
     "diagnostics": false
@@ -50,16 +69,19 @@
     "button": "never"
   },
   "features": {
-    "edit_prediction_provider": "none",
-    "copilot": false
+    "edit_prediction_provider": "none"
   },
   "project_panel": {
     "dock": "left"
   },
-  "icon_theme": "Catppuccin Mocha",
+  "icon_theme": {
+    "mode": "dark",
+    "light": "Catppuccin Mocha",
+    "dark": "Catppuccin Mocha"
+  },
   "vim_mode": true,
-  "ui_font_size": 14,
-  "buffer_font_size": 14,
+  "ui_font_size": 15.0,
+  "buffer_font_size": 15.0,
   "buffer_font_family": "JetBrainsMono Nerd Font",
   "buffer_font_features": {
     "ligatures": false
@@ -71,14 +93,12 @@
   },
   "agent": {
     "button": false,
-    "enabled": false,
-    "version": "1"
+    "enabled": false
   },
   "format_on_save": "on",
   "restore_on_startup": "none",
   "gutter": {
     "folds": false,
-    "code_actions": false,
     "runnables": false,
     "breakpoints": false,
     "min_line_number_digits": 0
@@ -102,9 +122,6 @@
         // Run code actions that sorts @import declarations.
         "source.organizeImports": true
       }
-    },
-    "LaTeX": {
-      "tab_size": 2
     },
     "JavaScript": {
       "tab_size": 2,
@@ -156,5 +173,6 @@
     "toolbar": {
       "breadcrumbs": false
     }
-  }
+  },
+  "soft_wrap": "editor_width"
 }

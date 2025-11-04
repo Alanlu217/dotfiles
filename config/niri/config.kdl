@@ -283,7 +283,7 @@ spawn-at-startup "blueman-applet"
 spawn-at-startup "nm-applet"
 
 spawn-at-startup "swww-daemon"
-spawn-at-startup "swww-daemon -n overlay"
+spawn-sh-at-startup "swww-daemon -n overlay"
 
 spawn-at-startup "~/dotfiles/scripts/niriidle.sh"
 

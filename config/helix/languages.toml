@@ -9,9 +9,6 @@ command = "clippy"
 [language-server.tinymist]
 command = "tinymist"
 
-[language-server.zls]
-config.enable_build_on_save = true
-
 [language-server.ty]
 command = "ty"
 args = ["server"]
@@ -29,17 +26,14 @@ indent = { tab-width = 2, unit = "  " }
 auto-format = true
 
 [[language]]
-name = "cpp"
-formatter = { command = 'clang-format' }
-file-types = ["cpp", "hpp", "ino"]
+name = "c"
+formatter = { command = "clang-format" }
 auto-format = true
-indent = { tab-width = 4, unit = "    " }
 
 [[language]]
-name = "c"
-formatter = { command = 'clang-format' }
+name = "cpp"
+formatter = { command = "clang-format" }
 auto-format = true
-indent = { tab-width = 4, unit = "    " }
 
 [[language]]
 name = "go"
@@ -81,7 +75,3 @@ auto-format = true
 formatter = { command = "prettier", args = ["--parser", "markdown"] }
 indent = { tab-width = 4, unit = "   " }
 
-[[language]]
-name = "nix"
-auto-format = true
-formatter = { command = "alejandra" }
