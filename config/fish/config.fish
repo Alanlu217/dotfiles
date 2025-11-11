@@ -48,6 +48,8 @@ abbr dc "docker compose"
 
 abbr py python3
 
+abbr zj zellij
+
 alias nixup="sudo nixos-rebuild switch --flake ~/dotfiles/nixos/"
 alias nd="nix develop --command fish"
 

@@ -19,8 +19,5 @@ select = "underline"
 [editor.indent-guides]
 render = true
 
-[keys.insert]
-tab = ["insert_tab"]
-
 [keys.normal]
 V = ["extend_line_below", "select_mode"]
