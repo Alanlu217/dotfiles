@@ -62,10 +62,13 @@ deps:
     rustup rust-analyzer
     go gopls
 
+    # Tools
+    tmux
+    tectonic
+
     # Applications
     alacritty
     firefox
-    thunderbird
     nautilus
     eog
     evince
