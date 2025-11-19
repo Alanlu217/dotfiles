@@ -68,6 +68,7 @@ deps:
 
     # Applications
     alacritty
+    obsidian
     firefox
     nautilus
     eog
