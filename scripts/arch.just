@@ -40,6 +40,7 @@ deps:
 
     ttf-iosevka-nerd # Fonts
     ttf-jetbrains-mono-nerd # Fonts
+    noto-fonts-cjk
     noto-fonts
 
     # for screenshotting
@@ -73,6 +74,8 @@ deps:
     nautilus
     eog
     evince
+    steam
+    spotify-launcher
     zed vulkan-intel
   )
 
@@ -98,10 +101,6 @@ extra:
     #!/usr/bin/env bash
 
     pkgs=(
-        noto-fonts-cjk
-        steam
-        spotify-launcher
-
         # Latex
         tectonic
         tex-fmt
