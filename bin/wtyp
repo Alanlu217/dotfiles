@@ -12,6 +12,6 @@ if [ ! -f $filename ]; then
   typst c "$file"
 fi
 
-evince "${filename}.pdf" &> /dev/null & disown
+zathura "${filename}.pdf" &> /dev/null & disown
 
 typst w "$file"

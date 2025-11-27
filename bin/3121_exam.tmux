@@ -6,8 +6,7 @@ CWD="/data/unsw/comp/3121_code"
 # If the session exists, just attach
 tmux has-session -t $SESSION 2>/dev/null
 if [ $? -eq 0 ]; then
-    tmux attach -t $SESSION
-    exit 0
+    tmux kill-session -t $SESSION
 fi
 
 tmux new-session -d -s $SESSION -c "$CWD" -x- -y-

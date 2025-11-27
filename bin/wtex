@@ -10,6 +10,6 @@ if [ ! -f $filename ]; then
   tectonic -X compile -Z search-path=$HOME/dotfiles/twemojis $file
 fi
 
-evince "${filename}.pdf" &> /dev/null & disown
+zathura "${filename}.pdf" &> /dev/null & disown
 
 watchexec -c -i '*.pdf' -- tectonic -X compile -Z search-path=$HOME/dotfiles/twemojis $file

@@ -74,6 +74,7 @@ deps:
     nautilus
     eog
     evince
+    zathura zathura-pdf-poppler
     steam
     spotify-launcher
     zed vulkan-intel
