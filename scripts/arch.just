@@ -15,6 +15,7 @@ deps:
     mako # notification launcher
     waybar # info bar
     hyprlock # lock screen
+    swayidle # idler
 
     tlp # Battery Saver
 
@@ -53,7 +54,8 @@ deps:
     zoxide # Better cd
     yazi # File manager
     fzf
-    helix 
+    helix
+    man-db man-pages
 
     # Dev
     zig zls
