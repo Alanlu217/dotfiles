@@ -64,6 +64,7 @@ deps:
     btop
     rustup rust-analyzer
     go gopls
+    uv
 
     # Tools
     tmux
@@ -83,6 +84,9 @@ deps:
   )
 
   sudo pacman -S ${pkgs[@]}
+
+  uv tool install ruff
+  uv tool install pyrefly
 
   sudo systemctl enable bluetooth
   sudo systemctl enable tlp

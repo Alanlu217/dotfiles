@@ -9,13 +9,13 @@ command = "clippy"
 [language-server.tinymist]
 command = "tinymist"
 
-[language-server.ty]
-command = "ty"
-args = ["server"]
+[language-server.pyrefly]
+command = "pyrefly"
+args = ["lsp"]
 
 [[language]]
 name = "python"
-language-servers = ["ty", "ruff"]
+language-servers = ["pyrefly", "ruff"]
 auto-format = true
 
 [[language]]

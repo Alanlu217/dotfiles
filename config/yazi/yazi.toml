@@ -1,5 +1,5 @@
 [opener]
 edit = [
-	{ run = 'hx "$@"', block = true },
+	{ run = 'helix "$@"', block = true },
 ]
 
