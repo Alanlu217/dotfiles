@@ -1,5 +1,4 @@
 # Colors
-
 background-color=#1e1e2e
 text-color=#cdd6f4
 border-color=#b4befe
@@ -9,6 +8,7 @@ progress-color=over #313244
 icons=0
 max-icon-size=16
 default-timeout=6000
+layer=overlay
 
 [urgency=high]
 border-color=#fab387

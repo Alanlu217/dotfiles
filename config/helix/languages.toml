@@ -9,14 +9,18 @@ command = "clippy"
 [language-server.tinymist]
 command = "tinymist"
 
-[language-server.ty]
-command = "ty"
-args = ["server"]
-config.experimental.rename = true
+[language-server.pyrefly]
+command = "pyrefly"
+args = ["lsp"]
+
+[language-server.deno-lsp]
+command = "deno"
+args = ["lsp"]
+config.deno.enable = true
 
 [[language]]
 name = "python"
-language-servers = ["ty", "ruff"]
+language-servers = ["pyrefly", "ruff"]
 auto-format = true
 
 [[language]]
@@ -43,36 +47,15 @@ formatter = { command = "golines" }
 
 [[language]]
 name = "typescript"
-language-servers = ["eslint", "typescript-language-server"]
+roots = ["deno.json", "deno.jsonc", "package.json"]
+file-types = ["ts", "tsx"]
 auto-format = true
-formatter = { command = "prettier", args = ["--parser", "typescript"] }
-indent = { tab-width = 2, unit = " " }
+language-servers = ["deno-lsp"]
 
 [[language]]
 name = "javascript"
-language-servers = ["eslint", "typescript-language-server"]
+roots = ["deno.json", "deno.jsonc", "package.json"]
+file-types = ["js", "jsx"]
 auto-format = true
-formatter = { command = "prettier", args = ["--parser", "typescript"] }
-indent = { tab-width = 4, unit = " " }
-
-[[language]]
-name = "css"
-auto-format = true
-formatter = { command = "prettier", args = ["--parser", "css"] }
-
-[[language]]
-name = "html"
-auto-format = true
-formatter = { command = "prettier", args = ["--parser", "html"] }
-
-[[language]]
-name = "json"
-auto-format = true
-formatter = { command = "prettier", args = ["--parser", "json"] }
-
-[[language]]
-name = "markdown"
-auto-format = true
-formatter = { command = "prettier", args = ["--parser", "markdown"] }
-indent = { tab-width = 4, unit = "   " }
+language-servers = ["deno-lsp"]
 

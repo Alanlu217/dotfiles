@@ -326,7 +326,7 @@ screenshot-path "~/Pictures/Screenshots/Screenshot from %Y-%m-%d %H-%M-%S.png"
 // https://github.com/YaLTeR/niri/wiki/Configuration:-Animations
 animations {
     // Uncomment to turn off all animations.
-    off
+    // off
 
     // Slow down all animations by this factor. Values below 1 speed them up instead.
     slowdown 0.8
@@ -361,6 +361,7 @@ window-rule {
 
 window-rule {
     match app-id=r#"Minecraft"#
+    match app-id=r#"qemu"#
 
     open-maximized true
     open-floating true
