@@ -287,6 +287,8 @@ spawn-sh-at-startup "swww-daemon -n overlay"
 
 spawn-at-startup "~/dotfiles/scripts/niriidle.sh"
 
+spawn-at-startup "~/dotfiles/scripts/low_bat.nu"
+
 spawn-at-startup "xwayland-satellite" ":12"
 
 spawn-sh-at-startup "gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'"
@@ -415,11 +417,7 @@ binds {
     Mod+Grave repeat=false { spawn "~/dotfiles/scripts/swwwrwall.sh";}
     Mod+Shift+Grave repeat=false { spawn "~/dotfiles/scripts/swwwswall.sh";}
     Mod+M repeat=false hotkey-overlay-title="Lock the Screen: hyprlock" { spawn "hyprlock"; }
-    // Mod+Shift+C repeat=false { spawn "~/dotfiles/scripts/show_time.sh"; }
-
-    // You can also use a shell. Do this if you need pipes, multiple commands, etc.
-    // Note: the entire command goes as a single argument in the end.
-    // Mod+T { spawn "bash" "-c" "notify-send hello && exec alacritty"; }
+    Mod+E repeat=false { spawn "~/dotfiles/scripts/show_time.sh"; }
 
     // Example volume keys mappings for PipeWire & WirePlumber.
     // The allow-when-locked=true property makes them work even when the session is locked.

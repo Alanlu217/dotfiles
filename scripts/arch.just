@@ -35,7 +35,7 @@ deps:
     brightnessctl
     avahi nss-mdns
 
-    fish # better shell
+    nushell # better shell
     starship # prompt
     watchexec
 

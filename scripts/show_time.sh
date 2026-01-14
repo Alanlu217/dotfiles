@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-date | rofi -dmenu
+notify-send "$(date)"
