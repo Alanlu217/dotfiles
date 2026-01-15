@@ -412,7 +412,7 @@ binds {
     Mod+X repeat=false hotkey-overlay-title="Open a Terminal" { spawn "alacritty"; }
     Mod+Space repeat=false hotkey-overlay-title="Run an Application: rofi drun" { spawn "rofi" "-show" "drun"; }
     Alt+Space repeat=false hotkey-overlay-title="Run an Application: rofi window" { spawn "rofi" "-show" "window"; }
-    Ctrl+Space repeat=false { spawn "~/dotfiles/scripts/wifi_sel.py"; }
+    Ctrl+Space repeat=false { spawn "~/dotfiles/scripts/wifi_sel.nu"; }
     Mod+B repeat=false hotkey-overlay-title="Run an Application: firefox" { spawn "firefox"; }
     Mod+Grave repeat=false { spawn "~/dotfiles/scripts/swwwrwall.sh";}
     Mod+Shift+Grave repeat=false { spawn "~/dotfiles/scripts/swwwswall.sh";}

@@ -11,7 +11,7 @@ deps:
     niri
     xwayland-satellite
     swww
-    rofi-wayland # application launcher
+    rofi # application launcher
     mako # notification launcher
     waybar # info bar
     hyprlock # lock screen
@@ -36,7 +36,6 @@ deps:
     avahi nss-mdns
 
     nushell # better shell
-    starship # prompt
     watchexec
 
     ttf-iosevka-nerd # Fonts
@@ -80,7 +79,7 @@ deps:
     zathura zathura-pdf-poppler
     steam
     spotify-launcher
-    zed vulkan-intel
+    vulkan-intel
   )
 
   sudo pacman -S ${pkgs[@]}
@@ -90,7 +89,6 @@ deps:
 
   sudo systemctl enable bluetooth
   sudo systemctl enable tlp
-  sudo systemctl enable ly
   sudo systemctl enable dbus
   sudo systemctl enable avahi-daemon
 
@@ -103,35 +101,4 @@ paru:
     makepkg -si
     cd ..
     rm -rf paru
-
-extra:
-    #!/usr/bin/env bash
-
-    pkgs=(
-        # Latex
-        tectonic
-        tex-fmt
-    )
-
-    paru -Syu ${pkgs[@]}
-
-rwall:
-    #!/usr/bin/env bash
-    wall="$(pwd)/../wallpapers/$(ls ../wallpapers | shuf -n 1)"
-    hyprctl hyprpaper reload ",$wall"
-    rm -rf ~/.curr_bg
-    ln -s "$wall" ~/.curr_bg
-
-swall:
-    #!/usr/bin/env bash
-    name="$(ls ../wallpapers | rofi -dmenu)"
-    if [ "${name}" == "" ]; then exit; fi
-    wall="$(pwd)/../wallpapers/$name"
-    hyprctl hyprpaper reload ",$wall"
-    rm -rf ~/.curr_bg
-    ln -s "$wall" ~/.curr_bg
-
-setupwall:
-    rm -rf ~/.curr_bg
-    ln -s ~/dotfiles/wallpapers/dark-flowers.png ~/.curr_bg
 
