@@ -17,6 +17,3 @@
 # You can remove these comments if you want or leave
 # them for future reference.
 
-$env.CARAPACE_BRIDGES = 'zsh,fish,bash,inshellisense' # optional
-mkdir $"($nu.cache-dir)"
-carapace _carapace nushell | save --force $"($nu.cache-dir)/carapace.nu"

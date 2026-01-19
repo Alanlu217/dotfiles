@@ -380,6 +380,20 @@ window-rule {
     draw-border-with-background false
 }
 
+window-rule {
+    match title="notificationtoasts"
+
+    default-floating-position x=100 y=100 relative-to="top-right"
+
+    focus-ring {
+        off
+    }
+
+    border {
+        off
+    }
+}
+
 layer-rule {
     match namespace="^swww-daemonoverlay"
     place-within-backdrop true
