@@ -73,7 +73,7 @@ deps:
     alacritty
     obsidian
     firefox
-    nautilus
+    thunar
     eog
     evince
     zathura zathura-pdf-poppler

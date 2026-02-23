@@ -105,7 +105,7 @@ output "eDP-1" {
     position x=0 y=0
 }
 
-output "DP-1" {
+output "DP-3" {
     mode "2560x1440@180.002"
     scale 1.2
 }
@@ -363,6 +363,7 @@ window-rule {
 
 window-rule {
     match app-id=r#"Minecraft"#
+    match app-id=r#"steam_app_2357570"#
     match app-id=r#"qemu"#
 
     open-maximized true
@@ -431,7 +432,7 @@ binds {
     Mod+Grave repeat=false { spawn "~/dotfiles/scripts/swwwrwall.sh";}
     Mod+Shift+Grave repeat=false { spawn "~/dotfiles/scripts/swwwswall.sh";}
     Mod+M repeat=false hotkey-overlay-title="Lock the Screen: hyprlock" { spawn "hyprlock"; }
-    Mod+E repeat=false { spawn "~/dotfiles/scripts/show_time.sh"; }
+    Mod+E repeat=false { spawn "thunar"; }
 
     // Example volume keys mappings for PipeWire & WirePlumber.
     // The allow-when-locked=true property makes them work even when the session is locked.
