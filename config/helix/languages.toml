@@ -18,6 +18,9 @@ command = "deno"
 args = ["lsp"]
 config.deno.enable = true
 
+[language-server.clangd]
+args = ["--header-insertion=never"]
+
 [[language]]
 name = "python"
 language-servers = ["pyrefly", "ruff"]

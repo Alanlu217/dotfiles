@@ -367,7 +367,6 @@ window-rule {
     match app-id=r#"qemu"#
 
     open-maximized true
-    open-floating true
     open-fullscreen true
 
     border {
@@ -454,7 +453,7 @@ binds {
     Mod+Slash repeat=false { toggle-overview; }
     Mod+Alt+Space repeat=false { toggle-overview; }
 
-    Mod+Q { close-window; }
+    Mod+Shift+Q { close-window; }
 
     Mod+Left  { focus-column-left; }
     Mod+Down  { focus-window-down; }
