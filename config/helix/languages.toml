@@ -62,3 +62,6 @@ file-types = ["js", "jsx"]
 auto-format = true
 language-servers = ["deno-lsp"]
 
+[[language]]
+name = "verilog"
+grammar = "verilog"

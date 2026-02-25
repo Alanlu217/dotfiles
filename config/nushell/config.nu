@@ -10,6 +10,12 @@ $env.GTK_THEME = "Adwaita:dark"
 $env.ELECTRON_OZONE_PLATFORM_HINT = "auto"
 $env.QT_QPA_PLATFORMTHEME = "qt6ct"
 
+$env.config.history = {
+    file_format: "sqlite"
+    isolation: true
+}
+
+
 alias hx = helix
 alias f = yazi
 

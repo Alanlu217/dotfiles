@@ -43,15 +43,27 @@
     {
       "host": "vlab.cse.unsw.edu.au",
       "username": "z5693267",
+      "args": [],
       "projects": [
         {
-          "paths": ["/import/glass/6/z5693267/1531_code"]
+          "paths": [
+            "/import/glass/6/z5693267/1521_code/./"
+          ]
         },
         {
-          "paths": ["/import/glass/6/z5693267/2521_code"]
+          "paths": [
+            "/import/glass/6/z5693267/1531_code"
+          ]
         },
         {
-          "paths": ["~/Documents/1511_code"]
+          "paths": [
+            "/import/glass/6/z5693267/2521_code"
+          ]
+        },
+        {
+          "paths": [
+            "~/Documents/1511_code"
+          ]
         }
       ],
       "nickname": "1511"
@@ -59,6 +71,7 @@
     {
       "host": "vlab.cse.unsw.edu.au",
       "username": "z5693267",
+      "args": [],
       "projects": []
     }
   ],
@@ -113,7 +126,8 @@
       // Formatting with ZLS matches `zig fmt`.
       // The Zig FAQ answers some questions about `zig fmt`:
       // https://github.com/ziglang/zig/wiki/FAQ
-      "format_on_save": "language_server",
+      "formatter": "language_server",
+      "format_on_save": "on",
       // Make sure that zls is the primary language server
       "language_servers": ["zls", "..."],
       "code_actions_on_format": {
