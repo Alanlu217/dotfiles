@@ -4,19 +4,12 @@
   font-family: "Iosevka Nerd Font";
   font-size: 14px;
   min-height: 0;
+  background-color: @surface0;
 }
 
 #waybar {
-  background: transparent;
-  background-color: @surface0;
-  border-radius: 8px;
+  background-color: rgba(0, 0, 0, 0);
   color: @text;
-  padding: 0px;
-}
-
-#workspaces {
-  background-color: @surface0;
-  border-radius: 8px;
 }
 
 #workspaces button {
@@ -37,48 +30,41 @@
   color: @sapphire;
 }
 
+#workspaces button.urgent {
+  color: @red;
+}
+
 #cpu {
   color: @blue;
-  background-color: @surface0;
   padding-left: 1.2rem;
   padding-right: 0.6rem;
 }
 
 #memory {
   color: @blue;
-  background-color: @surface0;
   padding-right: 0.6rem;
 }
 
 #custom-hypridle {
   color: @blue;
   padding-left: 0.6rem;
-  background-color: @surface0;
 }
 
 #clock {
   color: @blue;
-  background-color: @surface0;
-  margin: 5px;
   padding-left:  8px;
   padding-right:  8px;
 }
 
 #pulseaudio {
-  background-color: @surface0;
   color: @maroon;
-  margin-left: 1rem;
 }
 
 #tray,
-#backlight,
 #battery,
-#pulseaudio,
-#custom-power {
-  background-color: @surface0;
+#pulseaudio {
   padding-left: 0.5rem;
   padding-right: 0.5rem;
-  margin: 5px 0;
 }
 
 #battery {
@@ -95,25 +81,4 @@
 
 #backlight {
   color: @yellow;
-}
-
-#custom-lock {
-  color: @maroon;
-  background-color: @surface0;
-  margin: 5px 0px 5px 5px;
-  padding: 0px 5px 0px 10px;
-}
-
-#custom-power {
-  margin-right: 1rem;
-  color: @red;
-}
-
-#tray {
-  margin-left: 1rem;
-  margin-right: 1rem;
-}
-
-#workspaces button.urgent {
-  color: @red;
 }

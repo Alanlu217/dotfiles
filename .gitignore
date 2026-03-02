@@ -1,3 +1,2 @@
 config/helix/runtime
-config/nushell/history.txt
-config/nushell/history*
+config/nushell/history.*
