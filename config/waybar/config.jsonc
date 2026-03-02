@@ -3,9 +3,7 @@
 	"height": 26,
 	"position": "bottom",
 	"modules-left": [
-		"hyprland/workspaces",
-		"sway/workspaces",
-		"niri/workspaces",
+		"ext/workspaces",
 		"custom/hypridle",
 		"cpu",
 		"memory"
@@ -21,48 +19,6 @@
 		"custom/lock",
 		"custom/power"
 	],
-	"hyprland/workspaces": {
-		"on-click": "activate",
-		"on-scroll-up": "hyprctl dispatch workspace e-1",
-		"on-scroll-down": "hyprctl dispatch workspace e+1",
-		"format": "{icon}",
-		"all-outputs": true,
-		"format-icons": {
-			"1": "1",
-			"2": "2",
-			"3": "3",
-			"4": "4",
-			"5": "5",
-      "6": "6",
-      "7": "7",
-      "8": "8",
-      "9": "9",
-      "10": "10",
-      "urgent": "",
-      "focused": "",
-      "default": "",
-		}
-	},
-	"sway/workspaces": {
-    "disable-scroll": true,
-    "all-outputs": true,
-    "format": "{name}",
-    "format-icons": {
-      "1": "1",
-      "2": "2",
-      "3": "3",
-      "4": "4",
-      "5": "5",
-      "6": "6",
-      "7": "7",
-      "8": "8",
-      "9": "9",
-      "10": "10",
-      "urgent": "",
-      "focused": "",
-      "default": "",
-    },
-  },
 	"custom/hypridle": {
 		"format": "󰤄 {text}",
 		"exec": "just -f ~/dotfiles/scripts/idle.just running",
@@ -76,31 +32,26 @@
 	"memory": {
 		"format": "  {percentage}%"
 	},
-	"tray": {
-		"icon-size": 14,
-		"spacing": 10
-	},
 	"clock": {
 		"tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>",
-		"format": "  {:%H:%M    %d/%m/%Y}"
+		"format": " {:%H:%M   %d/%m/%Y}"
 	},
-	"backlight": {
-		"device": "nvidia_0",
-		"format": "{icon}",
-		"on-scroll-up": "brightnessctl s '+10%'",
-		"on-scroll-down": "brightnessctl s '10%-'",
-		"on-click": "((( $(brightnessctl g) == 100 )) && brightnessctl s '0') || (brightnessctl s '+10%')",
-		"format-icons": [
-			"",
-			"",
-			"",
-			"",
-			"",
-			"",
-			"",
-			"",
-			""
-		]
+	"tray": {
+		"icon-size": 16,
+		"spacing": 12
+	},
+	"pulseaudio": {
+		"scroll-step": 2,
+		"format": "{icon}  {volume}%",
+		"format-muted": "",
+		"format-icons": {
+			"default": [
+				"",
+				"",
+				""
+			]
+		},
+		"on-click": "pavucontrol"
 	},
 	"battery": {
 		"states": {
@@ -118,35 +69,4 @@
 			""
 		]
 	},
-	"pulseaudio": {
-		"scroll-step": 2, // %, can be a float
-		"format": "{icon}  {volume}%",
-		"format-muted": "",
-		"format-icons": {
-			"default": [
-				"",
-				"",
-				""
-			]
-		},
-		"on-click": "pavucontrol"
-	},
-	"custom/lock": {
-		"tooltip": false,
-		"on-click": "hyprlock &",
-		"format": ""
-	},
-	"custom/power": {
-		"tooltip": false,
-		"on-click": "wlogout &",
-		"format": "⏻"
-	},
-	"hyprland/language": {
-		"format": " {}",
-		"format-en": "en",
-		"format-fa": "fa",
-		"interval": 1,
-		"keyboard-name": "gaming-keyboard",
-		"on-click": "hyprctl switchxkblayout gaming-keyboard next"
-	}
 }

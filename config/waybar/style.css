@@ -1,8 +1,8 @@
-@import url("./catppuccin/themes/mocha.css");
+@import url("mocha.css");
 
 * {
-  font-family: "Fira Code Nerd Font";
-  font-size: 12px;
+  font-family: "Iosevka Nerd Font";
+  font-size: 14px;
   min-height: 0;
 }
 
