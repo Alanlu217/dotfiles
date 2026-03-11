@@ -62,9 +62,14 @@
 
 #tray,
 #battery,
+#network,
 #pulseaudio {
   padding-left: 0.5rem;
   padding-right: 0.5rem;
+}
+
+#network {
+  color: @mauve
 }
 
 #battery {

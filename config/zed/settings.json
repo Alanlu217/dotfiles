@@ -7,6 +7,8 @@
 // custom settings, run `zed: open default settings` from the
 // command palette (cmd-shift-p / ctrl-shift-p)
 {
+  "show_whitespaces": "boundary",
+  "helix_mode": true,
   "disable_ai": true,
   "inlay_hints": {
     "enabled": false,
@@ -22,13 +24,13 @@
       "alt": false,
       "shift": false,
       "platform": false,
-      "function": false
-    }
+      "function": false,
+    },
   },
   "ui_font_family": "JetBrainsMono Nerd Font",
   "telemetry": {
     "metrics": false,
-    "diagnostics": false
+    "diagnostics": false,
   },
   "show_edit_predictions": false,
   "edit_predictions": {
@@ -36,9 +38,9 @@
     "mode": "subtle",
     "copilot": {
       "proxy": null,
-      "proxy_no_verify": null
+      "proxy_no_verify": null,
     },
-    "enabled_in_text_threads": false
+    "enabled_in_text_threads": false,
   },
   "ssh_connections": [
     {
@@ -47,79 +49,72 @@
       "args": [],
       "projects": [
         {
-          "paths": [
-            "/import/glass/6/z5693267/1521_code/./"
-          ]
+          "paths": ["/import/glass/6/z5693267/1521_code/./"],
         },
         {
-          "paths": [
-            "/import/glass/6/z5693267/1531_code"
-          ]
+          "paths": ["/import/glass/6/z5693267/1531_code"],
         },
         {
-          "paths": [
-            "/import/glass/6/z5693267/2521_code"
-          ]
+          "paths": ["/import/glass/6/z5693267/2521_code"],
         },
         {
-          "paths": [
-            "~/Documents/1511_code"
-          ]
-        }
+          "paths": ["~/Documents/1511_code"],
+        },
       ],
-      "nickname": "1511"
+      "nickname": "1511",
     },
     {
       "host": "vlab.cse.unsw.edu.au",
       "username": "z5693267",
       "args": [],
-      "projects": []
-    }
+      "projects": [],
+    },
   ],
   "collaboration_panel": {
-    "button": false
-  },
-  "chat_panel": {
-    "button": "never"
+    "button": false,
   },
   "project_panel": {
-    "dock": "left"
+    "dock": "left",
   },
   "icon_theme": {
     "mode": "dark",
     "light": "Catppuccin Mocha",
-    "dark": "Catppuccin Mocha"
+    "dark": "Catppuccin Mocha",
   },
   "vim_mode": true,
   "ui_font_size": 15.0,
   "buffer_font_size": 15.0,
   "buffer_font_family": "JetBrainsMono Nerd Font",
   "buffer_font_features": {
-    "ligatures": false
+    "ligatures": false,
   },
   "theme": {
     "mode": "dark",
     "light": "One Light",
-    "dark": "Catppuccin Mocha"
+    "dark": "Catppuccin Mocha",
   },
   "agent": {
     "button": false,
-    "enabled": false
+    "enabled": false,
   },
   "format_on_save": "on",
-  "restore_on_startup": "none",
+  "restore_on_startup": "empty_tab",
   "gutter": {
     "folds": false,
     "runnables": false,
     "breakpoints": false,
-    "min_line_number_digits": 0
+    "min_line_number_digits": 0,
   },
   "git_panel": {
-    "button": true
+    "button": true,
   },
   "wrap_guides": [80],
 
   "languages": {
+    "SystemVerilog": {
+      "tab_size": 4,
+      "language_servers": ["verible"],
+    },
     "Zig": {
       // Formatting with ZLS matches `zig fmt`.
       // The Zig FAQ answers some questions about `zig fmt`:
@@ -132,27 +127,27 @@
         // Run code actions that currently supports adding and removing discards.
         // "source.fixAll": true,
         // Run code actions that sorts @import declarations.
-        "source.organizeImports": true
-      }
+        "source.organizeImports": true,
+      },
     },
     "JavaScript": {
       "tab_size": 2,
       "formatter": {
         "external": {
           "command": "prettier",
-          "arguments": ["--stdin-filepath", "{buffer_path}"]
-        }
-      }
+          "arguments": ["--stdin-filepath", "{buffer_path}"],
+        },
+      },
     },
     "TypeScript": {
       "tab_size": 2,
       "formatter": {
         "external": {
           "command": "prettier",
-          "arguments": ["--stdin-filepath", "{buffer_path}"]
-        }
-      }
-    }
+          "arguments": ["--stdin-filepath", "{buffer_path}"],
+        },
+      },
+    },
   },
   "lsp": {
     "zls": {
@@ -171,20 +166,20 @@
         //
         // Further information about build-on save:
         // https://zigtools.org/zls/guides/build-on-save/
-        "enable_build_on_save": true
+        "enable_build_on_save": true,
         // omit the following line if `zig` is in your PATH
         // "zig_exe_path": "/path/to/zig_executable"
-      }
-    }
+      },
+    },
   },
   "toolbar": {
     "breadcrumbs": false,
-    "quick_actions": false
+    "quick_actions": false,
   },
   "terminal": {
     "toolbar": {
-      "breadcrumbs": false
-    }
+      "breadcrumbs": false,
+    },
   },
-  "soft_wrap": "editor_width"
+  "soft_wrap": "editor_width",
 }

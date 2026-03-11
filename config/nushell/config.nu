@@ -18,6 +18,7 @@ $env.config.history = {
 
 alias hx = helix
 alias f = yazi
+alias zed = zeditor
 
 path add ~/dotfiles/bin
 path add ~/.local/bin/

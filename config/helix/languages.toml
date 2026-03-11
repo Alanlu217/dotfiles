@@ -21,6 +21,9 @@ config.deno.enable = true
 [language-server.clangd]
 args = ["--header-insertion=never"]
 
+[language-server.verible-ls]
+command = "verible-verilog-ls"
+
 [[language]]
 name = "python"
 language-servers = ["pyrefly", "ruff"]
@@ -65,3 +68,6 @@ language-servers = ["deno-lsp"]
 [[language]]
 name = "verilog"
 grammar = "verilog"
+language-servers = ["verible-ls"]
+formatter = { command = "verible-verilog-format", args = ["-"] }
+auto-format = true
