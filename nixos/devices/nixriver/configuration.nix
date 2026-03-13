@@ -26,7 +26,7 @@
   networking.networkmanager.enable = true;
 
   # Set your time zone.
-  time.timeZone = "Australia/Adelaide";
+  time.timeZone = "Australia/Sydney";
 
   # Select internationalisation properties.
   i18n.defaultLocale = "en_AU.UTF-8";
