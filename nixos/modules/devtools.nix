@@ -6,6 +6,9 @@
     gnumake
     killall
 
+    iverilog gtkwave
+    typst tinymist
+
     go
     gopls
 

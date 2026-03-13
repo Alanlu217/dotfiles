@@ -19,6 +19,7 @@
     curl
     btop
     gh
+    gping
 
     nix-index
   ];
