@@ -4,6 +4,7 @@
     cmake
     clang-tools
     gnumake
+    killall
 
     go
     gopls

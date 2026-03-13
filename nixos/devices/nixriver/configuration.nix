@@ -43,11 +43,6 @@
     LC_TIME = "en_AU.UTF-8";
   };
 
-  fileSystems."/data" = {
-    device = "/dev/nvme0n1p7";
-    fsType = "ext4";
-  };
-
   # Configure keymap in X11
   services.xserver.xkb = {
     layout = "au";
@@ -56,6 +51,7 @@
   };
 
   programs.fish.enable = true;
+  documentation.man.generateCaches = false;
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.aln = {

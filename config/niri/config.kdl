@@ -283,7 +283,7 @@ spawn-at-startup "blueman-applet"
 spawn-at-startup "nm-applet"
 
 spawn-at-startup "swww-daemon"
-spawn-sh-at-startup "swww-daemon -n overlay"
+spawn-at-startup "swww-daemon" "-n" "overlay"
 
 spawn-at-startup "~/dotfiles/scripts/niriidle.sh"
 
@@ -291,7 +291,7 @@ spawn-at-startup "~/dotfiles/scripts/low_bat.nu"
 
 spawn-at-startup "xwayland-satellite" ":12"
 
-spawn-sh-at-startup "gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'"
+spawn-at-startup "gsettings" "set" "org.gnome.desktop.interface color-scheme" "prefer-dark"
 
 // Environment Settings
 environment {

@@ -3,7 +3,7 @@
 	"height": 26,
 	"position": "bottom",
 	"modules-left": [
-		"ext/workspaces",
+		"niri/workspaces",
 		"custom/hypridle",
 		"cpu",
 		"memory"

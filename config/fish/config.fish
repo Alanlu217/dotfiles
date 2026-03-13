@@ -50,10 +50,8 @@ abbr py python3
 
 abbr zj zellij
 
-alias nixup="sudo nixos-rebuild switch --flake ~/dotfiles/nixos/"
+alias nixup="sudo nixos-rebuild switch --flake ~/dotfiles/nixos#nixriver"
 alias nd="nix develop --command fish"
-
-alias hx="helix"
 
 alias edot='helix $(fzf --walker-root ~/dotfiles)'
 
