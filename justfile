@@ -12,6 +12,10 @@ git-setup:
 
     git config --global commit.verbose true
 
+applications:
+    rm -rf ~/.local/share/applications
+    ln -s ~/dotfiles/applications ~/.local/share/
+
 setup:
     just git-setup
     just config::all
