@@ -1,9 +1,20 @@
 mod arch "scripts/arch.just"
 mod alpine "scripts/alpine.just"
-mod config
 
 default:
     just -l
+
+setup: config applications git-setup
+
+unsetup:
+    make -C config clean
+    make -C applications clean
+
+config:
+    make -C config
+
+applications:
+    make -C applications
 
 git-setup:
     git config --global user.email "alanlu2468@gmail.com"
@@ -12,10 +23,3 @@ git-setup:
 
     git config --global commit.verbose true
 
-applications:
-    rm -rf ~/.local/share/applications
-    ln -s ~/dotfiles/applications ~/.local/share/
-
-setup:
-    just git-setup
-    just config::all
