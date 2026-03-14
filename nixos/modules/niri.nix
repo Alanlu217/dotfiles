@@ -19,6 +19,7 @@
     adwaita-icon-theme
     xwayland-satellite
     firefox-bin
+    obsidian
     evince
   ];
 

@@ -4,23 +4,25 @@
   programs.zoxide.enable = true;
 
   environment.systemPackages = with pkgs; [
-    vim
-    helix
-    fastfetch
-    eza
-    yazi
-    fzf
-    zellij
-    starship
-    just
-    nixd
     alejandra
-    wget
-    curl
     btop
+    curl
+    eza
+    fastfetch
+    fzf
     gh
+    gnutar
     gping
-
+    helix
+    just
     nix-index
+    nixd
+    starship
+    unzip
+    vim
+    wget
+    yazi
+    zellij
+    nushell
   ];
 }

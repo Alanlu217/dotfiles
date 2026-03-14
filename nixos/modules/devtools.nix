@@ -16,6 +16,7 @@
     rust-analyzer
 
     python3
+    uv
 
     zvm
   ];
