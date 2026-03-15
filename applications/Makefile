@@ -6,12 +6,12 @@ OUT := $(foreach src,$(SRC),$(OUT_DIR)/$(src))
 
 .PHONY: all
 all: $(OUT)
-
+	
 .PHONY: $(OUT)
 $(OUT): $(OUT_DIR)/%: %
-	@mkdir -p $(OUT_DIR)
+	@mkdir -p "$(OUT_DIR)"
 	@rm -rf "$@"
-	ln -s "$(abspath $<)" "$@"
+	ln -s "$(abspath "$<")" "$@"
 
 .PHONY: clean
 clean:

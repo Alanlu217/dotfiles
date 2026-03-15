@@ -1,0 +1,6 @@
+[Desktop Entry]
+Name=Helix
+Exec=alacritty -e helix %F
+Terminal=false
+Type=Application
+Keywords=Text;editor;
