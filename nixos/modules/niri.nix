@@ -16,6 +16,7 @@
     swww
     mako
     rofi-wayland
+    wl-clipboard
     adwaita-icon-theme
     xwayland-satellite
     firefox-bin
