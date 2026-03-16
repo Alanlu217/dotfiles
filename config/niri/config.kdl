@@ -291,6 +291,8 @@ spawn-at-startup "~/dotfiles/scripts/low_bat.nu"
 
 spawn-at-startup "xwayland-satellite" ":12"
 
+spawn-at-startup "udiskie"
+
 spawn-at-startup "gsettings" "set" "org.gnome.desktop.interface color-scheme" "prefer-dark"
 
 // Environment Settings

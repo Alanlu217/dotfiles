@@ -24,5 +24,6 @@
     yazi
     zellij
     nushell
+    tree-sitter
   ];
 }

@@ -19,5 +19,5 @@ select = "underline"
 [editor.indent-guides]
 render = true
 
-[keys.normal]
-V = ["extend_line_below", "select_mode"]
+[keys.normal." "]
+m = [":hsplit-new", ":insert-output make", "normal_mode"]
