@@ -49,12 +49,10 @@ abbr dc "docker compose"
 
 abbr py python3
 
-abbr zj zellij
-
 alias nixup="sudo nixos-rebuild switch --flake ~/dotfiles/nixos#nixriver"
 alias nd="nix develop --command fish"
 
-alias edot='hx $(fzf --walker-root ~/dotfiles)'
+alias edot='$EDITOR $(fzf --walker-root ~/dotfiles)'
 
 # starship init fish | source
 zoxide init fish | source
