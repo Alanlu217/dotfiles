@@ -11,6 +11,7 @@ unsetup:
     make -C applications clean
 
 config:
+    touch ~/.profile.fish
     make -C config
 
 applications:
