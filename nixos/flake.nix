@@ -22,7 +22,7 @@
           ./modules/nix-ld.nix
           ./modules/distrobox.nix
 
-          ./modules/niri.nix
+          ./modules/compositor.nix
           ./modules/steam.nix
           ./modules/libreoffice.nix
         ];
