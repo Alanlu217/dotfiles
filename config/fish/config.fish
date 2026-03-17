@@ -8,6 +8,7 @@ set -gx GTK_THEME Adwaita:dark
 
 set -gx ELECTRON_OZONE_PLATFORM_HINT auto
 
+set -gx EDITOR nvim
 set -gx PAGER less
 set -gx MANPAGER less
 

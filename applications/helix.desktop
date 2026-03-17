@@ -3,4 +3,5 @@ Name=Helix
 Exec=alacritty -e helix %F
 Terminal=false
 Type=Application
+Icon=helix
 Keywords=Text;editor;

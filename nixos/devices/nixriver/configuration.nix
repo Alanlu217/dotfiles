@@ -95,6 +95,11 @@
     ];
   };
 
+  nix.settings = {
+    max-jobs = "auto";
+    cores = 0;
+  };
+
   # Open ports in the firewall.
   # networking.firewall.allowedTCPPorts = [ ... ];
   # networking.firewall.allowedUDPPorts = [ ... ];

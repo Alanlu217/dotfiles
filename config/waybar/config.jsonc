@@ -4,6 +4,7 @@
 	"position": "bottom",
 	"modules-left": [
 		"niri/workspaces",
+		"hyprland/workspaces",
 		"custom/hypridle",
 		"cpu",
 		"memory"
