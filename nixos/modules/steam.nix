@@ -5,4 +5,5 @@
     dedicatedServer.openFirewall = true;
     localNetworkGameTransfers.openFirewall = true;
   };
+  programs.gamescope = {enable = true;};
 }

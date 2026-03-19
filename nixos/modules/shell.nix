@@ -20,12 +20,14 @@
     gh
     gnutar
     gping
+    guile
     helix
     just
     nix-index
     nixd
     starship
     unzip
+    rlwrap
     vim
     wget
     yazi

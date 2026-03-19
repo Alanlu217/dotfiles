@@ -54,9 +54,6 @@
   programs.nh.enable = true;
   documentation.man.generateCaches = false;
 
-  programs.nix-ld.enable = true;
-  programs.nix-ld.libraries = with pkgs; [ libGLU ];
-
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.aln = {
     isNormalUser = true;
