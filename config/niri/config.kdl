@@ -287,7 +287,7 @@ spawn-at-startup "swww-daemon" "-n" "overlay"
 
 spawn-at-startup "~/dotfiles/scripts/niriidle.sh"
 
-spawn-at-startup "~/dotfiles/scripts/low_bat.nu"
+spawn-at-startup "~/dotfiles/scripts/low_bat.py"
 
 spawn-at-startup "xwayland-satellite" ":12"
 

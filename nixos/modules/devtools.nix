@@ -6,6 +6,7 @@
     gnumake
     killall
 
+    verible
     iverilog gtkwave
     typst tinymist
 
@@ -17,6 +18,8 @@
 
     python3
     uv
+
+    arduino-cli
 
     zvm
   ];

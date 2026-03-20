@@ -10,6 +10,8 @@
   programs.xwayland.enable = true;
   programs.thunar.enable = true;
 
+  services.upower.enable = true;
+
   environment.systemPackages = with pkgs; [
     alacritty
     waybar
@@ -23,6 +25,7 @@
     firefox-bin
     obsidian
     evince
+    libnotify
   ];
 
   fonts.packages = with pkgs; [

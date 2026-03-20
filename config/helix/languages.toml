@@ -69,5 +69,5 @@ language-servers = ["deno-lsp"]
 name = "verilog"
 grammar = "verilog"
 language-servers = ["verible-ls"]
-formatter = { command = "verible-verilog-format", args = ["-"] }
+formatter = { command = "verible-verilog-format", args = ["--indentation_spaces=4", "--wrap_spaces=4", "-"] }
 auto-format = true
