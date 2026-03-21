@@ -26,6 +26,7 @@
     obsidian
     evince
     libnotify
+    catppuccin-cursors
   ];
 
   fonts.packages = with pkgs; [
