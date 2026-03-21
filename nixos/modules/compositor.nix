@@ -4,6 +4,7 @@
     ./powerkeydisable.nix
   ];
 
+  programs.dconf.enable = true;
   programs.niri.enable = true;
   programs.hyprland.enable = true;
   programs.hyprlock.enable = true;
@@ -12,7 +13,11 @@
 
   services.upower.enable = true;
 
+  environment.variables = { XCURSOR_THEME = "Adwaita"; XCURSOR_SIZE = "24"; HYPRCURSOR_THEME = "Adwaita"; HYPRCURSOR_SIZE = "24";};
+
   environment.systemPackages = with pkgs; [
+    glib
+    gsettings-desktop-schemas
     alacritty
     waybar
     swayidle
@@ -26,7 +31,7 @@
     obsidian
     evince
     libnotify
-    catppuccin-cursors
+    adwaita-icon-theme
   ];
 
   fonts.packages = with pkgs; [
