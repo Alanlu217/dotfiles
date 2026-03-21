@@ -6,6 +6,8 @@
     gnumake
     killall
 
+    ghc
+
     verible
     iverilog gtkwave
     typst tinymist
