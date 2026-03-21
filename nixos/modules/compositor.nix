@@ -32,6 +32,7 @@
     evince
     libnotify
     adwaita-icon-theme
+    grim slurp
   ];
 
   fonts.packages = with pkgs; [

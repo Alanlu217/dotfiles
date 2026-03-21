@@ -70,6 +70,10 @@
   nixpkgs.config.allowUnfree = true;
 
   services.displayManager.ly.enable = true;
+  services.avahi = {
+    enable = true;
+    nssmdns = true;
+  };
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
