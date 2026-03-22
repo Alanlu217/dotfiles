@@ -72,7 +72,7 @@
   services.displayManager.ly.enable = true;
   services.avahi = {
     enable = true;
-    nssmdns = true;
+    nssmdns4 = true;
   };
 
   # Some programs need SUID wrappers, can be configured further or are
