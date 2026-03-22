@@ -8,7 +8,7 @@ running:
     fi
 
 start:
-    bash ~/dotfiles/scripts/niriidle.sh &
+    bash ~/dotfiles/scripts/idle.sh &
     pkill -RTMIN+1 waybar
 
 stop:
@@ -19,7 +19,7 @@ toggle:
     #!/usr/bin/env bash
 
     if [ "$(pidof swayidle)" == "" ]; then
-        bash ~/dotfiles/scripts/niriidle.sh &
+        bash ~/dotfiles/scripts/idle.sh &
         pkill -RTMIN+1 waybar
         pkill -RTMIN+1 .waybar-wrapped
     else

@@ -285,7 +285,7 @@ spawn-at-startup "nm-applet"
 spawn-at-startup "swww-daemon"
 spawn-at-startup "swww-daemon" "-n" "overlay"
 
-spawn-at-startup "~/dotfiles/scripts/niriidle.sh"
+spawn-at-startup "~/dotfiles/scripts/idle.sh"
 
 spawn-at-startup "~/dotfiles/scripts/low_bat.py"
 

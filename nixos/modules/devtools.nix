@@ -6,7 +6,7 @@
     gnumake
     killall
 
-    ghc
+    ghc haskell-language-server
 
     verible
     iverilog gtkwave
