@@ -13,19 +13,7 @@
 
   services.upower.enable = true;
 
-  programs.dconf.profiles.user.databases = [
-    {
-      settings."org/gnome/desktop/interface" = {
-        gtk-theme = "Adwaita";
-      };
-    }
-  ];
-
-  environment.variables = { XCURSOR_THEME = "Adwaita"; XCURSOR_SIZE = "24"; HYPRCURSOR_THEME = "Adwaita"; HYPRCURSOR_SIZE = "24";};
-
   environment.systemPackages = with pkgs; [
-    adwaita-qt
-    glib
     gsettings-desktop-schemas
     alacritty
     waybar
@@ -34,7 +22,6 @@
     mako
     rofi-wayland
     wl-clipboard
-    adwaita-icon-theme
     xwayland-satellite
     firefox-bin
     obsidian
