@@ -2,6 +2,8 @@ deps:
   #!/usr/bin/env bash
 
   pkgs=(
+    base-devel
+  
     # Git stuff
     git
     github-cli
@@ -35,7 +37,7 @@ deps:
     brightnessctl
     avahi nss-mdns
 
-    nushell # better shell
+    fish # better shell
     watchexec
 
     ttf-iosevka-nerd # Fonts
@@ -76,8 +78,10 @@ deps:
     thunar
     eog
     evince
+    xdg-desktop-portal-gnome
     zathura zathura-pdf-poppler
-    steam
+    discord
+    steam lib32-vulkan-intel
     spotify-launcher
     vulkan-intel
   )
