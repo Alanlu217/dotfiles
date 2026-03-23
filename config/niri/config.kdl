@@ -433,6 +433,7 @@ binds {
     Mod+Grave repeat=false { spawn "~/dotfiles/scripts/swwwrwall.sh";}
     Mod+Shift+Grave repeat=false { spawn "~/dotfiles/scripts/swwwswall.sh";}
     Mod+M repeat=false hotkey-overlay-title="Lock the Screen: hyprlock" { spawn "hyprlock"; }
+    Mod+Ctrl+P repeat=false { spawn "alacritty" "-e" "gping" "1.1.1.1"; }
     Mod+E repeat=false { spawn "thunar"; }
 
     // Example volume keys mappings for PipeWire & WirePlumber.
