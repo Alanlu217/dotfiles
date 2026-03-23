@@ -70,6 +70,7 @@ deps:
     # Tools
     tmux
     tectonic
+    typst tinymist typstyle
 
     # Applications
     alacritty
