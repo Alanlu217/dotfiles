@@ -2,16 +2,25 @@
 
 file="$1"
 filename="${file%%.*}"
-
 extension="${file##*.}"
-if [[ -z extension || "$file" == "$extension" ]]; then
+out="$HOME/.cache/wtyp.pdf"
+
+if [[ -z "$file" ]]; then
+    echo "Expecting filename"
+    exit
+fi
+
+if [[ -z "$extension" || "$file" == "$extension" ]]; then
     file="${file}.typ"
 fi
 
-if [ ! -f $filename ]; then
-  typst c "$file"
+if [[ ! -f "$file" ]]; then
+    typst compile "$file" "$out"
 fi
 
-zathura "${filename}.pdf" &> /dev/null & disown
+evince "$out" &> /dev/null & disown
 
-typst w "$file"
+watchexec -c -- typst compile "$file" "$out" >/dev/null 2>&1 & disown
+WATCH_PID=$!
+"$EDITOR" "$file"
+kill "$WATCH_PID"

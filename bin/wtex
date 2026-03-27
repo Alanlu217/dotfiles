@@ -1,15 +1,27 @@
 #!/usr/bin/env bash
 
-file=$1
-
+file="$1"
 filename="${file%%.*}"
+extension="${file##*.}"
+out="$HOME/.cache/wtyp.pdf"
 
-echo $filename
+if [[ -z "$file" ]]; then
+  echo "Expecting filename"
+  exit
+fi
 
-if [ ! -f $filename ]; then
+if [[ -z "$extension" || "$file" == "$extension" ]]; then
+  file="${file}.typ"
+fi
+
+if [[ ! -f "$file" ]]; then
   tectonic -X compile -Z search-path=$HOME/dotfiles/twemojis $file
 fi
 
-zathura "${filename}.pdf" &> /dev/null & disown
+evince "$out" &> /dev/null & disown
 
-watchexec -c -i '*.pdf' -- tectonic -X compile -Z search-path=$HOME/dotfiles/twemojis $file
+watchexec -c -i '*.pdf' -- tectonic -X compile -Z search-path=$HOME/dotfiles/twemojis $file >/dev/null 2>&1 & disown
+WATCH_PID=$!
+"$EDITOR" "$file"
+kill "$WATCH_PID"
+
