@@ -10,7 +10,7 @@
 
     verible
     iverilog gtkwave
-    typst tinymist
+    typst tinymist typstyle
 
     go
     gopls
