@@ -34,5 +34,6 @@
     zellij
     nushell
     tree-sitter
+    watchexec
   ];
 }
