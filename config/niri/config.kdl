@@ -284,6 +284,8 @@ spawn-at-startup "nm-applet"
 
 spawn-at-startup "awww-daemon"
 spawn-at-startup "awww-daemon" "-n" "overlay"
+spawn-at-startup "swww-daemon"
+spawn-at-startup "swww-daemon" "-n" "overlay"
 
 spawn-at-startup "~/dotfiles/scripts/idle.sh"
 
