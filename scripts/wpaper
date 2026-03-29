@@ -1,0 +1,61 @@
+#!/usr/bin/env python3
+
+import argparse
+import random
+import subprocess
+import sys
+import os
+from pathlib import Path
+
+WALL_DIR = Path.home() / "dotfiles" / "wallpapers"
+
+
+def get_setter() -> str:
+    for cmd in ("swww", "awww"):
+        if subprocess.run(["which", cmd], capture_output=True).returncode == 0:
+            return cmd
+    print("Error: neither swww nor awww found", file=sys.stderr)
+    sys.exit(1)
+
+
+def set_wallpaper(setter: str, wall: Path):
+    args = ["--transition-step=4", "--transition-fps", "120", str(wall)]
+    subprocess.Popen([setter, "img"] + args)
+    if os.environ.get("NIRI_SOCKET"):
+        subprocess.Popen([setter, "img", "-n", "overlay"] + args)
+    curr_bg = Path.home() / ".curr_bg"
+    curr_bg.unlink(missing_ok=True)
+    curr_bg.symlink_to(wall)
+
+def cmd_start(args):
+    setter = get_setter()
+    print(f"Starting {setter}-daemon...")
+    subprocess.Popen([f"{setter}-daemon"])
+    if os.environ.get("NIRI_SOCKET"):
+        subprocess.Popen([f"{setter}-daemon", "-n", "overlay"])
+
+def cmd_random(args):
+    wall = random.choice(list(WALL_DIR.iterdir()))
+    print(f"Setting wallpaper: {wall.name}")
+    set_wallpaper(get_setter(), wall)
+
+
+def cmd_pick(args):
+    walls = "\n".join(p.name for p in sorted(WALL_DIR.iterdir()))
+    result = subprocess.run(["rofi", "-dmenu"], input=walls, capture_output=True, text=True)
+    if name := result.stdout.strip():
+        set_wallpaper(get_setter(), WALL_DIR / name)
+
+
+parser = argparse.ArgumentParser(prog="wall", description="Wallpaper manager using swww or awww.")
+sub = parser.add_subparsers(dest="command", required=True)
+
+sub.add_parser("start",  help="Start the swww or awww daemon")
+sub.add_parser("random", help="Set a random wallpaper")
+sub.add_parser("pick",   help="Pick a wallpaper interactively via rofi")
+
+COMMANDS = {"start": cmd_start, "random": cmd_random, "pick": cmd_pick}
+
+if __name__ == "__main__":
+    args = parser.parse_args(args=None if sys.argv[1:] else ["--help"])
+    COMMANDS[args.command](args)

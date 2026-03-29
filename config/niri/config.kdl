@@ -282,10 +282,7 @@ spawn-at-startup "waybar"
 spawn-at-startup "blueman-applet"
 spawn-at-startup "nm-applet"
 
-spawn-at-startup "awww-daemon"
-spawn-at-startup "awww-daemon" "-n" "overlay"
-spawn-at-startup "swww-daemon"
-spawn-at-startup "swww-daemon" "-n" "overlay"
+spawn-at-startup "~/dotfiles/scripts/wpaper" "start"
 
 spawn-at-startup "~/dotfiles/scripts/idle.sh"
 
@@ -432,8 +429,8 @@ binds {
     Alt+Space repeat=false hotkey-overlay-title="Run an Application: rofi window" { spawn "rofi" "-show" "window"; }
     Ctrl+Space repeat=false { spawn "~/dotfiles/scripts/wifi_sel.nu"; }
     Mod+B repeat=false hotkey-overlay-title="Run an Application: firefox" { spawn "firefox"; }
-    Mod+Grave repeat=false { spawn "~/dotfiles/scripts/rwall.sh";}
-    Mod+Shift+Grave repeat=false { spawn "~/dotfiles/scripts/swall.sh";}
+    Mod+Grave repeat=false { spawn "~/dotfiles/scripts/wpaper" "random";}
+    Mod+Shift+Grave repeat=false { spawn "~/dotfiles/scripts/wpaper" "pick";}
     Mod+M repeat=false hotkey-overlay-title="Lock the Screen: hyprlock" { spawn "hyprlock"; }
     Mod+Ctrl+P repeat=false { spawn "alacritty" "-e" "gping" "1.1.1.1"; }
     Mod+E repeat=false { spawn "thunar"; }
