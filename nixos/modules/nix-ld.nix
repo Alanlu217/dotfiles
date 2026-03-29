@@ -19,6 +19,7 @@
       util-linux
       xz
       systemd
+      pkgsi686Linux.glibc
       
       # My own additions
       xorg.libXcomposite

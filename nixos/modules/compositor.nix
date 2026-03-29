@@ -20,7 +20,7 @@
     swayidle
     swww
     mako
-    rofi-wayland
+    rofi
     wl-clipboard
     xwayland-satellite
     firefox-bin

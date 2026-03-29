@@ -6,8 +6,6 @@
     gnumake
     killall
 
-    ghc haskell-language-server
-
     verible
     iverilog gtkwave
     typst tinymist typstyle
