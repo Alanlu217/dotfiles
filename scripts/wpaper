@@ -27,12 +27,14 @@ def set_wallpaper(setter: str, wall: Path):
     curr_bg.unlink(missing_ok=True)
     curr_bg.symlink_to(wall)
 
+
 def cmd_start(args):
     setter = get_setter()
     print(f"Starting {setter}-daemon...")
     subprocess.Popen([f"{setter}-daemon"])
     if os.environ.get("NIRI_SOCKET"):
         subprocess.Popen([f"{setter}-daemon", "-n", "overlay"])
+
 
 def cmd_random(args):
     wall = random.choice(list(WALL_DIR.iterdir()))
@@ -42,17 +44,21 @@ def cmd_random(args):
 
 def cmd_pick(args):
     walls = "\n".join(p.name for p in sorted(WALL_DIR.iterdir()))
-    result = subprocess.run(["rofi", "-dmenu"], input=walls, capture_output=True, text=True)
+    result = subprocess.run(
+        ["rofi", "-dmenu"], input=walls, capture_output=True, text=True
+    )
     if name := result.stdout.strip():
         set_wallpaper(get_setter(), WALL_DIR / name)
 
 
-parser = argparse.ArgumentParser(prog="wall", description="Wallpaper manager using swww or awww.")
+parser = argparse.ArgumentParser(
+    prog="wall", description="Wallpaper manager using swww or awww."
+)
 sub = parser.add_subparsers(dest="command", required=True)
 
-sub.add_parser("start",  help="Start the swww or awww daemon")
+sub.add_parser("start", help="Start the swww or awww daemon")
 sub.add_parser("random", help="Set a random wallpaper")
-sub.add_parser("pick",   help="Pick a wallpaper interactively via rofi")
+sub.add_parser("pick", help="Pick a wallpaper interactively via rofi")
 
 COMMANDS = {"start": cmd_start, "random": cmd_random, "pick": cmd_pick}
 
