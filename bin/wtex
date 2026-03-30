@@ -3,7 +3,7 @@
 file="$1"
 filename="${file%%.*}"
 extension="${file##*.}"
-out="$HOME/.cache/wtyp.pdf"
+out="/tmp/wtyp.pdf"
 
 if [[ -z "$file" ]]; then
   echo "Expecting filename"

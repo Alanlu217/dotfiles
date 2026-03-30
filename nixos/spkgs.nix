@@ -6,5 +6,6 @@
     zed-editor
     blender
     freecad
+    kicad
   ];
 }

@@ -29,5 +29,7 @@
     nushell
     tree-sitter
     watchexec
+    ripgrep
+    tmux
   ];
 }

@@ -24,8 +24,12 @@ function f
 end
 
 # Abbreviations
-alias ls="eza --icons --git"
-alias l="eza --icons -l --git --no-user --no-permissions"
+
+if command -v eza >/dev/null
+    alias ls="eza --icons --git"
+    alias l="eza --icons -l --git --no-user --no-permissions"
+end
+
 alias vi="nvim"
 alias tex="tectonic -X"
 
