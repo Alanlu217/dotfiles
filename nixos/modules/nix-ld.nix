@@ -22,19 +22,19 @@
       pkgsi686Linux.glibc
       
       # My own additions
-      libXcomposite
-      libXtst
-      libXrandr
-      libXext
-      libX11
-      libXfixes
+      xorg.libXcomposite
+      xorg.libXtst
+      xorg.libXrandr
+      xorg.libXext
+      xorg.libX11
+      xorg.libXfixes
       libGL
       libva
       pipewire
-      libxcb
-      libXdamage
-      libxshmfence
-      libXxf86vm
+      xorg.libxcb
+      xorg.libXdamage
+      xorg.libxshmfence
+      xorg.libXxf86vm
       libelf
 
       # Required
@@ -54,13 +54,13 @@
       # glibc_multi.bin # Seems to cause issue in ARM
       
       # # Without these it silently fails
-      libXinerama
-      libXcursor
-      libXrender
-      libXScrnSaver
-      libXi
-      libSM
-      libICE
+      xorg.libXinerama
+      xorg.libXcursor
+      xorg.libXrender
+      xorg.libXScrnSaver
+      xorg.libXi
+      xorg.libSM
+      xorg.libICE
       gnome2.GConf
       nspr
       nss
@@ -86,13 +86,13 @@
       # other issue: (Unity:377230): GLib-GIO-CRITICAL **: 21:09:04.706: g_dbus_proxy_call_sync_internal: assertion 'G_IS_DBUS_PROXY (proxy)' failed
       
       # Verified games requirements
-      libXt
-      libXmu
+      xorg.libXt
+      xorg.libXmu
       libogg
       libvorbis
       SDL
       SDL2_image
-      glew_1_10
+      glew110
       libidn
       tbb
       
@@ -121,7 +121,7 @@
       libgcrypt
       libvpx
       librsvg
-      libXft
+      xorg.libXft
       libvdpau
       # ...
       # Some more libraries that I needed to run programs

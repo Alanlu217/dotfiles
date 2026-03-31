@@ -9,6 +9,7 @@
     verible
     iverilog gtkwave
     typst tinymist typstyle
+    tectonic texlab tex-fmt
 
     go
     gopls
