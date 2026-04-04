@@ -18,7 +18,7 @@
     alacritty
     waybar
     swayidle
-    swww
+    awww
     mako
     rofi
     wl-clipboard
@@ -26,9 +26,11 @@
     firefox-bin
     obsidian
     evince
+    zathura
     libnotify
     adwaita-icon-theme
     grim slurp
+    playerctl
   ];
 
   fonts.packages = with pkgs; [

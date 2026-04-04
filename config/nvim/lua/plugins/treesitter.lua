@@ -24,6 +24,7 @@ require("nvim-treesitter.configs").setup({
 		"yaml",
 		"zig",
 	},
+    ignore_install = { "verilog" },
 	auto_install = true,
 	highlight = {
 		enable = true,

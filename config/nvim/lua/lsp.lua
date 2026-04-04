@@ -4,7 +4,7 @@ vim.pack.add({
 	"https://github.com/stevearc/conform.nvim",
 })
 
-vim.lsp.enable({ "gopls", "clangd", "zls", "rust_analyzer", "texlab", "tinymist", "ty", "ruff" })
+vim.lsp.enable({ "gopls", "clangd", "zls", "rust_analyzer", "texlab", "tinymist", "pyrefly", "ruff", "verible" })
 
 require("blink.cmp").setup({
 	keymap = {
@@ -27,9 +27,26 @@ require("blink.cmp").setup({
 	fuzzy = { implementation = "lua" },
 })
 
-vim.api.nvim_create_autocmd("FileType", {
-	pattern = "typst",
-	callback = function()
-		MiniPairs.map("i", "$", { action = "closeopen", pair = "$$", neigh_pattern = "[^\\]." })
+require("conform").setup({
+    formatters_by_ft = {
+        lua = { "stylua" },
+        go = { "goimports" },
+        rust = { "rustfmt" },
+        zig = { "zigfmt" },
+        typst = { "typstyle" },
+        python = { "ruff_format" },
+        verilog = { "verible" },
+    },
+    formatters = {
+        verible = {
+            prepend_args = { "--indentation_spaces=4", "--wrap_spaces=4" },
+        },
+    },
+})
+
+vim.api.nvim_create_autocmd("BufWritePre", {
+	pattern = "*",
+	callback = function(args)
+		require("conform").format({ bufnr = args.buf })
 	end,
 })

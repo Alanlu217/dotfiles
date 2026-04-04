@@ -1,7 +1,6 @@
 -- plugins
 require("plugins/blankline")
 require("plugins/catppuccin")
-require("plugins/conform")
 require("plugins/mini")
 require("plugins/oil")
 require("plugins/treesitter")
