@@ -1,6 +1,6 @@
 [Desktop Entry]
 Name=Helix
-Exec=alacritty -e helix %F
+Exec=alacritty -e hx %F
 Terminal=false
 Type=Application
 Icon=helix

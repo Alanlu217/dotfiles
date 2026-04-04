@@ -21,11 +21,11 @@
     awww
     mako
     rofi
+    glib
     wl-clipboard
     xwayland-satellite
     firefox-bin
     obsidian
-    evince
     zathura
     libnotify
     adwaita-icon-theme
