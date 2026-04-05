@@ -7,7 +7,7 @@
     killall
 
     verible
-    iverilog gtkwave
+    iverilog surfer
     typst tinymist typstyle
     tectonic texlab tex-fmt
 
