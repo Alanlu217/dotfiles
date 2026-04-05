@@ -1,0 +1,5 @@
+#!/usr/bin/env sh
+
+command=$1
+shift
+$command $@ &>/dev/null & disown
