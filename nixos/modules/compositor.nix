@@ -7,6 +7,7 @@
   programs.dconf.enable = true;
   programs.niri.enable = true;
   programs.hyprland.enable = true;
+  programs.sway.enable = true;
   programs.hyprlock.enable = true;
   programs.xwayland.enable = true;
   programs.thunar.enable = true;

@@ -1,12 +1,3 @@
-# Default config for sway
-#
-# Copy this to ~/.config/sway/config and edit it to your liking.
-#
-# Read `man 5 sway` for a complete reference.
-
-### Variables
-#
-# Logo key. Use Mod1 for Alt.
 set $mod Mod4
 set $term alacritty
 set $menu rofi -show drun
@@ -21,30 +12,10 @@ set $browser firefox
 #
 # You can get the names of your outputs by running: swaymsg -t get_outputs
 
-output eDP-1 resolution 3072x1920@120Hz scale 2 position 0,0
-output DP-3 resolution 3840x2160@59.997Hz scale 2 position 1536,-120
-output DP-7 resolution 3840x2160@60Hz scale 2
+output eDP-1 resolution 3072x1920@120Hz scale 2 position 0 0
+output DP-3 resolution 2560x1440@180.002Hz scale 1.2 position 1536 0
 
 workspace 1 output eDP-1
-
-### Idle configuration
-#
-# Example configuration:
-#
-# exec swayidle -w \
-#          timeout 300 'swaylock -f -c 000000' \
-#          timeout 600 'swaymsg "output * power off"' resume 'swaymsg "output * power on"' \
-#          before-sleep 'swaylock -f -c 000000'
-#
-# This will lock your screen after 300 seconds of inactivity, then turn off
-# your displays after another 300 seconds, and turn your screens back on when
-# resumed. It will also lock your screen before your computer goes to sleep.
-
-exec swayidle -w \
-         timeout 100 'brightnessctl set 5' resume 'brightnessctl set 80%' \
-         timeout 110 'swaymsg "output * power off"' resume 'swaymsg "output * power on"' \
-         timeout 120 'hyprlock' \
-         before-sleep 'hyprlock'
 
 ### Input configuration
 #
@@ -77,7 +48,7 @@ input "type:keyboard" {
 }
 
 input "5426:145:Razer_Razer_Viper_8KHz" {
-    pointer_accel -0.5
+    pointer_accel 0
 }
 
 ### Key bindings
@@ -88,7 +59,7 @@ input "5426:145:Razer_Razer_Viper_8KHz" {
     bindsym $mod+x exec $term
 
     # Kill focused window
-    bindsym $mod+q kill
+    bindsym $mod+Shift+q kill
 
     # Start your launcher
     bindsym $mod+space exec $menu
@@ -98,14 +69,14 @@ input "5426:145:Razer_Razer_Viper_8KHz" {
     bindsym $mod+b exec $browser
 
     # Wallpapers
-    bindsym $mod+t exec "just -f ~/dotfiles/scripts/alpine.just rwall"
-    bindsym $mod+Shift+t exec "just -f ~/dotfiles/scripts/alpine.just swall"
+    bindsym $mod+Grave exec "~/dotfiles/scripts/wpaper random"
+    bindsym $mod+Shift+Grave exec "~/dotfiles/scripts/wpaper pick"
 
     # Swaylock
     bindsym $mod+l exec "hyprlock"
 
     # Screenshot
-    bindsym $mod+p exec "grim -g "$(slurp -d)" - | wl-copy"
+    bindsym $mod+g exec "grim -g "$(slurp -d)" - | wl-copy"
 
     # Drag floating windows by holding down $mod and left mouse button.
     # Resize them with right mouse button + $mod.
@@ -251,8 +222,7 @@ bindsym $mod+r mode "resize"
     # Special key to take a screenshot with grim
     bindsym Print exec grim
 
-
-exec swww-daemon
+exec ~/dotfiles/scripts/wpaper start
 exec waybar
 
 focus_follows_mouse yes
