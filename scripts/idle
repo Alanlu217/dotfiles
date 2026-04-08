@@ -71,6 +71,21 @@ def run(cmd):
     )
 
 
+def start():
+    run(command)
+
+
+def stop():
+    run(["killall", daemon])
+
+
+def toggle():
+    if is_running():
+        run(["killall", daemon])
+    else:
+        run(command)
+
+
 def notify_waybar():
     run(["pkill", "-RTMIN+1", "waybar"])
     run(["pkill", "-RTMIN+1", ".waybar-wrapped"])
@@ -80,19 +95,29 @@ def is_running():
     return subprocess.run(["pidof", daemon], capture_output=True).returncode == 0
 
 
-def instant_idle():
-    swayidle = subprocess.Popen(
+def now():
+    running = is_running()
+
+    if running:
+        stop()
+
+    subprocess.Popen(
         [
             "swayidle",
             "timeout",
             "1",
             "hyprctl dispatch dpms off",
             "resume",
-            "hyprctl dispatch dpms on",
+            'hyprctl dispatch dpms on; pkill swayidle; swayidle timeout 10 "hyprctl dispatch dpms off" resume "hyprctl dispatch dpms on"',
         ]
     )
-    subprocess.run(["hyprlock"])
-    swayidle.terminate()
+    if subprocess.run(["pidof", "hyprlock"], capture_output=True).returncode != 0:
+        subprocess.run(["hyprlock"])
+
+    run(["pkill", "swayidle"])
+
+    if running:
+        start()
 
 
 parser = argparse.ArgumentParser()
@@ -106,16 +131,13 @@ sub.add_parser("running", help="Check if the idle daemon is running")
 args = parser.parse_args()
 
 if args.cmd == "start":
-    run(command)
+    start()
 elif args.cmd == "stop":
-    run(["killall", daemon])
+    stop()
 elif args.cmd == "toggle":
-    if is_running():
-        run(["killall", daemon])
-    else:
-        run(command)
+    toggle()
 elif args.cmd == "now":
-    instant_idle()
+    now()
 elif args.cmd == "running":
     print("on" if is_running() else "off")
 
