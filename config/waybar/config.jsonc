@@ -22,8 +22,8 @@
 	],
 	"custom/hypridle": {
 		"format": "󰤄 {text}",
-		"exec": "just -f ~/dotfiles/scripts/idle.just running",
-		"on-click": "just -f ~/dotfiles/scripts/idle.just toggle",
+		"exec": "~/dotfiles/scripts/idle running",
+		"on-click": "~/dotfiles/scripts/idle toggle",
 		"interval": 60,
 		"signal": 1
 	},

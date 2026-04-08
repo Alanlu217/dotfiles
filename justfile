@@ -20,7 +20,7 @@ applications:
 git-setup:
     git config --global user.email "alanlu2468@gmail.com"
     git config --global user.name "alanlu"
-    git config --global core.editor "helix"
+    git config --global core.editor "hx"
 
     git config --global commit.verbose true
 
