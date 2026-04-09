@@ -6,50 +6,16 @@ import argparse
 
 desktops = {
     "Hyprland": {
-        "daemon": "hypridle",
-        "command": ["hypridle"],
+        "monitor_off": "hyprctl dispatch dpms off",
+        "monitor_on": "hyprctl dispatch dpms on",
     },
     "niri": {
-        "daemon": "swayidle",
-        "command": [
-            "swayidle",
-            "timeout",
-            "100",
-            "brightnessctl -s set 5",
-            "resume",
-            "brightnessctl -r",
-            "timeout",
-            "110",
-            "niri msg action power-off-monitors",
-            "resume",
-            "niri msg action power-on-monitors",
-            "timeout",
-            "120",
-            "hyprlock",
-            "before-sleep",
-            "hyprlock",
-        ],
+        "monitor_off": "niri msg action power-off-monitors",
+        "monitor_on": "niri msg action power-on-monitors",
     },
     "sway": {
-        "daemon": "swayidle",
-        "command": [
-            "swayidle",
-            "timeout",
-            "100",
-            "brightnessctl -s set 5",
-            "resume",
-            "brightnessctl -r",
-            "timeout",
-            "110",
-            "swaymsg 'output * power off'",
-            "resume",
-            "swaymsg 'output * power on'",
-            "timeout",
-            "120",
-            "hyprlock",
-            "before-sleep",
-            "hyprlock",
-        ],
+        "monitor_off": "swaymsg 'output * power off'",
+        "monitor_on": "swaymsg 'output * power on'",
     },
 }
 
@@ -58,8 +24,37 @@ if desktop not in desktops:
     print("Desktop not supported")
     os._exit(0)
 
-daemon = desktops[desktop]["daemon"]
-command = desktops[desktop]["command"]
+off = desktops[desktop]["monitor_off"]
+on = desktops[desktop]["monitor_on"]
+daemon = "swayidle"
+
+command = [
+    "swayidle",
+    "timeout",
+    "100",
+    "brightnessctl -s set 5",
+    "resume",
+    "brightnessctl -r",
+    "timeout",
+    "110",
+    off,
+    "resume",
+    on,
+    "timeout",
+    "120",
+    "hyprlock",
+    "before-sleep",
+    "hyprlock",
+]
+
+now_command = [
+    "swayidle",
+    "timeout",
+    "1",
+    off,
+    "resume",
+    f'{on}; pkill swayidle; swayidle timeout 10 "{off}" resume "{on}"',
+]
 
 
 def run(cmd):
@@ -101,16 +96,7 @@ def now():
     if running:
         stop()
 
-    subprocess.Popen(
-        [
-            "swayidle",
-            "timeout",
-            "1",
-            "hyprctl dispatch dpms off",
-            "resume",
-            'hyprctl dispatch dpms on; pkill swayidle; swayidle timeout 10 "hyprctl dispatch dpms off" resume "hyprctl dispatch dpms on"',
-        ]
-    )
+    subprocess.Popen(now_command)
     if subprocess.run(["pidof", "hyprlock"], capture_output=True).returncode != 0:
         subprocess.run(["hyprlock"])
 
