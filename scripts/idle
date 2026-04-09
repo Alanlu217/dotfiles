@@ -122,9 +122,8 @@ elif args.cmd == "stop":
     stop()
 elif args.cmd == "toggle":
     toggle()
+    notify_waybar()
 elif args.cmd == "now":
     now()
 elif args.cmd == "running":
     print("on" if is_running() else "off")
-
-notify_waybar()

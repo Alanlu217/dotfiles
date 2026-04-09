@@ -14,6 +14,8 @@
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
+  boot.loader.timeout = 0;
+  boot.kernelPackages = pkgs.linuxPackages_6_19;
 
   networking.hostName = "nixriver"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
@@ -52,7 +54,7 @@
 
   programs.fish.enable = true;
   programs.nh.enable = true;
-  documentation.man.cache.enable = false;
+  documentation.man.generateCaches = false;
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.aln = {

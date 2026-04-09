@@ -19,7 +19,7 @@
     alacritty
     waybar
     swayidle
-    awww
+    swww
     mako
     rofi
     glib

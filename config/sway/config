@@ -53,6 +53,11 @@ input "5426:145:Razer_Razer_Viper_8KHz" {
     scroll_factor 1.5
 }
 
+input "1133:16500:Logitech_G305" {
+    pointer_accel -0.5
+    scroll_factor 1.5
+}
+
 ### Key bindings
 #
 # Basics:
@@ -231,6 +236,7 @@ bindsym $mod+r mode "resize"
 
 exec ~/dotfiles/scripts/wpaper start
 exec waybar
+exec xwayland-satellite
 
 focus_follows_mouse yes
 default_border pixel 1
