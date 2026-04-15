@@ -47,15 +47,6 @@ command = [
     "hyprlock",
 ]
 
-now_command = [
-    "swayidle",
-    "timeout",
-    "1",
-    off,
-    "resume",
-    f'{on}; pkill swayidle; swayidle timeout 10 "{off}" resume "{on}"',
-]
-
 
 def run(cmd):
     subprocess.Popen(
@@ -91,19 +82,8 @@ def is_running():
 
 
 def now():
-    running = is_running()
-
-    if running:
-        stop()
-
-    subprocess.Popen(now_command)
-    if subprocess.run(["pidof", "hyprlock"], capture_output=True).returncode != 0:
-        subprocess.run(["hyprlock"])
-
-    run(["pkill", "swayidle"])
-
-    if running:
-        start()
+    subprocess.Popen("hyprlock")
+    subprocess.run(["systemctl", "suspend"])
 
 
 parser = argparse.ArgumentParser()

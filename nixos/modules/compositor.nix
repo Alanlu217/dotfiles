@@ -16,6 +16,7 @@
 
   environment.systemPackages = with pkgs; [
     gsettings-desktop-schemas
+    gnome-themes-extra
     alacritty
     waybar
     swayidle
