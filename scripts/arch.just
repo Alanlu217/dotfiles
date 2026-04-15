@@ -19,8 +19,6 @@ deps:
     hyprlock # lock screen
     swayidle # idler
 
-    tlp # Battery Saver
-
     # Audio stuff
     wireplumber
     pipewire
@@ -29,10 +27,8 @@ deps:
     pipewire-jack
     pavucontrol
 
-    networkmanager # network manager
     bluez # bluetooth
     bluez-utils # bluetooth utils
-    network-manager-applet # nm-applet
     blueman # blueman-applet
     brightnessctl
     avahi nss-mdns
@@ -59,7 +55,6 @@ deps:
     man-db man-pages
 
     # Dev
-    zig zls
     clang
     openssh
     btop
@@ -78,7 +73,6 @@ deps:
     firefox
     thunar
     eog
-    evince
     xdg-desktop-portal-gnome
     zathura zathura-pdf-poppler
     discord
@@ -93,7 +87,6 @@ deps:
   uv tool install pyrefly
 
   sudo systemctl enable bluetooth
-  sudo systemctl enable tlp
   sudo systemctl enable dbus
   sudo systemctl enable avahi-daemon
 
