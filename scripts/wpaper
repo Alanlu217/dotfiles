@@ -32,9 +32,6 @@ def cmd_start(args):
     setter = get_setter()
     print(f"Starting {setter}-daemon...")
     subprocess.Popen([f"{setter}-daemon"])
-    if os.environ.get("NIRI_SOCKET"):
-        subprocess.Popen([f"{setter}-daemon", "-n", "overlay"])
-
 
 def cmd_random(args):
     wall = random.choice(list(WALL_DIR.iterdir()))
