@@ -44,7 +44,7 @@
 	"pulseaudio": {
 		"scroll-step": 2,
 		"format": "{icon} {volume}%",
-		"format-muted": "",
+		"format-muted": " ",
 		"format-icons": {
 			"default": [
 				"",
