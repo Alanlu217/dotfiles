@@ -1,0 +1,59 @@
+#!/usr/bin/env python3
+from argparse import ArgumentParser
+from subprocess import run
+from pathlib import Path
+from shutil import rmtree
+import sys
+import os
+
+VENV = Path.home() / ".venv/global"
+PYPROJECT = Path.home() / "dotfiles/scripts"
+
+ENV = {**os.environ, "UV_PROJECT_ENVIRONMENT": str(VENV)}
+
+
+def setup():
+    if VENV.exists():
+        print(f"{VENV} already exists, syncing instead...")
+        sync()
+        return
+    run(["uv", "sync", "--project", str(PYPROJECT)], env=ENV, check=True)
+
+
+def sync():
+    run(["uv", "sync", "--project", str(PYPROJECT)], env=ENV, check=True)
+
+
+def clean():
+    if VENV.exists():
+        rmtree(VENV)
+        print(f"Removed {VENV}")
+    else:
+        print(f"Nothing to clean at {VENV}")
+
+
+def list_packages():
+    run(["uv", "pip", "list", "--python", str(VENV)], check=True)
+
+
+def info():
+    print(f"venv:      {VENV}")
+    print(f"python:    {VENV / 'bin/python'}")
+    print(f"pyproject: {PYPROJECT / 'pyproject.toml'}")
+
+
+parser = ArgumentParser(description="Manage global uv venv")
+parser.add_argument("command", choices=["setup", "sync", "clean", "list", "info"])
+try:
+    args = parser.parse_args(args=None if sys.argv[1:] else ["--help"])
+except SystemExit:
+    parser.print_help()
+    raise
+
+if not VENV.exists() and args.command != "setup":
+    print(f"No venv found at {VENV}, run 'setup' first.")
+    sys.exit(1)
+
+{"setup": setup, "sync": sync, "clean": clean, "list": list_packages, "info": info}[
+    args.command
+]()

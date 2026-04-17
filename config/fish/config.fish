@@ -32,6 +32,7 @@ end
 
 alias vi="nvim"
 alias tex="tectonic -X"
+alias py="$HOME/.venv/global/bin/python3"
 
 alias gs="git status --short"
 alias gd="git diff"
@@ -50,8 +51,6 @@ alias gcl="git clone"
 
 abbr d docker
 abbr dc "docker compose"
-
-abbr py python3
 
 alias nixup="sudo nixos-rebuild switch --flake ~/dotfiles/nixos#nixriver"
 alias nd="nix develop --command fish"

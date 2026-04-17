@@ -9,9 +9,9 @@ command = "clippy"
 [language-server.tinymist]
 command = "tinymist"
 
-[language-server.pyrefly]
-command = "pyrefly"
-args = ["lsp"]
+[language-server.ty]
+command = "ty"
+args = ["server"]
 
 [language-server.deno-lsp]
 command = "deno"
@@ -26,7 +26,7 @@ command = "verible-verilog-ls"
 
 [[language]]
 name = "python"
-language-servers = ["pyrefly", "ruff"]
+language-servers = ["ty", "ruff"]
 auto-format = true
 
 [[language]]
