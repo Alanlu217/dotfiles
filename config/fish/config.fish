@@ -32,7 +32,7 @@ end
 
 alias vi="nvim"
 alias tex="tectonic -X"
-alias py="$HOME/.venv/global/bin/python3"
+alias py="uv run python"
 
 alias gs="git status --short"
 alias gd="git diff"
