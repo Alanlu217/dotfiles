@@ -32,7 +32,7 @@ end
 
 alias vi="nvim"
 alias tex="tectonic -X"
-alias py="uv run python"
+alias py="uvx ipython"
 
 alias gs="git status --short"
 alias gd="git diff"

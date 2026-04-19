@@ -8,14 +8,7 @@ vim.lsp.enable({ "gopls", "clangd", "zls", "rust_analyzer", "texlab", "tinymist"
 
 require("blink.cmp").setup({
 	keymap = {
-		preset = "enter",
-
-		["<Tab>"] = {
-			"insert_next",
-			"snippet_forward",
-			"fallback",
-		},
-		["<S-Tab>"] = { "insert_prev", "snippet_backward", "fallback" },
+		preset = "super-tab",
 	},
 	completion = {
 		list = { selection = { preselect = false } },

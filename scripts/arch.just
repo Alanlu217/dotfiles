@@ -85,6 +85,7 @@ deps:
 
   uv tool install ruff
   uv tool install pyrefly
+  uv tool install ipython
 
   sudo systemctl enable bluetooth
   sudo systemctl enable dbus
