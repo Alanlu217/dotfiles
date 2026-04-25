@@ -6,14 +6,14 @@
   };
 
   outputs = {nixpkgs, ...}@inputs: {
-    nixosConfigurations.nixriver = let
+    nixosConfigurations.iodine-nix = let
       system = "x86_64-linux";
     in
       nixpkgs.lib.nixosSystem {
         inherit system;
         specialArgs = {inherit inputs;};
         modules = [
-          ./devices/nixriver/configuration.nix
+          ./devices/iodine-nix/configuration.nix
 
           ./spkgs.nix
 

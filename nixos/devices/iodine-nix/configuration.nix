@@ -17,7 +17,7 @@
   boot.loader.timeout = 0;
   boot.kernelPackages = pkgs.linuxPackages_6_19;
 
-  networking.hostName = "nixriver"; # Define your hostname.
+  networking.hostName = "iodine-nix"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
   # Configure network proxy if necessary

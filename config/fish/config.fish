@@ -52,7 +52,7 @@ alias gcl="git clone"
 abbr d docker
 abbr dc "docker compose"
 
-alias nixup="sudo nixos-rebuild switch --flake ~/dotfiles/nixos#nixriver"
+alias nixup="sudo nixos-rebuild switch --flake ~/dotfiles/nixos#iodine-nix"
 alias nd="nix develop --command fish"
 
 alias edot='$EDITOR $(fzf --walker-root ~/dotfiles)'
