@@ -3,7 +3,6 @@
 import subprocess
 import os
 import time
-import subprocess
 import argparse
 
 desktops = {
@@ -84,10 +83,22 @@ def is_running():
 
 
 def now():
+    running = is_running()
+
+    if running:
+        stop()
+
     if subprocess.run(["pidof", "hyprlock"], capture_output=True).returncode != 0:
         subprocess.Popen("hyprlock")
         time.sleep(0.5)
     subprocess.run(["systemctl", "suspend"])
+
+    if running:
+        start()
+
+
+def exit():
+    pass
 
 
 parser = argparse.ArgumentParser()

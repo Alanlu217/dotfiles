@@ -68,7 +68,7 @@ deps:
     typst tinymist typstyle
 
     # Applications
-    alacritty
+    kitty
     obsidian
     firefox
     thunar

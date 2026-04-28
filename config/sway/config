@@ -1,5 +1,5 @@
 set $mod Mod4
-set $term alacritty
+set $term kitty
 set $menu rofi -show drun
 set $wmenu rofi -show window
 set $browser firefox

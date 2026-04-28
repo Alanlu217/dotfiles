@@ -57,7 +57,9 @@ alias nd="nix develop --command fish"
 
 alias edot='$EDITOR $(fzf --walker-root ~/dotfiles)'
 
-# starship init fish | source
+starship init fish | source
+enable_transience
+
 zoxide init fish | source
 
 # enable_transience
