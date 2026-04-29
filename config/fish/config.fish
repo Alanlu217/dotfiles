@@ -5,6 +5,10 @@ end
 export PATH="$HOME/dotfiles/bin:$PATH"
 
 set -gx GTK_THEME Adwaita:dark
+set -gx XCURSOR_THEME Adwaita
+set -gx XCURSOR_SIZE 24
+
+set -gx XDG_DATA_DIRS $HOME/.local/share /usr/local/share:/usr/share
 
 set -gx ELECTRON_OZONE_PLATFORM_HINT auto
 

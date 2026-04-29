@@ -1,11 +1,6 @@
 [Desktop Entry]
 Type=Application
 Name=Spotify
-GenericName=Music Player
-Icon=spotify-client
-TryExec=spotify
-Exec=spotify %U --ozone-platform-hint=wayland
-Terminal=false
-MimeType=x-scheme-handler/spotify;
-Categories=Audio;Music;Player;AudioVideo;
-StartupWMClass=spotify
+TryExec=spotify_player
+Exec=spotify_player
+Terminal=true
