@@ -31,7 +31,7 @@ deps:
     bluez-utils # bluetooth utils
     blueman # blueman-applet
     brightnessctl
-    avahi nss-mdns
+    avahi nss-mdns iwd
 
     fish # better shell
     watchexec
@@ -77,7 +77,7 @@ deps:
     zathura zathura-pdf-poppler
     discord
     steam lib32-vulkan-intel
-    spotify-launcher
+    spotify_player
     vulkan-intel
   )
 
@@ -90,6 +90,7 @@ deps:
   sudo systemctl enable bluetooth
   sudo systemctl enable dbus
   sudo systemctl enable avahi-daemon
+  sudo systemctl enable iwd
 
 paru:
     #!/usr/bin/env bash

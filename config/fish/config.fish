@@ -16,7 +16,7 @@ set -gx EDITOR hx
 set -gx PAGER less
 set -gx MANPAGER less
 
-set -gx QT_QPA_PLATFORMTHEME qt6ct
+set -gx QT_QPA_PLATFORMTHEME qt5ct
 
 function f
     set tmp (mktemp -t "yazi-cwd.XXXXXX")
