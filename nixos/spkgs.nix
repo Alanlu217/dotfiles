@@ -7,5 +7,6 @@
     blender
     freecad
     kicad
+    inkscape
   ];
 }
