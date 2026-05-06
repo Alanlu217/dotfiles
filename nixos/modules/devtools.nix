@@ -1,10 +1,14 @@
 {pkgs, ...}: {
+  services.flatpak.enable = true;
+  
   environment.systemPackages = with pkgs; [
     gcc
     cmake
     clang-tools
     gnumake
     killall
+
+    tailscale
 
     verible
     iverilog surfer
