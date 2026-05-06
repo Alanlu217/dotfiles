@@ -12,6 +12,12 @@
   color: @text;
 }
 
+#submap {
+  color: @green;
+  padding-left: 0.4rem;
+  padding-right: 0.4rem;
+}
+
 #workspaces button {
   color: @lavender;
   padding-left: 0.4rem;
@@ -46,7 +52,7 @@
 }
 
 #custom-hypridle {
-  color: @blue;
+  color: @yellow;
   padding-left: 0.6rem;
 }
 

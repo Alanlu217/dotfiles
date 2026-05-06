@@ -6,6 +6,7 @@
 		"niri/workspaces",
 		"hyprland/workspaces",
 		"sway/workspaces",
+		"hyprland/submap",
 		"custom/hypridle",
 		"cpu",
 		"memory"
