@@ -1,0 +1,30 @@
+#!/usr/bin/env python3
+import json
+from subprocess import run
+
+msg = json.loads(
+    run(["swaymsg", "-t", "get_outputs"], text=True, capture_output=True).stdout
+)
+output = next(o for o in msg if o["active"])
+width, height, refresh = (
+    str(output["current_mode"]["width"]),
+    str(output["current_mode"]["height"]),
+    str(round(output["current_mode"]["refresh"] / 1000)),
+)
+
+run(
+    [
+        "gamescope",
+        "-e",
+        "-W",
+        width,
+        "-H",
+        height,
+        "-f",
+        "-r",
+        refresh,
+        "--",
+        "/usr/bin/steam",
+        "-tenfoot",
+    ]
+)

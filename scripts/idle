@@ -14,7 +14,7 @@ desktops = {
         "monitor_off": "niri msg action power-off-monitors",
         "monitor_on": "niri msg action power-on-monitors",
     },
-    "sway": {
+    "sway:wlroots": {
         "monitor_off": "swaymsg 'output * power off'",
         "monitor_on": "swaymsg 'output * power on'",
     },

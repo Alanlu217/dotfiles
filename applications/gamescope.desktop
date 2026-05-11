@@ -1,0 +1,5 @@
+[Desktop Entry]
+Type=Application
+Name=Gamescope Steam
+TryExec=gamescope -e -W 2560 -H 1440 -f -r 180 -- /usr/bin/steam -tenfoot
+Exec=gamescope -e -W 2560 -H 1440 -f -r 180 -- /usr/bin/steam -tenfoot
