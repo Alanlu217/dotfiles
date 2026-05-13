@@ -78,6 +78,9 @@ input "1133:16500:Logitech_G305" {
     # Start file browser
     bindsym $mod+e exec $filebrowser
 
+    # Rename workspace
+    bindsym $mod+Shift+r exec "~/dotfiles/scripts/swayutils rwork"
+
     # Wallpapers
     bindsym $mod+Grave exec "~/dotfiles/scripts/wpaper random"
     bindsym $mod+Shift+Grave exec "~/dotfiles/scripts/wpaper pick"

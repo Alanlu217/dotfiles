@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
+
 import json
 from subprocess import run
+import os
 
 msg = json.loads(
     run(["swaymsg", "-t", "get_outputs"], text=True, capture_output=True).stdout
 )
-output = next(o for o in msg if o["active"])
+output = next(o for o in msg if o["focused"])
 width, height, refresh = (
     str(output["current_mode"]["width"]),
     str(output["current_mode"]["height"]),
@@ -23,8 +25,15 @@ run(
         "-f",
         "-r",
         refresh,
+        "--expose-wayland",
+        "--steam",
         "--",
-        "/usr/bin/steam",
+        "steam",
         "-tenfoot",
-    ]
+    ],
+    env={
+        **os.environ,
+        "LIBGL_ALWAYS_SOFTWARE": "0",
+        "DXVK_ASYNC": "1",
+    },
 )
