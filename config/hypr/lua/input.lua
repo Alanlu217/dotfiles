@@ -80,6 +80,8 @@ hl.bind(mainMod .. " + X", hl.dsp.exec_cmd(terminal))
 hl.bind(mainMod .. " + B", hl.dsp.exec_cmd(browser))
 hl.bind(mainMod .. " + E", hl.dsp.exec_cmd(fileManager))
 
+hl.bind(mainMod .. " + F", hl.dsp.window.fullscreen())
+
 hl.bind(mainMod .. " + G", hl.dsp.exec_cmd("grim -g \"$(slurp -d)\" - | wl-copy"))
 
 hl.bind(mainMod .. " + Grave", hl.dsp.exec_cmd("~/dotfiles/scripts/wpaper pick"))
@@ -88,6 +90,7 @@ hl.bind(mainMod .. " + SHIFT + Grave",
 
 hl.bind(mainMod .. " + L", hl.dsp.exec_cmd("hyprlock"))
 hl.bind(mainMod .. " + SHIFT + L", hl.dsp.exit())
+hl.bind(mainMod .. " + SHIFT + P", hl.dsp.exec_cmd("~/dotfiles/scripts/idle now"))
 
 hl.bind(mainMod .. " + SHIFT + Q", hl.dsp.window.close())
 hl.bind(mainMod .. " + V", hl.dsp.window.float({ action = "toggle" }))
@@ -101,7 +104,6 @@ local directions = {
     up = {"up", "W", "K"},
     down = {"down", "S", "J"},
 }
-
 for dir, binds in pairs(directions) do
     for _, v in ipairs(binds) do
         hl.bind(mainMod .. " + " .. v,
@@ -110,6 +112,12 @@ for dir, binds in pairs(directions) do
             hl.dsp.window.move({ direction = dir }))
     end
 end
+
+-- Move monitors
+hl.bind(mainMod .. " + Z", hl.dsp.focus({monitor = "left"}))
+hl.bind(mainMod .. " + C", hl.dsp.focus({monitor = "right"}))
+hl.bind(mainMod .. " + SHIFT + Z", hl.dsp.workspace.move({monitor = "left"}))
+hl.bind(mainMod .. " + SHIFT + C", hl.dsp.workspace.move({monitor = "right"}))
 
 -- Switch workspaces with mainMod + [0-9]
 -- Move active window to a workspace with mainMod + SHIFT + [0-9]
