@@ -7,6 +7,7 @@
 		"hyprland/workspaces",
 		"sway/workspaces",
 		"hyprland/submap",
+		"sway/mode",
 		"custom/hypridle",
 		"cpu",
 		"memory"
