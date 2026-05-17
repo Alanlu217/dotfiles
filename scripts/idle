@@ -7,8 +7,8 @@ import argparse
 
 desktops = {
     "Hyprland": {
-        "monitor_off": "hyprctl dispatch dpms off",
-        "monitor_on": "hyprctl dispatch dpms on",
+        "monitor_off": "hyprctl dispatch 'hl.dsp.dpms()'",
+        "monitor_on": "hyprctl dispatch 'hl.dsp.dpms()'",
     },
     "niri": {
         "monitor_off": "niri msg action power-off-monitors",
