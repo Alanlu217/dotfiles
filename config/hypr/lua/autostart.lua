@@ -1,11 +1,9 @@
 local autostart = {
     "waybar",
     "udiskie",
-    "xwayland-satellite",
     "~/dotfiles/scripts/wpaper start",
     "~/dotfiles/scripts/idle start",
     "~/dotfiles/scripts/low_bat.py",
-    "hyprctl setcursor Adwaita 24",
 }
 
 hl.on("hyprland.start", function ()

@@ -104,12 +104,23 @@ local directions = {
     up = {"up", "W", "K"},
     down = {"down", "S", "J"},
 }
+local dir_to_resize = {
+    left = {x = -10, y = 0},
+    right = {x = 10, y = 0},
+    up = {x = 0, y = 10},
+    down = {x = 0, y = -10},
+}
 for dir, binds in pairs(directions) do
     for _, v in ipairs(binds) do
+        -- Focus
         hl.bind(mainMod .. " + " .. v,
             hl.dsp.focus({ direction = dir }))
+        -- Move
         hl.bind(mainMod .. " + SHIFT + " .. v,
             hl.dsp.window.move({ direction = dir }))
+        -- Resize
+        hl.bind(mainMod .. " + SHIFT + CTRL + " .. v,
+            hl.dsp.window.resize({relative = true, x = dir_to_resize[dir].x, y = dir_to_resize[dir].y}), {repeating = true})
     end
 end
 
