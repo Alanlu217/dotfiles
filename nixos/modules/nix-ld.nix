@@ -45,23 +45,22 @@
       zlib
 
       # ── Display / X11 ────────────────────────────────────────────
-      xorg.libX11
-      xorg.libXext
-      xorg.libXfixes
-      xorg.libXrender
-      xorg.libXrandr
-      xorg.libXcomposite
-      xorg.libXdamage
-      xorg.libXtst
-      xorg.libXi
-      xorg.libXinerama
-      xorg.libXcursor
-      xorg.libXScrnSaver
-      xorg.libXxf86vm
-      xorg.libxcb
-      xorg.libxshmfence
-      xorg.libSM
-      xorg.libICE
+      libx11
+      libxext
+      libxfixes
+      libxrender
+      libxrandr
+      libxcomposite
+      libxdamage
+      libxtst
+      libxi
+      libxinerama
+      libxcursor
+      libxxf86vm
+      libxcb
+      libxshmfence
+      libSM
+      libICE
 
       # ── Wayland ──────────────────────────────────────────────────
       wayland

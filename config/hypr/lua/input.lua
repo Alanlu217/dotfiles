@@ -84,9 +84,9 @@ hl.bind(mainMod .. " + F", hl.dsp.window.fullscreen())
 
 hl.bind(mainMod .. " + G", hl.dsp.exec_cmd("grim -g \"$(slurp -d)\" - | wl-copy"))
 
-hl.bind(mainMod .. " + Grave", hl.dsp.exec_cmd("~/dotfiles/scripts/wpaper pick"))
+hl.bind(mainMod .. " + Grave", hl.dsp.exec_cmd("~/dotfiles/scripts/wpaper random"))
 hl.bind(mainMod .. " + SHIFT + Grave",
-    hl.dsp.exec_cmd("~/dotfiles/scripts/wpaper random"))
+    hl.dsp.exec_cmd("~/dotfiles/scripts/wpaper pick"))
 
 hl.bind(mainMod .. " + L", hl.dsp.exec_cmd("hyprlock"))
 hl.bind(mainMod .. " + SHIFT + L", hl.dsp.exit())
