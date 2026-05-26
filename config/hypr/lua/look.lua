@@ -52,6 +52,7 @@ hl.config({
 
     misc = {
         disable_hyprland_logo = true,
+        initial_workspace_tracking = false,
     },
 
     ecosystem = {

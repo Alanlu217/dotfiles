@@ -1,6 +1,0 @@
-[Desktop Entry]
-Type=Application
-Name=Spotify
-TryExec=spotify_player
-Exec=spotify_player
-Terminal=true

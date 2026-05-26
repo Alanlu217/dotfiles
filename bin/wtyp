@@ -18,7 +18,7 @@ if [[ ! -f "$file" ]]; then
     typst compile "$file" "$out"
 fi
 
-evince "$out" &> /dev/null & disown
+zathura "$out" &> /dev/null & disown
 
 watchexec -c -- typst compile "$file" "$out" >/dev/null 2>&1 & disown
 WATCH_PID=$!
