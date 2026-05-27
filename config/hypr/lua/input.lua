@@ -1,6 +1,6 @@
 local terminal    = "alacritty"
 local fileManager = "thunar"
-local browser     = "zen-browser"
+local browser     = "firefox"
 local menu        = "rofi -show drun"
 
 hl.config({
@@ -125,10 +125,10 @@ for dir, binds in pairs(directions) do
 end
 
 -- Move monitors
-hl.bind(mainMod .. " + Z", hl.dsp.focus({monitor = "left"}))
-hl.bind(mainMod .. " + C", hl.dsp.focus({monitor = "right"}))
-hl.bind(mainMod .. " + SHIFT + Z", hl.dsp.workspace.move({monitor = "left"}))
-hl.bind(mainMod .. " + SHIFT + C", hl.dsp.workspace.move({monitor = "right"}))
+hl.bind(mainMod .. " + Z", hl.dsp.focus({monitor = "l"}))
+hl.bind(mainMod .. " + C", hl.dsp.focus({monitor = "r"}))
+hl.bind(mainMod .. " + SHIFT + Z", hl.dsp.workspace.move({monitor = "l"}))
+hl.bind(mainMod .. " + SHIFT + C", hl.dsp.workspace.move({monitor = "r"}))
 
 -- Switch workspaces with mainMod + [0-9]
 -- Move active window to a workspace with mainMod + SHIFT + [0-9]
