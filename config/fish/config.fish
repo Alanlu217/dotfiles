@@ -55,7 +55,7 @@ abbr d docker
 abbr dc "docker compose"
 
 alias nixup="sudo nixos-rebuild switch --flake ~/dotfiles/nixos#iodine-nix"
-alias nd="nix develop --command fish"
+alias nd="nix develop --command $SHELL"
 
 alias edot='$EDITOR $(fzf --walker-root ~/dotfiles)'
 

@@ -177,6 +177,9 @@
     "quick_actions": false,
   },
   "terminal": {
+    "shell": {
+      "program": "fish"
+    },
     "toolbar": {
       "breadcrumbs": false,
     },
