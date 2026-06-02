@@ -1,7 +1,7 @@
 local autostart = {
     "waybar",
     "udiskie",
-    "xwayland-satellite",
+    -- "xwayland-satellite",
     "~/dotfiles/scripts/wpaper start",
     "~/dotfiles/scripts/idle start",
     "~/dotfiles/scripts/low_bat.py",

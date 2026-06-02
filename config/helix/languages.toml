@@ -52,6 +52,11 @@ auto-format = true
 formatter = { command = "golines" }
 
 [[language]]
+name = "java"
+auto-format = true
+indent = { tab-width = 4, unit = "    "}
+
+[[language]]
 name = "typescript"
 roots = ["deno.json", "deno.jsonc", "package.json"]
 file-types = ["ts", "tsx"]
