@@ -34,7 +34,7 @@ end
 
 alias vi="nvim"
 alias tex="tectonic -X"
-alias pylab="uv run --with numpy --with matplotlib --with ipython ipython --pylab --no-banner"
+alias pylab="uv run --with numpy --with matplotlib --with scipy --with sympy --with pandas --with ipython ipython --pylab --no-banner"
 
 alias gs="git status --short"
 alias gd="git diff"

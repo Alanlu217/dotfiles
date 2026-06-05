@@ -3,7 +3,7 @@ deps:
 
   pkgs=(
     base-devel
-  
+
     # Git stuff
     git
     github-cli
@@ -91,6 +91,7 @@ deps:
   sudo systemctl enable dbus
   sudo systemctl enable avahi-daemon
   sudo systemctl enable iwd
+  sudo systemctl enable systemd-resolved
 
 paru:
     #!/usr/bin/env bash

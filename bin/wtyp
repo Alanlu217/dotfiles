@@ -1,26 +1,45 @@
-#!/usr/bin/env bash
+#!/usr/bin/env python3
+import os
+import sys
+import subprocess
 
-file="$1"
-filename="${file%%.*}"
-extension="${file##*.}"
-out="/tmp/wtyp.pdf"
 
-if [[ -z "$file" ]]; then
-    echo "Expecting filename"
-    exit
-fi
+def main():
+    file = sys.argv[1] if len(sys.argv) > 1 else ""
+    out = "/tmp/wtyp.pdf"
 
-if [[ -z "$extension" || "$file" == "$extension" ]]; then
-    file="${file}.typ"
-fi
+    if len(sys.argv) > 2:
+        out = sys.argv[2]
 
-if [[ ! -f "$file" ]]; then
-    typst compile "$file" "$out"
-fi
+    if not file:
+        print("Expecting filename")
+        sys.exit(1)
 
-zathura "$out" &> /dev/null & disown
+    if "." not in os.path.basename(file):
+        file = file + ".typ"
 
-watchexec -c -- typst compile "$file" "$out" >/dev/null 2>&1 & disown
-WATCH_PID=$!
-"$EDITOR" "$file"
-kill "$WATCH_PID"
+    subprocess.run(["typst", "compile", file, out])
+
+    subprocess.Popen(
+        ["zathura", out],
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+        start_new_session=True,
+    )
+
+    watch = subprocess.Popen(
+        ["watchexec", "-c", "--", "typst", "compile", file, out],
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+        start_new_session=True,
+    )
+
+    editor = os.environ.get("EDITOR", "vi")
+    subprocess.run([editor, file])
+
+    # Kill watcher when editor closes
+    watch.kill()
+
+
+if __name__ == "__main__":
+    main()
