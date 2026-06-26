@@ -1,0 +1,29 @@
+// Add lines like this to spawn processes at startup.
+// Note that running niri as a session supports xdg-desktop-autostart,
+// which may be more convenient to use.
+// See the binds section below for more spawn examples.
+
+// This line starts waybar, a commonly used bar for Wayland compositors.
+spawn-at-startup "waybar"
+
+spawn-at-startup "blueman-applet"
+spawn-at-startup "nm-applet"
+
+spawn-at-startup "~/dotfiles/scripts/wpaper" "start"
+
+spawn-at-startup "~/dotfiles/scripts/idle.sh"
+
+spawn-at-startup "~/dotfiles/scripts/low_bat.py"
+
+spawn-at-startup "xwayland-satellite" ":12"
+
+spawn-at-startup "udiskie"
+
+spawn-at-startup "gsettings" "set" "org.gnome.desktop.interface color-scheme" "prefer-dark"
+
+// Environment Settings
+environment {
+    DISPLAY ":12"
+
+    ELECTRON_OZONE_PLATFORM_HINT "auto"
+}

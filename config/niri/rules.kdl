@@ -1,0 +1,64 @@
+// Window rules let you adjust behavior for individual windows.
+// Find more information on the wiki:
+// https://github.com/YaLTeR/niri/wiki/Configuration:-Window-Rules
+
+// Open the Firefox picture-in-picture player as floating by default.
+window-rule {
+    // This app-id regular expression will work for both:
+    // - host Firefox (app-id is "firefox")
+    // - Flatpak Firefox (app-id is "org.mozilla.firefox")
+    match app-id=r#"firefox$"# title="^Picture-in-Picture$"
+    open-floating true
+}
+
+// Example: enable rounded corners for all windows.
+// (This example rule is commented out with a "/-" in front.)
+window-rule {
+    geometry-corner-radius 0
+    clip-to-geometry true
+}
+
+window-rule {
+    match app-id=r#"Alacritty"#
+    match app-id=r#"kitty"#
+    match app-id=r#"ghostty"#
+    draw-border-with-background false
+}
+
+window-rule {
+    match app-id=r#"Minecraft"#
+    match app-id=r#"steam_app_2357570"#
+    match app-id=r#"qemu"#
+
+    open-maximized true
+    open-fullscreen true
+
+    border {
+        off
+    }
+}
+
+window-rule {
+    match app-id=r#"spotify"#
+
+    draw-border-with-background false
+}
+
+window-rule {
+    match title="notificationtoasts"
+
+    default-floating-position x=100 y=100 relative-to="top-right"
+
+    focus-ring {
+        off
+    }
+
+    border {
+        off
+    }
+}
+
+layer-rule {
+    match namespace="^awww-daemonoverlay"
+    place-within-backdrop true
+}
