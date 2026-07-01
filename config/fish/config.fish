@@ -80,3 +80,7 @@ set -gx PATH $PATH "$ZVM_INSTALL/"
 
 # uv
 fish_add_path "/home/aln/.local/bin"
+
+
+# Added by Antigravity CLI installer
+set -gx PATH "/home/aln/.local/bin" $PATH

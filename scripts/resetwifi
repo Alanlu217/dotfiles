@@ -1,0 +1,13 @@
+#!/usr/bin/env fish
+
+set conn (nmcli -t -f NAME,DEVICE con show --active | grep ":wlan0\$" | cut -d: -f1)
+
+if test -z "$conn"
+    echo "No active connection on wlan0"
+    exit 1
+end
+
+echo "Reconnecting '$conn' on wlan0..."
+nmcli c down $conn
+sleep 0.5
+nmcli c up $conn

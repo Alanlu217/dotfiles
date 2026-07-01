@@ -31,7 +31,7 @@ hl.config({
 
 hl.gesture({
     fingers = 3,
-    direction = "horizontal",
+    direction = "vertical",
     action = "workspace",
 })
 
@@ -53,6 +53,8 @@ hl.gesture({
     direction = "pinch",
     action = "close",
 })
+
+hl.gesture({ fingers = 3, direction = "pinch", action = "cursorZoom", mode = "live" })
 
 hl.device({
     name = "syna2ba6:00-06cb:cf00-touchpad",
