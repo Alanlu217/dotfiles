@@ -73,11 +73,11 @@
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
 
-  services.displayManager.ly.enable = true;
-  services.avahi = {
-    enable = true;
-    nssmdns4 = true;
-  };
+  # services.displayManager.ly.enable = true;
+  # services.avahi = {
+  #   enable = true;
+  #   nssmdns4 = true;
+  # };
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
