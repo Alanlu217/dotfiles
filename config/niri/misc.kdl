@@ -1,5 +1,6 @@
 // Cursor Settings
 cursor {
+    xcursor-theme "Adwaita"
     xcursor-size 24
 
     hide-when-typing
