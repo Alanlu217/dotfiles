@@ -8,8 +8,6 @@ local env = {
     XDG_SESSION_DESKTOP = "Hyprland",
     QT_QPA_PLATFORMTHEME = "qt6ct",
     GTK_THEME_VARIANT = "dark",
-    ELECTRON_ENABLE_WAYLAND = "1",
-    ELECTRON_OZONE_PLATFORM_HINT = "wayland",
 }
 
 for k, v in pairs(env) do

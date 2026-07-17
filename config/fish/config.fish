@@ -8,13 +8,9 @@ set -gx GTK_THEME Adwaita:dark
 set -gx XCURSOR_THEME Adwaita
 set -gx XCURSOR_SIZE 24
 
-set -gx ELECTRON_OZONE_PLATFORM_HINT auto
-
 set -gx EDITOR hx
 set -gx PAGER less
 set -gx MANPAGER less
-
-set -gx QT_QPA_PLATFORMTHEME qt5ct
 
 function f
     set tmp (mktemp -t "yazi-cwd.XXXXXX")
@@ -80,7 +76,6 @@ set -gx PATH $PATH "$ZVM_INSTALL/"
 
 # uv
 fish_add_path "/home/aln/.local/bin"
-
 
 # Added by Antigravity CLI installer
 set -gx PATH "/home/aln/.local/bin" $PATH

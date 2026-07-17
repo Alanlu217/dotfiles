@@ -24,6 +24,4 @@ spawn-at-startup "gsettings" "set" "org.gnome.desktop.interface color-scheme" "p
 // Environment Settings
 environment {
     DISPLAY ":12"
-
-    ELECTRON_OZONE_PLATFORM_HINT "auto"
 }
