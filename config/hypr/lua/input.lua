@@ -1,4 +1,4 @@
-local terminal    = "alacritty"
+local terminal    = "kitty"
 local fileManager = "thunar"
 local browser     = "firefox"
 local menu        = "rofi -show drun"

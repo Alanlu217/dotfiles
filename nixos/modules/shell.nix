@@ -14,7 +14,6 @@
     gh
     gnutar
     gping
-    guile
     helix
     just
     nix-index
@@ -29,7 +28,7 @@
     nushell
     tree-sitter
     watchexec
-    ripgrep
+    ripgrep sd
     tmux
   ];
 }
