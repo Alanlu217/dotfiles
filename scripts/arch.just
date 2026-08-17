@@ -77,7 +77,6 @@ deps:
     zathura zathura-pdf-poppler
     discord
     steam lib32-vulkan-intel
-    spotify_player
     vulkan-intel
   )
 
