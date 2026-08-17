@@ -228,9 +228,9 @@ binds {
     // Mod+Space       { switch-layout "next"; }
     // Mod+Shift+Space { switch-layout "prev"; }
 
-    Mod+G { screenshot; }
-    Mod+Shift+G { screenshot-screen; }
-    Mod+Shift+Alt+G { screenshot-window; }
+    Mod+G { screenshot show-pointer=false; }
+    Mod+Shift+G { screenshot-screen show-pointer=false; }
+    Mod+Shift+Alt+G { screenshot-window show-pointer=false; }
 
     // Applications such as remote-desktop clients and software KVM switches may
     // request that niri stops processing the keyboard shortcuts defined here
