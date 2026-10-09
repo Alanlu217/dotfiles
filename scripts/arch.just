@@ -10,6 +10,8 @@ deps:
 
     ly
 
+    xdg-utils
+
     niri
     xwayland-satellite
     swww

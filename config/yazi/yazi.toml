@@ -1,9 +1,12 @@
 [opener]
-pdf = [
-  { run = 'xdg-open "$@"', desc = "xdg-open", orphan = true, for = "linux" },
+helix= [
+  { run = "helix %s", desc = "Open in Helix", block = true, orphan = false}
+]
+url = [
+  { run = "url %s", desc = "Open in Firefox", block = false, orphan = true }
 ]
 
 [open]
-prepend_rules = [
-  { mime = "application/pdf", use = "pdf" },
-]
+[[open.prepend_rules]]
+url = "*.{url,pdf}"
+use = [ "url", "helix" ]
