@@ -1,12 +1,20 @@
 [opener]
-helix= [
+helix = [
   { run = "helix %s", desc = "Open in Helix", block = true, orphan = false}
 ]
 url = [
   { run = "url %s", desc = "Open in Firefox", block = false, orphan = true }
 ]
+zathura = [
+  { run = "zathura %s", desc = "Open in Zathura", block = false, orphan = true }
+]
 
 [open]
 [[open.prepend_rules]]
-url = "*.{url,pdf}"
+url = "*.pdf"
+use = [ "zathura" ]
+
+[[open.prepend_rules]]
+url = "*.url"
 use = [ "url", "helix" ]
+
