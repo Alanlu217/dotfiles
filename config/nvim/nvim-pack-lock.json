@@ -4,6 +4,22 @@
       "rev": "8219b58f1c11a2fb1644d3c7116c509fa8348ec0",
       "src": "https://github.com/saghen/blink.cmp"
     },
+    "blink.indent": {
+      "rev": "2e9c9768affeaf3a48b2dc329eb59763012f79f6",
+      "src": "https://github.com/saghen/blink.indent"
+    },
+    "blink.lib": {
+      "rev": "fd9a48ebbe6ec30d5dfcc5b42c243941ccdca1aa",
+      "src": "https://github.com/saghen/blink.lib"
+    },
+    "blink.nvim": {
+      "rev": "d1e7c7c45d45c6b6a25427bf62db4db73b03ff3d",
+      "src": "https://github.com/saghen/blink.nvim"
+    },
+    "blink.pairs": {
+      "rev": "ef8fc29c8afa0fc1d0eb611a1a76fd87f0951f6e",
+      "src": "https://github.com/saghen/blink.pairs"
+    },
     "conform.nvim": {
       "rev": "016802de402556da54c36bd7359b441266b01cdd",
       "src": "https://github.com/stevearc/conform.nvim"
@@ -19,6 +35,10 @@
     "mini.clue": {
       "rev": "79974f485028a3212f5a3f23b0095f8d0ae6f494",
       "src": "https://github.com/echasnovski/mini.clue"
+    },
+    "mini.completion": {
+      "rev": "ace27587795b84ae6a83b9bc7ff63aec0eebc252",
+      "src": "https://github.com/echasnovski/mini.completion"
     },
     "mini.extra": {
       "rev": "6cbc59d875a9768819091d0a56223205022cbe72",

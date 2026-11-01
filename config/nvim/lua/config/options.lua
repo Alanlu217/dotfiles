@@ -5,7 +5,8 @@ opt.number = true
 opt.mouse = "a"
 opt.timeoutlen = 400
 opt.scrollback = 100000
-opt.signcolumn = "number"
+opt.signcolumn = "yes"
+opt.shortmess:append("I")
 
 -- Indentation: 2-space soft tabs
 opt.expandtab = true

@@ -1,12 +1,20 @@
 -- Leader
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
+ 
+for _, mod in ipairs({
+  "options",
+  "plugins",
+  "picker",
+  "lsp",
+  "completion",
+  "format",
 
-require("config.format")
-require("config.keymaps")
-require("config.lsp")
-require("config.options")
-require("config.picker")
-require("config.plugins")
-require("config.statusline")
-require("config.terminal")
+  "statusline",
+  "terminal",
+  "keymaps",
+}) do
+  require("config." .. mod)
+end
+ 
+

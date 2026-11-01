@@ -2,33 +2,63 @@ local M = {}
 local autocmd = vim.api.nvim_create_autocmd
 local augroup = require("config.util").augroup
 
--- Format on save for any attached LSP that supports formatting
+local function can_format(client, bufnr)
+  return client:supports_method("textDocument/formatting", bufnr)
+end
+
+local function has_formatter(bufnr)
+  for _, client in ipairs(vim.lsp.get_clients({ bufnr = bufnr })) do
+    if can_format(client, bufnr) then
+      return true
+    end
+  end
+  return false
+end
+
+local function attach(bufnr)
+  if vim.b[bufnr].autoformat_attached then
+    return
+  end
+  vim.b[bufnr].autoformat_attached = true
+
+  autocmd("BufWritePre", {
+    group = augroup("LspFormat" .. bufnr),
+    buffer = bufnr,
+    callback = function()
+      if vim.g.disable_autoformat or vim.b[bufnr].disable_autoformat then
+        return
+      end
+      if not has_formatter(bufnr) then
+        return
+      end
+      vim.lsp.buf.format({
+        bufnr = bufnr,
+        timeout_ms = 2000,
+        filter = function(client)
+          return can_format(client, bufnr)
+        end,
+      })
+    end,
+  })
+end
+
 autocmd("LspAttach", {
   group = augroup("LspFormatOnSave"),
   callback = function(ev)
-    local client = vim.lsp.get_client_by_id(ev.data.client_id)
-    if not client or not client:supports_method("textDocument/formatting") then
-      return
-    end
-
-    vim.b[ev.buf].autoformat_attached = true
-
-    autocmd("BufWritePre", {
-      group = augroup("LspFormat" .. ev.buf),
-      buffer = ev.buf,
-      callback = function()
-        if vim.g.disable_autoformat or vim.b[ev.buf].disable_autoformat then
-          return
-        end
-        vim.lsp.buf.format({ bufnr = ev.buf, id = client.id, timeout_ms = 2000 })
-      end,
-    })
+    attach(ev.buf)
   end,
 })
 
--- Statusline component (empty string in buffers where formatting doesn't apply)
+-- Catch buffers whose LSP attached before this module was loaded
+for _, client in ipairs(vim.lsp.get_clients()) do
+  for bufnr in pairs(client.attached_buffers) do
+    attach(bufnr)
+  end
+end
+
+-- Statusline component (empty string where formatting doesn't apply)
 function M.status()
-  if not vim.b.autoformat_attached then
+  if not has_formatter(0) then
     return ""
   end
   if vim.g.disable_autoformat then

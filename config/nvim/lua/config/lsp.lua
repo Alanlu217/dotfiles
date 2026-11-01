@@ -3,6 +3,11 @@ local augroup = require("config.util").augroup
 
 vim.pack.add { "https://github.com/neovim/nvim-lspconfig" }
 
+-- Server configuration
+vim.lsp.config("tinymist", {
+  settings = { formatterMode = "typstyle" },
+})
+
 -- Servers to enable; any whose executable isn't installed is skipped
 local servers = {
   "tinymist",       -- Typst
@@ -49,6 +54,6 @@ vim.api.nvim_create_autocmd("LspAttach", {
     lmap("<leader>d", vim.diagnostic.open_float, "Line diagnostics")
     lmap("[d", function() vim.diagnostic.jump({ count = -1 }) end, "Prev diagnostic")
     lmap("]d", function() vim.diagnostic.jump({ count = 1 }) end, "Next diagnostic")
-    lmap("<leader>F", function() vim.lsp.buf.format({ async = true }) end, "Format")
+    lmap("<leader>cf", function() vim.lsp.buf.format({ async = true }) end, "Format")
   end,
 })

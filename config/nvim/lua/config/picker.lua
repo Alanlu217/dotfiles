@@ -5,20 +5,42 @@ vim.pack.add {
   "https://github.com/echasnovski/mini.clue",
 }
 
+local map = vim.keymap.set
+local augroup = require("config.util").augroup
+
+local function go_up()
+  local opts = MiniPick.get_picker_opts() or {}
+  local cwd = (opts.source and opts.source.cwd) or vim.fn.getcwd()
+  local parent = vim.fs.dirname(cwd)
+  MiniPick.stop()
+  vim.schedule(function()
+    MiniPick.builtin.files(nil, { source = { cwd = parent } })
+  end)
+end
+
 local miniclue = require("mini.clue")
-require("mini.pick").setup()
+require("mini.pick").setup({
+  mappings = {
+    go_up = { char = "<C-o>", func = go_up },
+  },
+})
 require("mini.extra").setup()
 require("mini.files").setup()
 
 -- Use the picker for vim.ui.select (code actions, rename prompts, etc.)
 vim.ui.select = MiniPick.ui_select
 
-local map = vim.keymap.set
 local pick = MiniPick.builtin
 local extra = MiniExtra.pickers
 
 -- Pickers
 map("n", "<leader>f", pick.files,     { desc = "Files" })
+map("n", "<leader>F", function()
+  local name = vim.api.nvim_buf_get_name(0)
+  local dir = name ~= "" and vim.fs.dirname(name) or vim.fn.getcwd()
+  if vim.fn.isdirectory(dir) == 0 then dir = vim.fn.getcwd() end
+  pick.files(nil, { source = { cwd = dir } })
+end, { desc = "Files (current file's dir)" })
 map("n", "<leader>b", pick.buffers,   { desc = "Buffers" })
 map("n", "<leader>g", pick.grep_live, { desc = "Live grep" })
 
@@ -55,7 +77,7 @@ end
 
 -- Explorer buffer-local keys
 vim.api.nvim_create_autocmd("User", {
-  group = require("config.util").augroup("MiniFilesKeys"),
+  group = augroup("MiniFilesKeys"),
   pattern = "MiniFilesBufferCreate",
   callback = function(args)
     local function bmap(lhs, rhs, desc)
@@ -87,7 +109,8 @@ miniclue.setup({
   },
 
   clues = {
-    -- Label for the <leader>u group (you have <leader>uf)
+    -- Group labels
+    { mode = "n", keys = "<Leader>c", desc = "+Code" },
     { mode = "n", keys = "<Leader>u", desc = "+UI" },
 
     miniclue.gen_clues.builtin_completion(),

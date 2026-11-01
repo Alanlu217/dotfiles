@@ -11,7 +11,6 @@ map("n", "<leader>R", function()
   vim.notify("Config reloaded")
 end, { desc = "Reload config" })
 
-map("n", "<leader>f", ":FZF<CR>", { desc = "FZF file picker" })
 map("n", "<C-a>", "ggVG", { desc = "Select whole file" })
 
 -- System clipboard
