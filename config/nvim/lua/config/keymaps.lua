@@ -23,7 +23,7 @@ map({ "n", "v" }, "<leader>P", [["+P]], { desc = "Paste before from system clipb
 local arrows = { h = "Left", j = "Down", k = "Up", l = "Right" }
 for dir, arrow in pairs(arrows) do
   for _, key in ipairs({ dir, arrow }) do
-    map({ "n", "t" }, "<A-" .. key .. ">", "<C-\\><C-n><C-w>" .. dir, { desc = "Window " .. dir })
+    map({ "n", "i", "t" }, "<A-" .. key .. ">", "<C-\\><C-n><C-w>" .. dir, { desc = "Window " .. dir })
   end
 end
 
