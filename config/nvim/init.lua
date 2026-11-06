@@ -25,6 +25,7 @@ for _, mod in ipairs({
   "statusline",
   "terminal",
   "keymaps",
+  "sessions"
 }) do
   require(mod)
 end

@@ -89,6 +89,7 @@ vim.api.nvim_create_autocmd("User", {
       local e = MiniFiles.get_fs_entry()
       if e then vim.ui.open(e.path) end
     end, "Open externally")
+    bmap("gs", files_search_here, "Search files here")
     bmap("<CR>", function() MiniFiles.go_in({ close_on_file = true }) end, "Open and close on file")
     bmap("<Right>", MiniFiles.go_in, "Go in")
     bmap("<Left>", MiniFiles.go_out, "Go out")

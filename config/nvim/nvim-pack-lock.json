@@ -60,6 +60,10 @@
       "rev": "32ead2c8016a68487de87f23d604135843b0196d",
       "src": "https://github.com/echasnovski/mini.pick"
     },
+    "mini.sessions": {
+      "rev": "ecf7507070bb2f3bac8f139ee182d79f9c60b801",
+      "src": "https://github.com/echasnovski/mini.sessions"
+    },
     "nvim": {
       "rev": "edefef779ab08ce1a4a404713e3012b0d202bd35",
       "src": "https://github.com/catppuccin/nvim"

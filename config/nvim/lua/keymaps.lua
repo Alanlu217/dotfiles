@@ -29,6 +29,33 @@ for dir, arrow in pairs(arrows) do
   end
 end
 
+-- Window resizing: Ctrl+arrows / Ctrl+Shift+hjkl move the border in that direction
+local function resize(dir, amount)
+  amount = amount or 2
+  local horizontal = dir == "h" or dir == "l"
+  local toward_after = dir == "l" or dir == "j" -- right/down
+  -- is there a window to the right (horizontal) or below (vertical)?
+  local has_after = vim.fn.winnr(horizontal and "l" or "j") ~= vim.fn.winnr()
+  -- With a neighbour after us, our far border moves with the key; without one,
+  -- only our near border can move, so the direction flips.
+  local grow = toward_after == has_after
+  vim.cmd(string.format("%sresize %s%d", horizontal and "vertical " or "", grow and "+" or "-", amount))
+end
+
+local resize_keys = {
+  h = { "<C-Left>",  "<C-S-h>" },
+  j = { "<C-Down>",  "<C-S-j>" },
+  k = { "<C-Up>",    "<C-S-k>" },
+  l = { "<C-Right>", "<C-S-l>" },
+}
+for dir, keys in pairs(resize_keys) do
+  for _, key in ipairs(keys) do
+    map({ "n", "t" }, key, function() resize(dir) end, { desc = "Resize window " .. dir })
+  end
+end
+
+map("n", "<leader>w", "<C-w>", { remap = false, desc = "Window commands" })
+
 -- Tab navigation: Shift+Alt+h/l or Shift+Alt+Left/Right
 local tab_keys = {
   { keys = { "<A-H>", "<A-S-Left>" },  cmd = "tabprevious", desc = "Previous tab" },
