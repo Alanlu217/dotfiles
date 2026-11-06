@@ -53,3 +53,8 @@ vim.api.nvim_create_autocmd("LspAttach", {
     lmap("<leader>=", function() vim.lsp.buf.format({ async = true }) end, "Format")
   end,
 })
+
+-- Diagnostics
+vim.keymap.set("n", "<leader>ui", function()
+  vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())
+end, { desc = "Toggle inlay hints" })

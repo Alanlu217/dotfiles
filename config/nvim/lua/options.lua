@@ -7,6 +7,18 @@ opt.timeoutlen = 400
 opt.scrollback = 100000
 opt.signcolumn = "yes"
 opt.shortmess:append("I")
+opt.ignorecase = true
+opt.smartcase = true
+opt.undofile = true
+opt.splitright = true
+opt.splitbelow = true
+opt.cursorline = true
+opt.scrolloff = 8
+opt.inccommand = "split"
+opt.confirm = true
+opt.breakindent = true
+opt.list = true
+opt.listchars = { tab = "» ", trail = "·", nbsp = "␣" }
 
 -- Indentation: 2-space soft tabs
 opt.expandtab = true
