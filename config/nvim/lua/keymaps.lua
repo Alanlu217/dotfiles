@@ -29,6 +29,23 @@ for dir, arrow in pairs(arrows) do
   end
 end
 
+-- Tab navigation: Shift+Alt+h/l or Shift+Alt+Left/Right
+local tab_keys = {
+  { keys = { "<A-H>", "<A-S-Left>" },  cmd = "tabprevious", desc = "Previous tab" },
+  { keys = { "<A-L>", "<A-S-Right>" }, cmd = "tabnext",     desc = "Next tab" },
+}
+for _, t in ipairs(tab_keys) do
+  for _, key in ipairs(t.keys) do
+    map({ "n", "i", "t" }, key, "<C-\\><C-n><cmd>" .. t.cmd .. "<CR>", { desc = t.desc })
+  end
+end
+
+-- Tab management
+map("n", "<leader>tn", "<cmd>tabnew<CR>", { desc = "New tab" })
+map("n", "<leader>tc", "<cmd>tabclose<CR>", { desc = "Close tab" })
+map("n", "<leader>to", "<cmd>tabonly<CR>", { desc = "Close other tabs" })
+map({ "n", "i", "t" }, "<A-t>", "<C-\\><C-n><cmd>tabnew<CR>", { desc = "New tab" })
+
 -- Toggle comment (built-in gc / gcc, so remap = true)
 map("n", "<leader>c", "gcc", { remap = true, desc = "Toggle comment" })
 map("x", "<leader>c", "gc", { remap = true, desc = "Toggle comment" })
