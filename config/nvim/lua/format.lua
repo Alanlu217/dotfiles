@@ -1,6 +1,6 @@
 local M = {}
 local autocmd = vim.api.nvim_create_autocmd
-local augroup = require("config.util").augroup
+local augroup = require("util").augroup
 
 local function can_format(client, bufnr)
   return client:supports_method("textDocument/formatting", bufnr)

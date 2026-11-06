@@ -32,6 +32,10 @@
       "rev": "f1e186e44d3b7f9ae918008e2c28ce37c6023d2d",
       "src": "https://github.com/lukas-reineke/indent-blankline.nvim"
     },
+    "mini.bracketed": {
+      "rev": "2757ab8b893f08a5f2a6f0fb8a56acd581a19d00",
+      "src": "https://github.com/echasnovski/mini.bracketed"
+    },
     "mini.clue": {
       "rev": "79974f485028a3212f5a3f23b0095f8d0ae6f494",
       "src": "https://github.com/echasnovski/mini.clue"

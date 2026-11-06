@@ -1,6 +1,6 @@
 local map = vim.keymap.set
 local autocmd = vim.api.nvim_create_autocmd
-local augroup = require("config.util").augroup
+local augroup = require("util").augroup
 
 map("t", "<Esc><Esc>", [[<C-\><C-n>]], { desc = "Exit terminal mode" })
 map("n", "<leader>t", ":botright 15split | terminal<CR>", { desc = "Terminal (bottom)" })
@@ -8,10 +8,22 @@ map("n", "<leader>T", ":botright vsplit | terminal<CR>", { desc = "Terminal (ver
 
 local term_group = augroup("TerminalBehaviour")
 
+local function live_terminal(buf)
+  if vim.bo[buf].buftype ~= "terminal" then
+    return false
+  end
+  local job = vim.b[buf].terminal_job_id
+  return job ~= nil and vim.fn.jobwait({ job }, 0)[1] == -1
+end
+
 autocmd({ "TermOpen", "BufEnter", "WinEnter" }, {
   group = term_group,
   pattern = "term://*",
-  command = "startinsert",
+  callback = function(ev)
+    if live_terminal(ev.buf) then
+      vim.cmd.startinsert()
+    end
+  end,
 })
 
 autocmd("TermClose", {

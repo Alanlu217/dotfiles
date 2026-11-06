@@ -1,4 +1,4 @@
-local augroup = require("config.util").augroup
+local augroup = require("util").augroup
 local opt = vim.opt
 
 opt.number = true

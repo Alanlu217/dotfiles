@@ -1,9 +1,11 @@
 local map = vim.keymap.set
 
--- Reload: clear cached config modules, then re-run init.lua
+-- Reload: clear cached modules that live in this config, then re-run init.lua
 map("n", "<leader>R", function()
+  local lua_dir = vim.fn.stdpath("config") .. "/lua/"
   for name in pairs(package.loaded) do
-    if name:match("^config") then
+    local rel = name:gsub("%.", "/")
+    if vim.uv.fs_stat(lua_dir .. rel .. ".lua") or vim.uv.fs_stat(lua_dir .. rel .. "/init.lua") then
       package.loaded[name] = nil
     end
   end
@@ -26,6 +28,10 @@ for dir, arrow in pairs(arrows) do
     map({ "n", "i", "t" }, "<A-" .. key .. ">", "<C-\\><C-n><C-w>" .. dir, { desc = "Window " .. dir })
   end
 end
+
+-- Toggle comment (built-in gc / gcc, so remap = true)
+map("n", "<leader>c", "gcc", { remap = true, desc = "Toggle comment" })
+map("x", "<leader>c", "gc", { remap = true, desc = "Toggle comment" })
 
 -- Clear highlighting on escape
 map("n", "<Esc>", "<cmd>nohlsearch<CR>", { desc = "Clear search highlight" })

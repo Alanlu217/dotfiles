@@ -1,7 +1,5 @@
 local map = vim.keymap.set
-local augroup = require("config.util").augroup
-
-vim.pack.add { "https://github.com/neovim/nvim-lspconfig" }
+local augroup = require("util").augroup
 
 -- Server configuration
 vim.lsp.config("tinymist", {
@@ -15,7 +13,7 @@ local servers = {
   "rust_analyzer",  -- Rust
   "gopls",          -- Go
   "lua_ls",         -- Lua
-  "pyright",        -- Python (types)
+  "ty",             -- Python (types)
   "ruff",           -- Python (lint + format)
   "ts_ls",          -- TypeScript / JavaScript
   "bashls",         -- Bash
@@ -52,8 +50,6 @@ vim.api.nvim_create_autocmd("LspAttach", {
     lmap("<leader>r", vim.lsp.buf.rename, "Rename")
     lmap("<leader>a", vim.lsp.buf.code_action, "Code action")
     lmap("<leader>d", vim.diagnostic.open_float, "Line diagnostics")
-    lmap("[d", function() vim.diagnostic.jump({ count = -1 }) end, "Prev diagnostic")
-    lmap("]d", function() vim.diagnostic.jump({ count = 1 }) end, "Next diagnostic")
-    lmap("<leader>cf", function() vim.lsp.buf.format({ async = true }) end, "Format")
+    lmap("<leader>=", function() vim.lsp.buf.format({ async = true }) end, "Format")
   end,
 })
