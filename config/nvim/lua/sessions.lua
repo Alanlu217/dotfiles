@@ -67,11 +67,11 @@ local function delete_dir()
   end)
 end
 
-map("n", "<leader>ds", save_dir,   { desc = "Save cwd" })
-map("n", "<leader>dd", delete_dir, { desc = "Delete saved cwd" })
-map("n", "<leader>dg", function() load_dir("global") end, { desc = "Load cwd (global)" })
-map("n", "<leader>dt", function() load_dir("tab") end,    { desc = "Load cwd (tab)" })
-map("n", "<leader>dw", function() load_dir("window") end, { desc = "Load cwd (window)" })
+map("n", "<leader>qs", save_dir,   { desc = "Save cwd" })
+map("n", "<leader>qd", delete_dir, { desc = "Delete saved cwd" })
+map("n", "<leader>qg", function() load_dir("global") end, { desc = "Load cwd (global)" })
+map("n", "<leader>qt", function() load_dir("tab") end,    { desc = "Load cwd (tab)" })
+map("n", "<leader>qw", function() load_dir("window") end, { desc = "Load cwd (window)" })
 
 return {
   save = save_dir,

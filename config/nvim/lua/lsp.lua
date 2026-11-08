@@ -45,11 +45,11 @@ vim.api.nvim_create_autocmd("LspAttach", {
       map("n", keys, fn, { buffer = ev.buf, desc = desc })
     end
     lmap("gd", vim.lsp.buf.definition, "Go to definition")
-    lmap("gr", vim.lsp.buf.references, "References")
+    lmap("gR", vim.lsp.buf.references, "References")
     lmap("K", vim.lsp.buf.hover, "Hover")
+    lmap("L", vim.diagnostic.open_float, "Line diagnostics")
     lmap("<leader>r", vim.lsp.buf.rename, "Rename")
     lmap("<leader>a", vim.lsp.buf.code_action, "Code action")
-    lmap("<leader>d", vim.diagnostic.open_float, "Line diagnostics")
     lmap("<leader>=", function() vim.lsp.buf.format({ async = true }) end, "Format")
   end,
 })

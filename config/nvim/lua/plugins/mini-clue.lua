@@ -35,10 +35,10 @@ miniclue.setup({
 
   clues = {
     -- Group labels
-    { mode = "n", keys = "<Leader>c", desc = "+Code" },
+    { mode = "n", keys = "<Leader>t", desc = "+Tabs" },
     { mode = "n", keys = "<Leader>u", desc = "+UI" },
     { mode = "n", keys = "<Leader>w", desc = "+Windows" },
-    { mode = "n", keys = "<Leader>d", desc = "+Saved cwd" },
+    { mode = "n", keys = "<Leader>q", desc = "+Saved cwd" },
 
     miniclue.gen_clues.builtin_completion(),
     miniclue.gen_clues.g(),

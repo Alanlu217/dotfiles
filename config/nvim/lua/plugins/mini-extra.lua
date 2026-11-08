@@ -10,8 +10,8 @@ local extra = MiniExtra.pickers
 map("n", "<leader>s", function() extra.lsp({ scope = "document_symbol" }) end,  { desc = "Symbols (buffer)" })
 map("n", "<leader>S", function() extra.lsp({ scope = "workspace_symbol" }) end, { desc = "Symbols (workspace)" })
 
-map("n", "<leader>x", function() extra.diagnostic({ scope = "current" }) end, { desc = "Diagnostics (buffer)" })
-map("n", "<leader>X", function() extra.diagnostic({ scope = "all" }) end,     { desc = "Diagnostics (workspace)" })
+map("n", "<leader>d", function() extra.diagnostic({ scope = "current" }) end, { desc = "Diagnostics (buffer)" })
+map("n", "<leader>D", function() extra.diagnostic({ scope = "all" }) end,     { desc = "Diagnostics (workspace)" })
 
 map("n", "<leader>o", function() extra.oldfiles() end, { desc = "Recent files" })
 map("n", "<leader>/", function() extra.buf_lines({ scope = "current" }) end, { desc = "Search buffer lines" })

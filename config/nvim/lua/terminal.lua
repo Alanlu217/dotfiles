@@ -3,8 +3,8 @@ local autocmd = vim.api.nvim_create_autocmd
 local augroup = require("util").augroup
 
 map("t", "<Esc><Esc>", [[<C-\><C-n>]], { desc = "Exit terminal mode" })
-map("n", "<leader>t", ":botright 15split | terminal<CR>", { desc = "Terminal (bottom)" })
-map("n", "<leader>T", ":botright vsplit | terminal<CR>", { desc = "Terminal (vertical)" })
+map("n", "<leader>x", ":botright 15split | terminal<CR>", { desc = "Terminal (bottom)" })
+map("n", "<leader>X", ":botright vsplit | terminal<CR>", { desc = "Terminal (right)" })
 
 local term_group = augroup("TerminalBehaviour")
 
