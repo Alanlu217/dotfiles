@@ -2,6 +2,9 @@
 helix = [
   { run = "helix %s", desc = "Open in Helix", block = true, orphan = false}
 ]
+neovim = [
+  { run = "nvim %s", desc = "Open in neovim", block = true, orphan = false}
+]
 url = [
   { run = "url %s", desc = "Open in Firefox", block = false, orphan = true }
 ]

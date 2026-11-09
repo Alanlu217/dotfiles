@@ -8,7 +8,7 @@ set -gx GTK_THEME Adwaita:dark
 set -gx XCURSOR_THEME Adwaita
 set -gx XCURSOR_SIZE 24
 
-set -gx EDITOR hx
+set -gx EDITOR nvim
 set -gx PAGER less
 set -gx MANPAGER less
 

@@ -10,7 +10,6 @@ local modules = {
   "plugins.catppuccin",
   "plugins.mini-pick",
   "plugins.mini-extra",
-  "plugins.mini-files",
   "plugins.mini-bracketed",
   "plugins.mini-clue",
   "plugins.mini-surround",
@@ -20,6 +19,8 @@ local modules = {
   "plugins.blink-cmp",
   "plugins.blink-pairs",
   "plugins.blink-indent",
+  "plugins.typst-preview",
+  "plugins.yazi",
 
   -- Core
   "lsp",

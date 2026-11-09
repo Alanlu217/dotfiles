@@ -19,6 +19,7 @@ opt.confirm = true
 opt.breakindent = true
 opt.list = true
 opt.listchars = { tab = "» ", trail = "·", nbsp = "␣" }
+opt.spelllang = "en_au"
 
 -- Indentation: 2-space soft tabs
 opt.expandtab = true

@@ -79,3 +79,9 @@ map("x", "<leader>c", "gc", { remap = true, desc = "Toggle comment" })
 
 -- Clear highlighting on escape
 map("n", "<Esc>", "<cmd>nohlsearch<CR>", { desc = "Clear search highlight" })
+
+-- Toggle Spellcheck
+vim.keymap.set("n", "<leader>us", function()
+  vim.wo.spell = not vim.wo.spell
+  vim.notify("Spell check " .. (vim.wo.spell and "on" or "off"))
+end, { desc = "Toggle spell check" })
