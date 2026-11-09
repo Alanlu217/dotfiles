@@ -54,7 +54,7 @@ local function float_open()
     col = math.floor((vim.o.columns - width) / 2),
     row = math.floor((vim.o.lines - height) / 2) - 1,
     style = "minimal",
-    border = "rounded",
+    border = "solid",
   })
 
   -- Start a shell only the first time (or after the previous one exited)
