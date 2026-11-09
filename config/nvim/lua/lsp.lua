@@ -2,9 +2,6 @@ local map = vim.keymap.set
 local augroup = require("util").augroup
 
 -- Server configuration
-vim.lsp.config("tinymist", {
-  settings = { formatterMode = "typstyle" },
-})
 
 -- Servers to enable; any whose executable isn't installed is skipped
 local servers = {
