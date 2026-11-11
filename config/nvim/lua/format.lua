@@ -1,64 +1,12 @@
+-- Format-on-save itself is handled by conform (lua/plugins/conform.lua).
+-- This module only adds the toggle, the manual-format key and a statusline component.
 local M = {}
-local autocmd = vim.api.nvim_create_autocmd
-local augroup = require("util").augroup
-
-local function can_format(client, bufnr)
-  return client:supports_method("textDocument/formatting", bufnr)
-end
-
-local function has_formatter(bufnr)
-  for _, client in ipairs(vim.lsp.get_clients({ bufnr = bufnr })) do
-    if can_format(client, bufnr) then
-      return true
-    end
-  end
-  return false
-end
-
-local function attach(bufnr)
-  if vim.b[bufnr].autoformat_attached then
-    return
-  end
-  vim.b[bufnr].autoformat_attached = true
-
-  autocmd("BufWritePre", {
-    group = augroup("LspFormat" .. bufnr),
-    buffer = bufnr,
-    callback = function()
-      if vim.g.disable_autoformat or vim.b[bufnr].disable_autoformat then
-        return
-      end
-      if not has_formatter(bufnr) then
-        return
-      end
-      vim.lsp.buf.format({
-        bufnr = bufnr,
-        timeout_ms = 2000,
-        filter = function(client)
-          return can_format(client, bufnr)
-        end,
-      })
-    end,
-  })
-end
-
-autocmd("LspAttach", {
-  group = augroup("LspFormatOnSave"),
-  callback = function(ev)
-    attach(ev.buf)
-  end,
-})
-
--- Catch buffers whose LSP attached before this module was loaded
-for _, client in ipairs(vim.lsp.get_clients()) do
-  for bufnr in pairs(client.attached_buffers) do
-    attach(bufnr)
-  end
-end
+local map = vim.keymap.set
 
 -- Statusline component (empty string where formatting doesn't apply)
 function M.status()
-  if not has_formatter(0) then
+  local formatters, lsp_fallback = require("conform").list_formatters_to_run(0)
+  if #formatters == 0 and not lsp_fallback then
     return ""
   end
   if vim.g.disable_autoformat then
@@ -81,6 +29,11 @@ vim.api.nvim_create_user_command("FormatToggle", function(opts)
   vim.notify("Format on save: " .. (status ~= "" and status or "n/a"))
 end, { bang = true, desc = "Toggle format on save" })
 
-vim.keymap.set("n", "<leader>uf", "<cmd>FormatToggle<CR>", { desc = "Toggle format on save" })
+map("n", "<leader>uf", "<cmd>FormatToggle<CR>", { desc = "Toggle format on save" })
+
+-- Manual format (works on a visual selection too); not tied to an LSP being attached
+map({ "n", "v" }, "<leader>=", function()
+  require("conform").format({ async = true, lsp_format = "fallback" })
+end, { desc = "Format" })
 
 return M

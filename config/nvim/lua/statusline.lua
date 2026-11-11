@@ -1,7 +1,7 @@
 -- Default statusline layout, with the format status added on the right
--- vim.opt.statusline = table.concat({
---   "%f %h%w%m%r",
---   "%=",
---   "%{v:lua.require'conform'.status()}  ",
---   "%-14.(%l,%c%V%) %P",
--- })
+vim.opt.statusline = table.concat({
+  "%f %h%w%m%r",
+  "%=",
+  "%{v:lua.require'format'.status()}  ",
+  "%-14.(%l,%c%V%) %P",
+})

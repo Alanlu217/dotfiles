@@ -21,6 +21,7 @@ local modules = {
   "plugins.blink-indent",
   "plugins.typst-preview",
   "plugins.yazi",
+  "plugins.conform",
 
   -- Core
   "lsp",

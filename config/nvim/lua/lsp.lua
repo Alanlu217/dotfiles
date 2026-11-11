@@ -47,7 +47,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
     lmap("L", vim.diagnostic.open_float, "Line diagnostics")
     lmap("<leader>r", vim.lsp.buf.rename, "Rename")
     lmap("<leader>a", vim.lsp.buf.code_action, "Code action")
-    lmap("<leader>=", function() vim.lsp.buf.format({ async = true }) end, "Format")
+    lmap("<C-Space>", function() vim.lsp.completion.get() end)
   end,
 })
 
