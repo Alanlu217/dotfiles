@@ -74,14 +74,22 @@ map("n", "<leader>to", "<cmd>tabonly<CR>", { desc = "Close other tabs" })
 map({ "n", "i", "t" }, "<A-t>", "<C-\\><C-n><cmd>tabnew<CR>", { desc = "New tab" })
 
 -- Toggle comment (built-in gc / gcc, so remap = true)
-map("n", "<leader>c", "gcc", { remap = true, desc = "Toggle comment" })
-map("x", "<leader>c", "gc", { remap = true, desc = "Toggle comment" })
+map({"n", "x"}, "<leader>c", "gcc", { remap = true, desc = "Toggle comment" })
 
 -- Clear highlighting on escape
 map("n", "<Esc>", "<cmd>nohlsearch<CR>", { desc = "Clear search highlight" })
 
 -- Toggle Spellcheck
 vim.keymap.set("n", "<leader>us", function()
-  vim.wo.spell = not vim.wo.spell
-  vim.notify("Spell check " .. (vim.wo.spell and "on" or "off"))
-end, { desc = "Toggle spell check" })
+  local enabled = not vim.b.spell_enabled
+  vim.b.spell_enabled = enabled
+  vim.wo.spell = enabled
+  vim.notify("Spell check " .. (enabled and "on" or "off"))
+end, { desc = "Toggle spell check (buffer)" })
+
+vim.api.nvim_create_autocmd("BufWinEnter", {
+  group = vim.api.nvim_create_augroup("buffer_local_spell", { clear = true }),
+  callback = function(ev)
+    vim.wo.spell = vim.b[ev.buf].spell_enabled == true
+  end,
+})
