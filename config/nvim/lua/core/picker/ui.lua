@@ -72,6 +72,7 @@ end
 ---@field title string
 ---@field matcher core.Matcher
 ---@field on_select fun(item: string, action: "edit"|"split"|"vsplit"|"tabedit")
+---@field on_cancel? fun()
 ---@field prompt? string
 
 ---@param spec core.picker.Spec
@@ -90,6 +91,7 @@ function M.open(spec)
   local sel = 0 -- 1 = best match
   local offset = 0 -- blank lines above the results in the list buffer
   local closed = false
+  local chosen = false -- true once an item was picked (vs. dismissed)
 
   -- Buffers and windows -----------------------------------------------------
   define_highlights()
@@ -203,12 +205,16 @@ function M.open(spec)
     if vim.api.nvim_win_is_valid(prev_win) then
       vim.api.nvim_set_current_win(prev_win)
     end
+    if not chosen and spec.on_cancel then
+      vim.schedule(spec.on_cancel)
+    end
   end
   close_active = close
 
   ---@param action "edit"|"split"|"vsplit"|"tabedit"
   local function select(action)
     local item = results[sel]
+    chosen = item ~= nil
     close()
     if item then
       vim.schedule(function()

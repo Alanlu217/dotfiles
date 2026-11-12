@@ -18,6 +18,7 @@ M.defaults = {
     max_files = 100000,
     hidden = true,
     ignore = { ".git", "node_modules", "target", ".direnv", "result", "__pycache__" },
+    override_ui_select = true,
     keys = {
       next = { "<C-n>", "<Down>", "<C-j>" },
       prev = { "<C-p>", "<Up>", "<C-k>" },

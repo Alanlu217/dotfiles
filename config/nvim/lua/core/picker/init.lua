@@ -1,6 +1,7 @@
 -- Public picker API:
 --   require("core.picker").files() / .buffers() / .recent()
---   require("core.picker").open({ title, matcher, on_select })   -- custom sources
+--   require("core.picker").open({ title, matcher, on_select, on_cancel? })
+--   require("core.picker").select(items, opts, on_choice)   -- vim.ui.select
 --   :Pick files|buffers|recent
 local M = {}
 
@@ -28,12 +29,53 @@ function M.matcher(items)
   return require("core.picker.matcher").from_list(items)
 end
 
+--- vim.ui.select implementation backed by the picker.
+---@generic T
+---@param items T[]
+---@param opts? { prompt?: string, format_item?: fun(item: T): string }
+---@param on_choice fun(item: T?, idx: integer?)
+function M.select(items, opts, on_choice)
+  opts = opts or {}
+  if #items == 0 then
+    on_choice(nil, nil)
+    return
+  end
+
+  local format = opts.format_item or tostring
+  local labels, lookup, seen = {}, {}, {}
+  for i, item in ipairs(items) do
+    local label = (tostring(format(item)):gsub("[\r\n]+", " "))
+    seen[label] = (seen[label] or 0) + 1
+    if seen[label] > 1 then
+      label = ("%s [%d]"):format(label, seen[label])
+    end
+    labels[i] = label
+    lookup[label] = i
+  end
+
+  M.open({
+    title = (tostring(opts.prompt or "Select"):gsub(":%s*$", "")),
+    matcher = M.matcher(labels),
+    on_select = function(label)
+      local idx = lookup[label]
+      on_choice(items[idx], idx)
+    end,
+    on_cancel = function()
+      on_choice(nil, nil)
+    end,
+  })
+end
+
 function M.setup()
+  if require("core.config").get().picker.override_ui_select then
+    vim.ui.select = M.select
+  end
+
   local names = { "files", "buffers", "recent" }
   vim.api.nvim_create_user_command("Pick", function(o)
-    local source = M[o.args ~= "" and o.args or "files"]
-    if vim.tbl_contains(names, o.args ~= "" and o.args or "files") and source then
-      source()
+    local name = o.args ~= "" and o.args or "files"
+    if vim.tbl_contains(names, name) then
+      M[name]()
     else
       vim.notify("Pick: unknown source '" .. o.args .. "'", vim.log.levels.ERROR)
     end

@@ -30,38 +30,26 @@ map({ "n", "t" }, "<C-\\>", function() require("core.terminal").toggle_float() e
 -- Windows -------------------------------------------------------------------
 map("n", "<leader>w", "<C-w>", { remap = false, desc = "Window commands" })
 
--- Focus: Alt+hjkl / Alt+arrows from normal, insert or terminal mode.
 local arrows = { h = "Left", j = "Down", k = "Up", l = "Right" }
-for dir, arrow in pairs(arrows) do
-  for _, key in ipairs({ dir, arrow }) do
-    map({ "n", "i", "t" }, "<A-" .. key .. ">", "<C-\\><C-n><C-w>" .. dir, { desc = "Window " .. dir })
-  end
-end
 
--- Resize: Ctrl+arrows / Ctrl+Shift+hjkl move the border in that direction.
--- (Ctrl+Shift+letter needs a terminal with the kitty keyboard protocol.)
-local resize_keys = {
-  h = { "<C-Left>", "<C-S-h>" },
-  j = { "<C-Down>", "<C-S-j>" },
-  k = { "<C-Up>", "<C-S-k>" },
-  l = { "<C-Right>", "<C-S-l>" },
-}
-for dir, keys in pairs(resize_keys) do
-  for _, key in ipairs(keys) do
-    map({ "n", "t" }, key, function() require("core.window").resize(dir) end, { desc = "Resize window " .. dir })
+for dir, arrow in pairs(arrows) do
+  -- Focus: Ctrl+hjkl (normal, terminal) and Ctrl+arrows (also insert).
+  local focus = "<C-\\><C-n><C-w>" .. dir
+  map({ "n", "t" }, "<C-" .. dir .. ">", focus, { desc = "Focus window " .. dir })
+  map({ "n", "i", "t" }, "<C-" .. arrow .. ">", focus, { desc = "Focus window " .. dir })
+
+  -- Resize: Ctrl+Alt+hjkl / Ctrl+Alt+arrows move the border in that direction.
+  local function resize()
+    require("core.window").resize(dir)
   end
+  map({ "n", "t" }, "<C-A-" .. dir .. ">", resize, { desc = "Resize window " .. dir })
+  map({ "n", "t" }, "<C-A-" .. arrow .. ">", resize, { desc = "Resize window " .. dir })
 end
 
 -- Tabs ----------------------------------------------------------------------
-local tab_nav = {
-  { keys = { "<A-H>", "<A-S-Left>" }, cmd = "tabprevious", desc = "Previous tab" },
-  { keys = { "<A-L>", "<A-S-Right>" }, cmd = "tabnext", desc = "Next tab" },
-}
-for _, t in ipairs(tab_nav) do
-  for _, key in ipairs(t.keys) do
-    map({ "n", "i", "t" }, key, "<C-\\><C-n><cmd>" .. t.cmd .. "<CR>", { desc = t.desc })
-  end
-end
+-- Alt+h / Alt+l switch tabs, from any mode (Alt+arrows don't work in a tty).
+map({ "n", "i", "t" }, "<A-h>", "<C-\\><C-n><cmd>tabprevious<CR>", { desc = "Previous tab" })
+map({ "n", "i", "t" }, "<A-l>", "<C-\\><C-n><cmd>tabnext<CR>", { desc = "Next tab" })
 
 map("n", "<leader>tn", "<cmd>tabnew<CR>", { desc = "New tab" })
 map("n", "<leader>tc", "<cmd>tabclose<CR>", { desc = "Close tab" })

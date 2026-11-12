@@ -1,8 +1,10 @@
 -- Bridge to the C library in native/ (LuaJIT FFI).
 --
 -- Sources stay in the config dir (may be read-only, e.g. NixOS); the built
--- library lives in stdpath("data")/native. The native core is an accelerator:
--- every consumer must cope with `load()` returning nil.
+-- library lives in stdpath("data")/native. Each load stages a copy under a
+-- name derived from the build, so :ReloadConfig can pick up a rebuilt library
+-- (dlopen caches by path). The native core is an accelerator: every consumer
+-- must cope with `load()` returning nil.
 local ffi = require("ffi")
 local config = require("core.config")
 local util = require("core.util")
@@ -11,17 +13,17 @@ local M = {}
 
 local src_dir = vim.fs.joinpath(vim.fn.stdpath("config"), "native")
 local build_dir = vim.fs.joinpath(vim.fn.stdpath("data"), "native")
+local loaded_dir = vim.fs.joinpath(build_dir, "loaded")
 local ext = (jit.os == "OSX") and "dylib" or "so"
 local lib_path = vim.fs.joinpath(build_dir, "libnvcore." .. ext)
 local header_path = vim.fs.joinpath(src_dir, "include", "nvcore.h")
-local loaded_dir = vim.fs.joinpath(build_dir, "loaded")
+
+M.paths = { src = src_dir, build = build_dir, lib = lib_path }
 
 -- Every library ever loaded in this process. Kept in _G so it survives
 -- :ReloadConfig: an old library must never be dlclose'd while indices created
 -- from it may still be alive.
 _G.__nvcore_libs = _G.__nvcore_libs or {}
-
-M.paths = { src = src_dir, build = build_dir, lib = lib_path }
 
 local state = { tried = false, lib = nil, err = nil }
 

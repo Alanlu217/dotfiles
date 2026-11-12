@@ -1,14 +1,16 @@
+-- Data only: overrides for framework defaults in lua/core/config.lua.
 return {
   picker = {
     width = 0.6,
     height = 0.6,
     border = "solid",
     prompt = "> ",
+    override_ui_select = true,
   },
 
   terminal = {
-    bottom_height = 0.4,
-    right_width = 0.5,
+    bottom_height = 0.4, -- <leader>x
+    right_width = 0.5, -- <leader>X
     float = { width = 0.8, height = 0.8, border = "solid" },
   },
 }
