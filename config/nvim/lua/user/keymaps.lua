@@ -13,6 +13,7 @@ map("x", "<leader>c", "gc", { remap = true, desc = "Toggle comment" })
 map({ "n", "v" }, "<leader>f", function() require("core.picker").files() end, { desc = "Pick files" })
 map({ "n", "v" }, "<leader>b", function() require("core.picker").buffers() end, { desc = "Pick buffers" })
 map({ "n", "v" }, "<leader>r", function() require("core.picker").recent() end, { desc = "Pick recent files" })
+map({ "n", "v" }, "<leader>h", function() require("core.picker").help() end, { desc = "Pick help tags" })
 
 -- System clipboard ----------------------------------------------------------
 map({ "n", "v" }, "<leader>y", [["+y]], { desc = "Yank to system clipboard" })

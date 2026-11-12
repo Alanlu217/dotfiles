@@ -2,6 +2,7 @@
 local config = require("core.config")
 local matcher = require("core.picker.matcher")
 local ui = require("core.picker.ui")
+local util = require("core.util")
 
 local M = {}
 
@@ -62,6 +63,44 @@ function M.recent()
     matcher = matcher.from_list(items),
     on_select = function(item, action)
       open_file(vim.fn.fnamemodify(item, ":p"), action)
+    end,
+  })
+end
+
+--- Every tag from the doc/tags files on the runtimepath (core docs and plugins).
+--- getcompletion("", "help") can't be used: for an empty pattern Neovim
+--- substitutes "help" to keep :help <Tab> fast, so it returns only a few tags.
+---@return string[]
+local function help_tags()
+  local seen, tags = {}, {}
+  for _, path in ipairs(vim.api.nvim_get_runtime_file("doc/tags", true)) do
+    local f = io.open(path, "r")
+    if f then
+      for line in f:lines() do
+        local tag = line:match("^([^\t]+)\t")
+        if tag and not seen[tag] and tag:sub(1, 6) ~= "!_TAG_" then
+          seen[tag] = true
+          tags[#tags + 1] = tag
+        end
+      end
+      f:close()
+    end
+  end
+  table.sort(tags)
+  return tags
+end
+
+function M.help()
+  -- :help always opens its own window, so "edit" and "split" are the same.
+  local cmds = { edit = "help", split = "help", vsplit = "vertical help", tabedit = "tab help" }
+  ui.open({
+    title = "Help",
+    matcher = matcher.from_list(help_tags()),
+    on_select = function(tag, action)
+      local ok, err = pcall(vim.cmd, ("%s %s"):format(cmds[action], tag))
+      if not ok then
+        util.notify(("No help for '%s':\n%s"):format(tag, err), vim.log.levels.WARN)
+      end
     end,
   })
 end

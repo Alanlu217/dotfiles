@@ -8,7 +8,14 @@ local features = { "core.native", "core.terminal", "core.picker" }
 function M.start()
   for _, name in ipairs(features) do
     local ok, mod = util.safe_require(name)
-    if ok and type(mod.setup) == "function" then
+    if ok and type(mod) ~= "table" then
+      vim.schedule(function()
+        util.notify(
+          ("'%s' did not return a module table (missing `return M`, or the wrong file is installed there)"):format(name),
+          vim.log.levels.ERROR
+        )
+      end)
+    elseif ok and type(mod.setup) == "function" then
       local setup_ok, err = pcall(mod.setup)
       if not setup_ok then
         vim.schedule(function()

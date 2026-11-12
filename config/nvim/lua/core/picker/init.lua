@@ -1,8 +1,8 @@
 -- Public picker API:
---   require("core.picker").files() / .buffers() / .recent()
+--   require("core.picker").files() / .buffers() / .recent() / .help()
 --   require("core.picker").open({ title, matcher, on_select, on_cancel? })
 --   require("core.picker").select(items, opts, on_choice)   -- vim.ui.select
---   :Pick files|buffers|recent
+--   :Pick files|buffers|recent|help
 local M = {}
 
 ---@param spec core.picker.Spec
@@ -21,6 +21,10 @@ end
 
 function M.recent()
   require("core.picker.sources").recent()
+end
+
+function M.help()
+  require("core.picker.sources").help()
 end
 
 ---@param items string[] one entry per line, no newlines inside
@@ -71,7 +75,7 @@ function M.setup()
     vim.ui.select = M.select
   end
 
-  local names = { "files", "buffers", "recent" }
+  local names = { "files", "buffers", "recent", "help" }
   vim.api.nvim_create_user_command("Pick", function(o)
     local name = o.args ~= "" and o.args or "files"
     if vim.tbl_contains(names, name) then
@@ -84,7 +88,7 @@ function M.setup()
     complete = function()
       return names
     end,
-    desc = "Open a picker (files|buffers|recent)",
+    desc = "Open a picker (files|buffers|recent|help)",
   })
 end
 
