@@ -1,3 +1,5 @@
+local picker = require("core.picker")
+
 local map = vim.keymap.set
 
 -- Reload: clear cached modules that live in this config, then re-run init.lua
@@ -14,6 +16,9 @@ map("n", "<leader>R", function()
 end, { desc = "Reload config" })
 
 map("n", "<C-a>", "ggVG", { desc = "Select whole file" })
+
+-- Picker
+map("n", "<leader>f", picker.files, { desc = "Pick files" })
 
 -- System clipboard
 map({ "n", "v" }, "<leader>y", [["+y]], { desc = "Yank to system clipboard" })

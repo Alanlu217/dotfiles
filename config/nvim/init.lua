@@ -16,6 +16,7 @@ end
 local modules = {
   -- core
   "core.ffi",
+  "core.picker",
 
   "options",
   "keymap",
