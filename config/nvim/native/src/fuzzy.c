@@ -65,9 +65,9 @@ static int same(char p, char t, int cs) {
     return tolower((unsigned char)p) == tolower((unsigned char)t);
 }
 
-/* DP scratch, reused across calls (the library is single-threaded). */
-static int *scratch;
-static size_t scratch_cap;
+/* DP scratch, reused across calls. Thread-local: filtering runs on worker threads. */
+static _Thread_local int *scratch;
+static _Thread_local size_t scratch_cap;
 
 static int *scratch_get(size_t n) {
     if (n > scratch_cap) {

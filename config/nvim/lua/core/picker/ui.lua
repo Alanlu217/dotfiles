@@ -2,7 +2,8 @@
 --
 -- Anchored bottom-left, above the statusline. The list sits above the prompt
 -- and is rendered bottom-up: the best match is the last list line, right above
--- the prompt.
+-- the prompt. Filtering is asynchronous: only the latest query is ever
+-- rendered, and the UI stays responsive while a worker ranks the items.
 local config = require("core.config")
 local util = require("core.util")
 
@@ -82,8 +83,8 @@ function M.open(spec)
   end
 
   local cfg = config.get().picker
+  local matcher = spec.matcher
   local prompt_text = spec.prompt or cfg.prompt
-  local total = spec.matcher.count()
   local prev_win = vim.api.nvim_get_current_win()
   local group = util.augroup("picker")
 
@@ -92,6 +93,7 @@ function M.open(spec)
   local offset = 0 -- blank lines above the results in the list buffer
   local closed = false
   local chosen = false -- true once an item was picked (vs. dismissed)
+  local inflight, dirty = false, false
 
   -- Buffers and windows -----------------------------------------------------
   define_highlights()
@@ -130,7 +132,10 @@ function M.open(spec)
     if cfg.border == "none" then
       return
     end
-    local count = ("%d/%d%s"):format(#results, total, spec.matcher.truncated and "+" or "")
+    local count = ("%d/%d%s"):format(#results, matcher.count(), matcher.truncated and "+" or "")
+    if matcher.loading then
+      count = count .. "  scanning..."
+    end
     local title = (" %s  %s "):format(spec.title, count)
     vim.api.nvim_win_set_config(prompt_win, vim.tbl_extend("force", prompt_cfg, { title = title, title_pos = "left" }))
   end
@@ -145,8 +150,9 @@ function M.open(spec)
     vim.api.nvim_win_set_cursor(list_win, { line, 0 })
   end
 
-  local function refresh()
-    results = spec.matcher.filter(query(), cfg.max_results)
+  ---@param items string[]
+  local function render(items)
+    results = items
     sel = #results > 0 and 1 or 0
 
     -- Blank padding first, then results worst-to-best, so a short list stays
@@ -174,6 +180,32 @@ function M.open(spec)
     update_title()
   end
 
+  --- Ask the matcher for the current query. Only one request is in flight; if
+  --- the query changes meanwhile, the stale answer is dropped and the latest
+  --- query is requested next.
+  local function request()
+    if closed then
+      return
+    end
+    if inflight then
+      dirty = true
+      return
+    end
+    inflight = true
+    matcher.filter(query(), cfg.max_results, function(items)
+      inflight = false
+      if closed then
+        return
+      end
+      if dirty then
+        dirty = false
+        request()
+        return
+      end
+      render(items)
+    end)
+  end
+
   -- Actions -----------------------------------------------------------------
   --- delta > 0 moves the selection down the screen, toward the best match.
   ---@param delta integer
@@ -196,6 +228,9 @@ function M.open(spec)
     closed = true
     close_active = nil
     pcall(vim.api.nvim_del_augroup_by_id, group)
+    if matcher.dispose then
+      matcher.dispose()
+    end
     vim.cmd.stopinsert()
     for _, win in ipairs({ prompt_win, list_win }) do
       if vim.api.nvim_win_is_valid(win) then
@@ -258,7 +293,7 @@ function M.open(spec)
   vim.api.nvim_create_autocmd({ "TextChangedI", "TextChanged" }, {
     group = group,
     buffer = prompt_buf,
-    callback = refresh,
+    callback = request,
   })
   -- Clicking away or switching windows dismisses the picker.
   vim.api.nvim_create_autocmd("WinLeave", {
@@ -277,12 +312,17 @@ function M.open(spec)
       prompt_cfg, list_cfg = layout(cfg)
       vim.api.nvim_win_set_config(list_win, list_cfg)
       vim.api.nvim_win_set_config(prompt_win, prompt_cfg)
-      refresh()
+      request()
     end,
   })
   vim.api.nvim_create_autocmd("ColorScheme", { group = group, callback = define_highlights })
 
-  refresh()
+  -- A still-loading matcher (scan in progress) re-requests when it finishes.
+  if matcher.subscribe then
+    matcher.subscribe(request)
+  end
+
+  request()
   vim.cmd.startinsert()
 end
 

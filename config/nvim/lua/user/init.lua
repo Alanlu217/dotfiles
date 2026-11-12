@@ -8,6 +8,7 @@ for _, mod in ipairs({
   "user.theme",
   "user.keymaps",
   "user.spell",
+  "user.lsp",
 }) do
   safe_require(mod)
 end

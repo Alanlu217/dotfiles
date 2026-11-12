@@ -16,6 +16,7 @@ opt.listchars = { tab = "> ", trail = "-", nbsp = "+" }
 opt.breakindent = true
 opt.shortmess:append("I")
 opt.mouse = "a"
+opt.winborder = "solid"
 
 -- Behaviour
 opt.timeoutlen = 400

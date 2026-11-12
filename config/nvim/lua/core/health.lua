@@ -28,6 +28,18 @@ function M.check()
   else
     vim.health.warn("native core unavailable: " .. tostring(err))
   end
+
+  vim.health.start("core.lsp")
+  local lsp = require("core.lsp")
+  if #lsp.enabled == 0 then
+    vim.health.info("no language servers enabled")
+  end
+  for _, name in ipairs(lsp.enabled) do
+    vim.health.ok(name .. " enabled")
+  end
+  for name, exe in pairs(lsp.missing) do
+    vim.health.info(("%s skipped: '%s' not found in PATH"):format(name, exe))
+  end
 end
 
 return M
