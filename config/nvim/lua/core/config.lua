@@ -10,7 +10,7 @@ M.defaults = {
   },
 
   picker = {
-    width = 0.6,
+    width = 0.3,
     height = 0.6,
     border = "solid",
     prompt = "> ",
@@ -32,7 +32,7 @@ M.defaults = {
   },
 
   terminal = {
-    bottom_height = 0.4,
+    bottom_height = 0.3,
     right_width = 0.5,
     autoinsert = true,
     close_on_exit = true,
