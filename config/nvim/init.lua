@@ -1,44 +1,13 @@
--- Leader
-vim.g.mapleader = " "
-vim.g.maplocalleader = " "
+-- Bootstrap only. Nothing personal lives here.
+--
+--   lua/core/  framework: native bridge, picker, terminal, window helpers.
+--              Provides mechanisms; defines no options and no keymaps.
+--   lua/user/  your space: options, theme, keymaps, per-feature settings.
+--   native/    C sources (built out-of-tree into stdpath("data")/native).
 
--- Test
-local native = require("core.ffi")
-local ffi = require("ffi")
-
-local version_ptr = native.native_core_version()
-if version_ptr ~= nil then
-  vim.print("Native Core Version: " .. ffi.string(version_ptr))
+if vim.fn.has("nvim-0.11") == 0 then
+  vim.api.nvim_echo({ { "This config requires Neovim >= 0.11", "ErrorMsg" } }, true, {})
+  return
 end
 
--- Module imports
-
-local modules = {
-  -- core
-  "core.ffi",
-  "core.picker",
-
-  "options",
-  "keymap",
-  "terminal",
-}
-
-local failed = {}
-
-for _, mod in ipairs(modules) do
-  local ok, err = pcall(require, mod)
-  if not ok then
-    table.insert(failed, { mod = mod, err = err })
-  end
-end
-
-if #failed > 0 then
-  vim.schedule(function()
-    for _, f in ipairs(failed) do
-      vim.notify(
-        ("Failed to load '%s':\n%s"):format(f.mod, f.err),
-        vim.log.levels.ERROR
-      )
-    end
-  end)
-end
+require("core").start()

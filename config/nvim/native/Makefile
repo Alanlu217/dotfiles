@@ -1,34 +1,44 @@
-CC = cc
-CFLAGS = -O3 -fPIC -shared
-TARGET_DIR = bin
+# Out-of-tree build: sources may live in a read-only config dir (e.g. NixOS);
+# artifacts go to BUILD_DIR (Neovim passes stdpath("data")/native).
+CC        ?= cc
+BUILD_DIR ?= build
+CFLAGS    ?= -O2
+WARN      := -Wall -Wextra -Wpedantic -Wshadow
+CFLAGS    += -std=c11 $(WARN) -fPIC -fvisibility=hidden -Iinclude -Isrc -MMD -MP
 
-SRC = utils.c fuzzy.c
+SRC  := $(wildcard src/*.c)
+OBJ  := $(SRC:src/%.c=$(BUILD_DIR)/obj/%.o)
 
-TARGET = $(TARGET_DIR)/core.so
-FFI_HEADER_NAME = common_ffi.h
-FFI_HEADER = $(TARGET_DIR)/$(FFI_HEADER_NAME)
-
-OS := $(shell uname)
-ifeq ($(OS), Darwin)
-    TARGET = $(TARGET_DIR)/core.dylib
+ifeq ($(shell uname),Darwin)
+  EXT := dylib
+else
+  EXT := so
 endif
+LIB  := $(BUILD_DIR)/libnvcore.$(EXT)
+TEST := $(BUILD_DIR)/test_core
 
-all: $(TARGET_DIR) $(TARGET) $(FFI_HEADER)
+all: $(LIB)
 
-$(TARGET_DIR):
-	mkdir -p $(TARGET_DIR)
+# Link to a temp name then rename: replacing a mapped .so in place can crash a
+# running Neovim, while rename gives the new file a fresh inode.
+$(LIB): $(OBJ)
+	$(CC) -shared -o $@.tmp $(OBJ)
+	mv -f $@.tmp $@
 
-$(TARGET): $(SRC) common.h
-	$(CC) $(CFLAGS) $(SRC) -o $(TARGET)
+$(BUILD_DIR)/obj/%.o: src/%.c | $(BUILD_DIR)/obj
+	$(CC) $(CFLAGS) -c $< -o $@
 
-$(FFI_HEADER): common.h | $(TARGET_DIR)
-	$(CC) -E -P common.h -o $(FFI_HEADER)
+$(BUILD_DIR)/obj:
+	mkdir -p $@
 
-test: test.c $(SRC) common.h
-	$(CC) -g -O0 test.c $(SRC) -o $(TARGET_DIR)/run_tests
-	./$(TARGET_DIR)/run_tests $(arg)
+$(TEST): tests/test_core.c $(OBJ)
+	$(CC) $(CFLAGS) -g -O0 tests/test_core.c $(OBJ) -o $@
+
+test: $(TEST)
+	$(TEST)
 
 clean:
-	rm -rf $(TARGET_DIR) run_tests test
+	rm -rf $(BUILD_DIR)
 
+-include $(OBJ:.o=.d)
 .PHONY: all test clean
