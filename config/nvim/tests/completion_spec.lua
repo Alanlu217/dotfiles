@@ -1,4 +1,5 @@
--- Headless tests for core.completion, against a fake in-process LSP server.
+-- Headless tests for core.completion and core.signature (the parameter viewer),
+-- against a fake in-process LSP server.
 --
 --   cd ~/.config/nvim && nvim --headless -u NONE -c "luafile tests/completion_spec.lua"
 --
@@ -90,6 +91,25 @@ local function completion(params)
   }
 end
 
+-- Two overloads of sig(); the active parameter is the number of commas typed
+-- since the "(". Nothing once the call is closed.
+local function signature_help(params)
+  local line = vim.api.nvim_buf_get_lines(0, params.position.line, params.position.line + 1, false)[1] or ""
+  local args = line:sub(1, params.position.character):match("sig%(([^)]*)$")
+  if not args then
+    return nil
+  end
+  local _, commas = args:gsub(",", "")
+  return {
+    signatures = {
+      { label = "sig(alpha: number, beta: string)", parameters = { { label = "alpha: number" }, { label = "beta: string" } } },
+      { label = "sig(gamma)", parameters = { { label = "gamma" } } },
+    },
+    activeSignature = 0,
+    activeParameter = commas,
+  }
+end
+
 local function server(_dispatchers)
   local closing, next_id = false, 0
   local srv = {}
@@ -97,9 +117,16 @@ local function server(_dispatchers)
     next_id = next_id + 1
     vim.schedule(function()
       if method == "initialize" then
-        callback(nil, { capabilities = { completionProvider = { triggerCharacters = { "." } } } })
+        callback(nil, {
+          capabilities = {
+            completionProvider = { triggerCharacters = { "." } },
+            signatureHelpProvider = { triggerCharacters = { "(", "," } },
+          },
+        })
       elseif method == "textDocument/completion" then
         callback(nil, completion(params))
+      elseif method == "textDocument/signatureHelp" then
+        callback(nil, signature_help(params))
       else
         callback(nil, nil)
       end
@@ -142,10 +169,21 @@ do
   check(path.detect({ before = "a/b", buf = 0 }) == nil, "path: ignores a/b when a/ does not exist")
 end
 
+do
+  local sig = require("core.signature")
+  -- "f(é, b)": é is one UTF-16 unit but two bytes, so b is at UTF-16 5..6, bytes 6..7.
+  local s, e = sig.param_range("f(é, b)", { label = { 5, 6 } })
+  check(s == 6 and e == 7, ("signature: UTF-16 offsets map to bytes (got %s,%s)"):format(tostring(s), tostring(e)))
+  s, e = sig.param_range("f(a.b, c)", { label = "a.b" })
+  check(s == 2 and e == 5, "signature: string label is a plain substring match")
+  check(sig.param_range("f(a)", { label = "zzz" }) == nil, "signature: unknown parameter label gives no range")
+end
+
 -- End to end ---------------------------------------------------------------------
 
 local co = coroutine.create(function()
   require("core.completion").setup()
+  require("core.signature").setup()
   vim.keymap.set("i", "<CR>", function()
     return require("core.completion").enter()
   end, { expr = true })
@@ -218,6 +256,46 @@ local co = coroutine.create(function()
   check(n_requests == before, ("no new request while the word grows (%d -> %d)"):format(before, n_requests))
   keys("<Esc>")
   wait(50)
+
+  -- 6. parameter viewer: opens on "(", follows the commas, cycles overloads, closes with the call
+  local viewer = require("core.signature")
+  local function float_count()
+    local n = 0
+    for _, w in ipairs(vim.api.nvim_list_wins()) do
+      if vim.api.nvim_win_get_config(w).relative == "cursor" then
+        n = n + 1
+      end
+    end
+    return n
+  end
+  reset()
+  keys("isig(")
+  wait(400)
+  local cur = viewer.current()
+  check(cur ~= nil and cur.count == 2 and cur.index == 1, "viewer opens on '(' with two overloads")
+  check(cur ~= nil and cur.param == "alpha: number", "viewer highlights the first parameter (got " .. tostring(cur and cur.param) .. ")")
+  check(float_count() == 1, "viewer has one floating window")
+  keys("1,")
+  wait(400)
+  cur = viewer.current()
+  check(cur ~= nil and cur.param == "beta: string", "viewer follows the comma (got " .. tostring(cur and cur.param) .. ")")
+  viewer.cycle(1)
+  cur = viewer.current()
+  check(cur ~= nil and cur.index == 2 and cur.label == "sig(gamma)", "cycle shows the second overload")
+  check(cur ~= nil and cur.param == nil, "no highlight when the active parameter is out of range")
+  viewer.cycle(1)
+  cur = viewer.current()
+  check(cur ~= nil and cur.index == 1, "cycle wraps around")
+  keys(")")
+  wait(400)
+  check(viewer.current() == nil and float_count() == 0, "viewer closes when the call is closed")
+  reset()
+  keys("isig(")
+  wait(400)
+  check(viewer.current() ~= nil, "viewer reopens")
+  keys("<Esc>")
+  wait(100)
+  check(viewer.current() == nil and float_count() == 0, "viewer closes on <Esc>")
 
   if #failures == 0 then
     io.stderr:write("\nall passed\n")

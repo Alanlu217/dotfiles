@@ -56,6 +56,13 @@ end
 map("i", "<C-Space>", open_menu, { desc = "Open completion" })
 map("i", "<C-@>", open_menu, { desc = "Open completion" }) -- what most terminals send for Ctrl+Space
 
+-- Parameter viewer (lua/core/signature.lua): opens by itself on "(" and ","; these
+-- keys open/close it by hand and step through overloads while it is showing.
+-- Note: <C-s> shadows Neovim's built-in insert-mode signature help.
+map("i", "<C-s>", function() require("core.signature").toggle() end, { desc = "Toggle parameter viewer" })
+map("i", "<A-n>", function() require("core.signature").cycle(1) end, { desc = "Next overload (parameter viewer)" })
+map("i", "<A-p>", function() require("core.signature").cycle(-1) end, { desc = "Previous overload (parameter viewer)" })
+
 -- Windows -------------------------------------------------------------------
 map("n", "<leader>w", "<C-w>", { remap = false, desc = "Window commands" })
 

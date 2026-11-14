@@ -60,6 +60,17 @@ M.defaults = {
     },
   },
 
+  -- Parameter viewer: LSP signature help next to the completion menu (core.signature).
+  signature = {
+    enabled = true,
+    auto = true, -- open on the servers' trigger characters (usually "(" and ","); false = only on the keymap
+    delay = 30, -- ms to wait after a keystroke before asking the servers
+    docs = true, -- show the active parameter's and the signature's documentation under the label
+    max_width = 80,
+    max_height = 10,
+    border = "solid",
+  },
+
   lsp = {
     -- Passed to vim.diagnostic.config().
     diagnostics = {

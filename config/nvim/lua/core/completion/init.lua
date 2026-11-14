@@ -18,6 +18,9 @@
 --   cancel()   close the menu (or cancel a pending request) | <C-e>
 -- Moving through entries never edits the buffer; only accepting does.
 --
+-- Companion: lua/core/signature.lua, the parameter viewer (signature help). It
+-- keeps clear of this menu on its own.
+--
 -- Mechanism only; no options and no keymaps are defined here.
 local util = require("core.util")
 local session = require("core.completion.session")
