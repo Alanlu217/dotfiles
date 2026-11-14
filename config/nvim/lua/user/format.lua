@@ -17,9 +17,6 @@ format.setup_formatters({
     -- Read from stdin, rustfmt cannot see Cargo.toml: set the edition yourself.
     args = { "--edition", "2021" },
   },
-  typstyle = {
-    cmd = "typstyle",
-  },
 })
 
 format.by_ft({
@@ -27,5 +24,4 @@ format.by_ft({
   c = { "clang-format" },
   cpp = { "clang-format" },
   rust = { "rustfmt" },
-  typst = { "typstyle" },
 })
