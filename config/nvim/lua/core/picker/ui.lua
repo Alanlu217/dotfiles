@@ -1,8 +1,8 @@
 -- Floating prompt + result list. Knows nothing about what is being picked.
 --
--- Anchored bottom-left, above the statusline. The list sits above the prompt
--- and is rendered bottom-up: the best match is the last list line, right above
--- the prompt. Filtering is asynchronous: only the latest query is ever
+-- Anchored bottom-left, above the statusline. The prompt sits on top and the
+-- list below it is rendered top-down: the best match is the first list line,
+-- right under the prompt. Filtering is asynchronous: only the latest query is ever
 -- rendered, and the UI stays responsive while a worker ranks the items.
 local config = require("core.config")
 local util = require("core.util")
@@ -19,10 +19,10 @@ local HIGHLIGHTS = {
 }
 
 -- { top-left, top, top-right, right, bottom-right, bottom, bottom-left, left }
--- "solid" borders are blank cells, so a bottom edge on the list plus a top edge
--- on the prompt would show as two empty rows. The list drops its bottom edge
--- and the prompt's top edge (which carries the title) is the only separator.
-local SOLID_NO_BOTTOM = { " ", " ", " ", " ", "", "", "", " " }
+-- "solid" borders are blank cells, so a top edge on the list plus a bottom edge
+-- on the prompt would show as two empty rows. The list drops its top edge and
+-- the prompt's bottom edge is the only separator (its top edge carries the title).
+local SOLID_NO_TOP = { "", "", "", " ", " ", " ", " ", " " }
 
 local close_active ---@type fun()?
 
@@ -57,12 +57,12 @@ local function layout(cfg)
   }
   local prompt = vim.tbl_extend("force", base, {
     border = border,
-    row = top + list_outer,
+    row = top,
     height = 1,
   })
   local list = vim.tbl_extend("force", base, {
-    border = solid and SOLID_NO_BOTTOM or border,
-    row = top,
+    border = solid and SOLID_NO_TOP or border,
+    row = top + prompt_outer,
     height = math.max(1, list_inner),
     focusable = false,
   })
@@ -90,7 +90,6 @@ function M.open(spec)
 
   local results = {} ---@type string[] best match first
   local sel = 0 -- 1 = best match
-  local offset = 0 -- blank lines above the results in the list buffer
   local closed = false
   local chosen = false -- true once an item was picked (vs. dismissed)
   local inflight, dirty = false, false
@@ -145,9 +144,8 @@ function M.open(spec)
     if sel == 0 then
       return
     end
-    local line = offset + #results - sel + 1 -- best match is the last line
-    vim.api.nvim_buf_set_extmark(list_buf, NS, line - 1, 0, { line_hl_group = "PickerSelection", priority = 100 })
-    vim.api.nvim_win_set_cursor(list_win, { line, 0 })
+    vim.api.nvim_buf_set_extmark(list_buf, NS, sel - 1, 0, { line_hl_group = "PickerSelection", priority = 100 })
+    vim.api.nvim_win_set_cursor(list_win, { sel, 0 })
   end
 
   ---@param items string[]
@@ -155,25 +153,16 @@ function M.open(spec)
     results = items
     sel = #results > 0 and 1 or 0
 
-    -- Blank padding first, then results worst-to-best, so a short list stays
-    -- pinned against the prompt.
-    local height = vim.api.nvim_win_get_height(list_win)
-    offset = math.max(0, height - #results)
-    local lines = {}
-    for _ = 1, offset do
-      lines[#lines + 1] = ""
-    end
-    for i = #results, 1, -1 do
-      lines[#lines + 1] = results[i]
-    end
+    -- Best match first, so a short list stays pinned under the prompt.
+    local lines = vim.list_slice(results)
 
     vim.bo[list_buf].modifiable = true
     vim.api.nvim_buf_set_lines(list_buf, 0, -1, false, lines)
     vim.bo[list_buf].modifiable = false
 
-    -- A stale topline from a longer previous list would leave blank rows at the bottom.
+    -- Start from the top; a stale topline from a previous list would hide the best match.
     vim.api.nvim_win_call(list_win, function()
-      vim.fn.winrestview({ topline = math.max(1, #lines - height + 1), lnum = #lines })
+      vim.fn.winrestview({ topline = 1, lnum = 1 })
     end)
 
     highlight()
@@ -207,13 +196,13 @@ function M.open(spec)
   end
 
   -- Actions -----------------------------------------------------------------
-  --- delta > 0 moves the selection down the screen, toward the best match.
+  --- delta > 0 moves the selection down the screen, away from the best match.
   ---@param delta integer
   local function move(delta)
     if #results == 0 then
       return
     end
-    sel = math.min(#results, math.max(1, sel - delta))
+    sel = math.min(#results, math.max(1, sel + delta))
     highlight()
   end
 

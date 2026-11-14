@@ -1,8 +1,11 @@
 -- Public picker API:
 --   require("core.picker").files() / .buffers() / .recent() / .help()
+--   require("core.picker").symbols() / .workspace_symbols()   -- LSP
+--   require("core.picker").diagnostics() / .buffer_diagnostics()
+--   require("core.picker").keymaps()
 --   require("core.picker").open({ title, matcher, on_select, on_cancel? })
 --   require("core.picker").select(items, opts, on_choice)   -- vim.ui.select
---   :Pick files|buffers|recent|help
+--   :Pick files|buffers|recent|help|symbols|workspace_symbols|diagnostics|buffer_diagnostics|keymaps
 local M = {}
 
 ---@param spec core.picker.Spec
@@ -25,6 +28,31 @@ end
 
 function M.help()
   require("core.picker.sources").help()
+end
+
+--- Symbols of the current file (LSP).
+function M.symbols()
+  require("core.picker.symbols").document()
+end
+
+--- Symbols across the workspace (LSP).
+function M.workspace_symbols()
+  require("core.picker.symbols").workspace()
+end
+
+--- Diagnostics of every open buffer.
+function M.diagnostics()
+  require("core.picker.diagnostics").open()
+end
+
+--- Diagnostics of the current buffer.
+function M.buffer_diagnostics()
+  require("core.picker.diagnostics").open({ buffer = true })
+end
+
+--- Every keymap that applies to the current buffer.
+function M.keymaps()
+  require("core.picker.keymaps").open()
 end
 
 ---@param items string[] one entry per line, no newlines inside
@@ -75,7 +103,17 @@ function M.setup()
     vim.ui.select = M.select
   end
 
-  local names = { "files", "buffers", "recent", "help" }
+  local names = {
+    "files",
+    "buffers",
+    "recent",
+    "help",
+    "symbols",
+    "workspace_symbols",
+    "diagnostics",
+    "buffer_diagnostics",
+    "keymaps",
+  }
   vim.api.nvim_create_user_command("Pick", function(o)
     local name = o.args ~= "" and o.args or "files"
     if vim.tbl_contains(names, name) then
@@ -88,7 +126,7 @@ function M.setup()
     complete = function()
       return names
     end,
-    desc = "Open a picker (files|buffers|recent|help)",
+    desc = "Open a picker (files|buffers|recent|help|symbols|workspace_symbols|diagnostics|buffer_diagnostics|keymaps)",
   })
 end
 

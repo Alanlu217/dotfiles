@@ -14,6 +14,11 @@ map({ "n", "v" }, "<leader>f", function() require("core.picker").files() end, { 
 map({ "n", "v" }, "<leader>b", function() require("core.picker").buffers() end, { desc = "Pick buffers" })
 map({ "n", "v" }, "<leader>r", function() require("core.picker").recent() end, { desc = "Pick recent files" })
 map({ "n", "v" }, "<leader>h", function() require("core.picker").help() end, { desc = "Pick help tags" })
+map({ "n", "v" }, "<leader>s", function() require("core.picker").symbols() end, { desc = "Pick file symbols" })
+map({ "n", "v" }, "<leader>S", function() require("core.picker").workspace_symbols() end, { desc = "Pick workspace symbols" })
+map({ "n", "v" }, "<leader>d", function() require("core.picker").diagnostics() end, { desc = "Pick diagnostics (open buffers)" })
+map({ "n", "v" }, "<leader>D", function() require("core.picker").buffer_diagnostics() end, { desc = "Pick diagnostics (buffer)" })
+map({ "n", "v" }, "<leader>k", function() require("core.picker").keymaps() end, { desc = "Pick keymaps" })
 
 -- System clipboard ----------------------------------------------------------
 map({ "n", "v" }, "<leader>y", [["+y]], { desc = "Yank to system clipboard" })
@@ -49,8 +54,10 @@ end
 
 -- Tabs ----------------------------------------------------------------------
 -- Alt+h / Alt+l switch tabs, from any mode (Alt+arrows don't work in a tty).
-map({ "n", "i", "t" }, "<A-h>", "<C-\\><C-n><cmd>tabprevious<CR>", { desc = "Previous tab" })
-map({ "n", "i", "t" }, "<A-l>", "<C-\\><C-n><cmd>tabnext<CR>", { desc = "Next tab" })
+map({ "n", "i", "t" }, "<A-S-h>", "<C-\\><C-n><cmd>tabprevious<CR>", { desc = "Previous tab" })
+map({ "n", "i", "t" }, "<A-S-l>", "<C-\\><C-n><cmd>tabnext<CR>", { desc = "Next tab" })
+map({ "n", "i", "t" }, "<A-S-Left>", "<C-\\><C-n><cmd>tabprevious<CR>", { desc = "Previous tab" })
+map({ "n", "i", "t" }, "<A-S-Right>", "<C-\\><C-n><cmd>tabnext<CR>", { desc = "Next tab" })
 
 map("n", "<leader>tn", "<cmd>tabnew<CR>", { desc = "New tab" })
 map("n", "<leader>tc", "<cmd>tabclose<CR>", { desc = "Close tab" })

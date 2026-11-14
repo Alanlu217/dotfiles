@@ -1,7 +1,7 @@
 -- Data only: overrides for framework defaults in lua/core/config.lua.
 return {
   picker = {
-    width = 0.3,
+    width = 0.6,
     height = 0.6,
     border = "solid",
     prompt = "> ",
