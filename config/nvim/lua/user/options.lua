@@ -25,6 +25,11 @@ opt.undofile = true
 opt.inccommand = "split"
 opt.scrollback = 100000
 
+-- Completion (see lua/core/completion): native menu, nothing inserted until accepted.
+opt.completeopt = { "menu", "menuone", "noinsert", "popup" }
+opt.pumheight = 10
+opt.shortmess:append("c") -- no "match 1 of N" / "-- Complete --" messages while typing
+
 -- Search
 opt.ignorecase = true
 opt.smartcase = true

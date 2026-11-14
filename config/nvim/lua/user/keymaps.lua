@@ -33,6 +33,29 @@ map("n", "<leader>X", function() require("core.terminal").open("right") end, { d
 -- Note: mapping <C-\> means a typed <C-\><C-n> no longer works; use <Esc><Esc>.
 map({ "n", "t" }, "<C-\\>", function() require("core.terminal").toggle_float() end, { desc = "Terminal (floating)" })
 
+-- Completion --------------------------------------------------------------
+-- <CR> accepts the highlighted entry; <Tab>/<S-Tab> move through entries without
+-- editing the text; arrows are plain cursor keys. <C-n>/<C-p> also move.
+-- The <expr> functions fall back to the key's normal action when idle
+-- (<Tab>/<S-Tab> then jump between snippet stops).
+local function cmp_expr(name)
+  return function()
+    return require("core.completion")[name]()
+  end
+end
+map("i", "<CR>", cmp_expr("enter"), { expr = true, desc = "Accept completion / newline" })
+map("i", "<Tab>", cmp_expr("tab"), { expr = true, desc = "Next completion / next snippet stop / Tab" })
+map("i", "<S-Tab>", cmp_expr("s_tab"), { expr = true, desc = "Previous completion / previous snippet stop" })
+map("i", "<Up>", cmp_expr("up"), { expr = true, desc = "Up (closes completion)" })
+map("i", "<Down>", cmp_expr("down"), { expr = true, desc = "Down (closes completion)" })
+map("i", "<C-y>", cmp_expr("confirm"), { expr = true, desc = "Accept completion" })
+map("i", "<C-e>", cmp_expr("cancel"), { expr = true, desc = "Close completion" })
+local function open_menu()
+  require("core.completion").trigger()
+end
+map("i", "<C-Space>", open_menu, { desc = "Open completion" })
+map("i", "<C-@>", open_menu, { desc = "Open completion" }) -- what most terminals send for Ctrl+Space
+
 -- Windows -------------------------------------------------------------------
 map("n", "<leader>w", "<C-w>", { remap = false, desc = "Window commands" })
 

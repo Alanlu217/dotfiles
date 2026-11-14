@@ -3,7 +3,7 @@ local util = require("core.util")
 local M = {}
 
 -- Framework features, each exposing setup() (autocmds + commands, no keymaps).
-local features = { "core.native", "core.terminal", "core.picker", "core.lsp" }
+local features = { "core.native", "core.terminal", "core.picker", "core.lsp", "core.completion" }
 
 function M.start()
   for _, name in ipairs(features) do

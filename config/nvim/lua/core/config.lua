@@ -41,6 +41,25 @@ M.defaults = {
     float = { width = 0.8, height = 0.8, border = "solid" },
   },
 
+  completion = {
+    enabled = true,
+    auto = true, -- open the menu while typing; false = only on <C-Space>
+    delay = 40, -- ms to wait after a keystroke before asking the sources
+    grace = 120, -- ms to wait for slow sources before showing what has arrived
+    max_items = 50,
+    sources = { "lsp", "path", "buffer" }, -- earlier wins when two sources offer the same word
+    trigger_chars = {}, -- extra characters that open the menu, besides those the servers declare
+    docs = true, -- documentation popup for the highlighted item (needs "popup" in 'completeopt')
+    buffer = {
+      min_prefix = 2, -- characters typed before buffer words are offered
+      max_words = 5000, -- per buffer
+      max_bytes = 1048576, -- buffers larger than this are not scanned
+    },
+    path = {
+      max_entries = 1000,
+    },
+  },
+
   lsp = {
     -- Passed to vim.diagnostic.config().
     diagnostics = {

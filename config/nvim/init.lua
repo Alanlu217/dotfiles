@@ -1,6 +1,6 @@
 -- Bootstrap only. Nothing personal lives here.
 --
---   lua/core/  framework: native bridge, picker, terminal, window helpers.
+--   lua/core/  framework: native bridge, picker, completion, terminal, window helpers.
 --              Provides mechanisms; defines no options and no keymaps.
 --   lua/user/  your space: options, theme, keymaps, per-feature settings.
 --   native/    C sources (built out-of-tree into stdpath("data")/native).

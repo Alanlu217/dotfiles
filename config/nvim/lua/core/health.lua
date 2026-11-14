@@ -29,6 +29,34 @@ function M.check()
     vim.health.warn("native core unavailable: " .. tostring(err))
   end
 
+  vim.health.start("core.completion")
+  local copt = vim.opt.completeopt:get()
+  for _, need in ipairs({ "menuone", "noinsert" }) do
+    if vim.tbl_contains(copt, need) then
+      vim.health.ok("'completeopt' has " .. need)
+    else
+      vim.health.error(("'completeopt' lacks '%s'; accepting without inserting needs it (set in lua/user/options.lua)"):format(need))
+    end
+  end
+  if vim.tbl_contains(copt, "popup") then
+    vim.health.ok("'completeopt' has popup (documentation window)")
+  else
+    vim.health.warn("'completeopt' lacks 'popup'; completion documentation will not be shown")
+  end
+  if vim.tbl_contains(copt, "noselect") then
+    vim.health.warn("'completeopt' has noselect; <CR> still accepts the first entry when none is highlighted")
+  end
+  if vim.snippet and vim.snippet.expand then
+    vim.health.ok("vim.snippet available")
+  else
+    vim.health.error("vim.snippet missing; snippet completions cannot be expanded")
+  end
+  if vim.api.nvim_complete_set or vim.api.nvim__complete_set then
+    vim.health.ok("lazy documentation updates supported")
+  else
+    vim.health.info("no nvim_complete_set; documentation only shows for items that arrive with it")
+  end
+
   vim.health.start("core.lsp")
   local lsp = require("core.lsp")
   if #lsp.enabled == 0 then
