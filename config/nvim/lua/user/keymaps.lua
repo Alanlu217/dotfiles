@@ -63,6 +63,18 @@ map("i", "<C-s>", function() require("core.signature").toggle() end, { desc = "T
 map("i", "<A-n>", function() require("core.signature").cycle(1) end, { desc = "Next overload (parameter viewer)" })
 map("i", "<A-p>", function() require("core.signature").cycle(-1) end, { desc = "Previous overload (parameter viewer)" })
 
+-- Formatting ----------------------------------------------------------------
+-- Which formatter runs is set in lua/user/format.lua. The visual mapping goes
+-- through the LSP (external formatters always take the whole buffer).
+map("n", "<leader>=", function() require("core.format").format({ async = true }) end, { desc = "Format buffer" })
+map("x", "<leader>=", function()
+  local a, b = vim.fn.line("v"), vim.fn.line(".")
+  vim.api.nvim_feedkeys(vim.keycode("<Esc>"), "nx", false)
+  require("core.format").format_range(math.min(a, b), math.max(a, b))
+end, { desc = "Format selection (LSP)" })
+map("n", "<leader>uf", function() require("core.format").toggle() end, { desc = "Toggle format on save (global)" })
+map("n", "<leader>uF", function() require("core.format").toggle(0) end, { desc = "Toggle format on save (buffer)" })
+
 -- Windows -------------------------------------------------------------------
 map("n", "<leader>w", "<C-w>", { remap = false, desc = "Window commands" })
 
@@ -71,7 +83,7 @@ local arrows = { h = "Left", j = "Down", k = "Up", l = "Right" }
 for dir, arrow in pairs(arrows) do
   -- Focus: Ctrl+hjkl (normal, terminal) and Ctrl+arrows (also insert).
   local focus = "<C-\\><C-n><C-w>" .. dir
-  map({ "n", "t" }, "<C-" .. dir .. ">", focus, { desc = "Focus window " .. dir })
+  map({ "n", "t" }, "<C-S-" .. dir .. ">", focus, { desc = "Focus window " .. dir })
   map({ "n", "i", "t" }, "<C-" .. arrow .. ">", focus, { desc = "Focus window " .. dir })
 
   -- Resize: Ctrl+Alt+hjkl / Ctrl+Alt+arrows move the border in that direction.

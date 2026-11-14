@@ -57,6 +57,23 @@ function M.check()
     vim.health.info("no nvim_complete_set; documentation only shows for items that arrive with it")
   end
 
+  vim.health.start("core.format")
+  local format = require("core.format")
+  local names = vim.tbl_keys(format.formatters)
+  table.sort(names)
+  if #names == 0 then
+    vim.health.info("no formatters defined (lua/user/format.lua)")
+  end
+  for _, name in ipairs(names) do
+    local cmd = format.formatters[name].cmd
+    if vim.fn.executable(cmd) == 1 then
+      vim.health.ok(("%s: '%s' found"):format(name, cmd))
+    else
+      vim.health.info(("%s skipped: '%s' not found in PATH"):format(name, cmd))
+    end
+  end
+  vim.health.info(("format on save: %s"):format(format.enabled() and "on" or "off"))
+
   vim.health.start("core.lsp")
   local lsp = require("core.lsp")
   if #lsp.enabled == 0 then

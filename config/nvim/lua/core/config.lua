@@ -71,6 +71,15 @@ M.defaults = {
     border = "solid",
   },
 
+  -- Formatting: formatters and the filetype mapping live in lua/user/format.lua.
+  format = {
+    enabled = true,
+    on_save = true, -- starting value of vim.g.format_on_save (toggled with :FormatToggle)
+    timeout_ms = 1000, -- per formatter; format-on-save blocks for at most this long
+    lsp_fallback = "fallback", -- "fallback": LSP only when no formatter is available | "always" | "never"
+    max_bytes = 1048576, -- buffers larger than this are not formatted on save
+  },
+
   lsp = {
     -- Passed to vim.diagnostic.config().
     diagnostics = {
