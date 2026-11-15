@@ -78,6 +78,16 @@ M.defaults = {
     border = "solid",
   },
 
+  -- Typst preview through tinymist (core.typst_preview).
+  typst_preview = {
+    follow = true, -- scroll the preview as the cursor moves (toggle: :TypstPreviewFollow)
+    follow_insert = true, -- also while typing
+    debounce = 60, -- ms between a cursor move and the scroll request
+    jump_center = true, -- centre the line after a click in the preview jumps to it
+    args = { "--invert-colors=auto" }, -- extra `tinymist preview` arguments
+    browser = nil, -- command (list) to open the url with, e.g. { "firefox", "--new-window" }; nil = system default
+  },
+
   -- Formatting: formatters and the filetype mapping live in lua/user/format.lua.
   format = {
     enabled = true,

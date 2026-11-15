@@ -9,6 +9,7 @@ for _, mod in ipairs({
   "user.keymaps",
   "user.spell",
   "user.lsp",
+  "user.typst",
   "user.format",
 }) do
   safe_require(mod)

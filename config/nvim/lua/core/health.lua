@@ -78,6 +78,13 @@ function M.check()
   vim.health.info("file: " .. require("core.config").get().projects.file)
   vim.health.info(("%d saved project(s)"):format(#require("core.projects").list()))
 
+  vim.health.start("core.typst_preview")
+  if vim.fn.executable("tinymist") == 1 then
+    vim.health.ok("tinymist found")
+  else
+    vim.health.info("tinymist not found in PATH; the typst preview is unavailable")
+  end
+
   vim.health.start("core.lsp")
   local lsp = require("core.lsp")
   if #lsp.enabled == 0 then
