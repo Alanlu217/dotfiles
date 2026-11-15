@@ -74,6 +74,27 @@ function M.check()
   end
   vim.health.info(("format on save: %s"):format(format.enabled() and "on" or "off"))
 
+  vim.health.start("core.treesitter")
+  local ts = require("core.treesitter")
+  for _, lang in ipairs(require("core.config").get().treesitter.languages) do
+    local parser, query = ts.available(lang)
+    if parser and query then
+      vim.health.ok(("%s: parser and highlights query found"):format(lang))
+    elseif parser then
+      vim.health.warn(("%s: parser found but no queries/%s/highlights.scm; regex syntax stays on"):format(lang, lang))
+    else
+      vim.health.info(("%s: no parser on 'runtimepath' (parser/%s.so); regex syntax is used"):format(lang, lang))
+    end
+  end
+  vim.health.info(("put extra parsers in %s/site/parser and queries in %s/site/queries/<lang>"):format(vim.fn.stdpath("data"), vim.fn.stdpath("data")))
+
+  vim.health.start("core.git")
+  if vim.fn.executable("git") == 1 then
+    vim.health.ok("git found")
+  else
+    vim.health.warn("git not found; the statusline git section and blame are off")
+  end
+
   vim.health.start("core.projects")
   vim.health.info("file: " .. require("core.config").get().projects.file)
   vim.health.info(("%d saved project(s)"):format(#require("core.projects").list()))

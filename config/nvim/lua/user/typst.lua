@@ -14,6 +14,7 @@ vim.api.nvim_create_autocmd("FileType", {
     map("<leader>lp", preview("open"), "Typst preview (start / reopen)")
     map("<leader>lP", preview("stop"), "Typst preview stop")
     map("<leader>ls", function() require("core.typst_preview").sync(true) end, "Typst preview: scroll to cursor")
+    map("<leader>ut", preview("toggle_theme"), "Typst preview: toggle light / dark")
     map("<leader>up", preview("follow"), "Typst preview: toggle follow cursor")
   end,
 })

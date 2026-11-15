@@ -84,7 +84,8 @@ M.defaults = {
     follow_insert = true, -- also while typing
     debounce = 60, -- ms between a cursor move and the scroll request
     jump_center = true, -- centre the line after a click in the preview jumps to it
-    args = { "--invert-colors=auto" }, -- extra `tinymist preview` arguments
+    theme = "light", -- preview colours: "auto" (browser), "light" or "dark" (toggle: :TypstPreviewTheme)
+    args = {}, -- extra `tinymist preview` arguments (--invert-colors is set by `theme`)
     browser = nil, -- command (list) to open the url with, e.g. { "firefox", "--new-window" }; nil = system default
   },
 
@@ -95,6 +96,45 @@ M.defaults = {
     timeout_ms = 1000, -- per formatter; format-on-save blocks for at most this long
     lsp_fallback = "fallback", -- "fallback": LSP only when no formatter is available | "always" | "never"
     max_bytes = 1048576, -- buffers larger than this are not formatted on save
+  },
+
+  -- Treesitter highlighting (core.treesitter). Parsers are not built here: Neovim
+  -- uses any parser/<lang>.so + queries/<lang>/highlights.scm on the 'runtimepath'.
+  treesitter = {
+    enabled = true,
+    disable = {}, -- filetypes that keep regex syntax
+    max_bytes = 1048576, -- buffers larger than this keep regex syntax
+    languages = { "lua", "c", "cpp", "rust", "typst" }, -- what :checkhealth core reports on
+  },
+
+  -- Git status in the statusline and inline blame (core.git).
+  git = {
+    enabled = true,
+    refresh_ms = 200, -- debounce for status refreshes
+    untracked = true, -- count untracked files (turn off in huge repos)
+    symbols = { ahead = "^", behind = "v", staged = "+", modified = "~", untracked = "?", conflict = "!" },
+    signs = { -- added / changed / deleted lines in the sign column (core.gitsigns)
+      enabled = true, -- starting value of vim.g.git_signs (toggled with :GitSignsToggle)
+      delay = 100, -- ms after the last edit before the diff is recomputed
+      priority = 6, -- below diagnostics (10), so an error still wins the column
+      numhl = false, -- true also colours the line number of changed lines
+      untracked = true, -- show every line of an untracked (not ignored) file as added
+      max_bytes = 1048576, -- buffers larger than this get no signs
+      text = { add = "+", change = "~", delete = "_", topdelete = "-" }, -- 1-2 cells each
+    },
+    blame = {
+      enabled = false, -- starting value of vim.g.git_blame (toggled with :GitBlameToggle)
+      delay = 150, -- ms the cursor must rest on a line before blame is requested
+      prefix = "  ", -- put in front of the virtual text
+      format = "{author}, {time} - {summary}", -- also {sha}
+      uncommitted = "Not committed yet",
+      max_bytes = 1048576, -- buffers larger than this are not blamed (they are piped to git)
+    },
+  },
+
+  -- Statusline (core.statusline); layout is in render() there.
+  statusline = {
+    enabled = true,
   },
 
   lsp = {

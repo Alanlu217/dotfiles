@@ -84,6 +84,16 @@ end, { desc = "Format selection (LSP)" })
 map("n", "<leader>uf", function() require("core.format").toggle() end, { desc = "Toggle format on save (global)" })
 map("n", "<leader>uF", function() require("core.format").toggle(0) end, { desc = "Toggle format on save (buffer)" })
 
+-- Git (lua/core/git.lua) ----------------------------------------------------
+-- Toggles live under <leader>u, next to format-on-save and spell check.
+map("n", "<leader>ub", function() require("core.git").blame_toggle() end, { desc = "Toggle git blame (global)" })
+map("n", "<leader>uB", function() require("core.git").blame_toggle(0) end, { desc = "Toggle git blame (buffer)" })
+map("n", "<leader>ug", "<cmd>GitSignsToggle<CR>", { desc = "Toggle git signs" })
+-- Git hunks: the added / changed / deleted regions shown in the sign column.
+map("n", "]h", function() require("core.gitsigns").next_hunk() end, { desc = "Next git hunk" })
+map("n", "[h", function() require("core.gitsigns").prev_hunk() end, { desc = "Previous git hunk" })
+map("n", "<leader>gp", function() require("core.gitsigns").preview_hunk() end, { desc = "Preview git hunk" })
+
 -- Windows -------------------------------------------------------------------
 map("n", "<leader>w", "<C-w>", { remap = false, desc = "Window commands" })
 

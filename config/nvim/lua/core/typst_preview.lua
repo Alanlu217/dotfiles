@@ -7,6 +7,10 @@
 --   :TypstPreviewSync     scroll the preview to the cursor, once
 --   :TypstPreviewFollow   toggle scrolling the preview as the cursor moves
 --   :TypstPreviewDebug    toggle printing what the preview sends back (jumps)
+--   :TypstPreviewTheme [auto|light|dark]
+--                         set the preview colours; no argument toggles light <-> dark.
+--                         A running preview is restarted (tinymist fixes the colours
+--                         when the preview starts).
 --
 -- Neovim -> preview: the `tinymist.scrollPreview` command, debounced on cursor moves.
 -- Preview -> Neovim: tinymist sends `tinymist/preview/scrollSource` when you click
@@ -33,6 +37,7 @@ local debugging = false
 local timer ---@type uv.uv_timer_t?
 local ignore_until = 0 -- cursor moves before this time (ms, vim.uv.now) are our own jumps
 local last_sent ---@type string?
+local theme ---@type string? "auto" | "light" | "dark"; nil = config value
 
 ---@return table
 local function cfg()
@@ -97,6 +102,30 @@ local function open_url(url)
   if err then
     notify(("could not open a browser (%s). The preview is at %s"):format(err, url), vim.log.levels.WARN)
   end
+end
+
+---@return string
+local function current_theme()
+  return theme or cfg().theme or "auto"
+end
+
+--- Preview arguments with the colour mode applied on top of `cfg().args`.
+---@return string[]
+local function preview_args()
+  local args = {}
+  local skip = false
+  for _, a in ipairs(cfg().args) do
+    if skip then
+      skip = false
+    elseif a == "--invert-colors" then
+      skip = true
+    elseif not a:match("^%-%-invert%-colors=") then
+      args[#args + 1] = a
+    end
+  end
+  local mode = ({ auto = "auto", light = "never", dark = "always" })[current_theme()] or "auto"
+  args[#args + 1] = "--invert-colors=" .. mode
+  return args
 end
 
 ---@param buf integer
@@ -277,7 +306,7 @@ function M.open()
   local file = main_file(buf)
   local id = ("nvim-%d-%d"):format(vim.uv.os_getpid(), vim.uv.hrtime() % 1000000)
   local args = { "--task-id", id, "--data-plane-host=127.0.0.1:0" }
-  vim.list_extend(args, cfg().args)
+  vim.list_extend(args, preview_args())
   args[#args + 1] = file
 
   starting = true
@@ -317,6 +346,34 @@ function M.toggle()
   else
     M.open()
   end
+end
+
+--- Set the preview colours and restart a running preview so they take effect.
+---@param value? string "auto" | "light" | "dark"; nil toggles light <-> dark
+function M.set_theme(value)
+  if value == nil or value == "" then
+    value = current_theme() == "dark" and "light" or "dark"
+  end
+  if value ~= "auto" and value ~= "light" and value ~= "dark" then
+    notify("theme must be auto, light or dark", vim.log.levels.WARN)
+    return
+  end
+  theme = value
+  notify("theme " .. value)
+
+  local client = live_client()
+  if not client or not state then
+    return
+  end
+  local id = state.id
+  state, last_sent = nil, nil
+  exec(client, "tinymist.doKillPreview", { id }, function()
+    vim.schedule(M.open)
+  end)
+end
+
+function M.toggle_theme()
+  M.set_theme()
 end
 
 ---@param value? boolean nil toggles
@@ -369,6 +426,15 @@ function M.setup()
   vim.api.nvim_create_user_command("TypstPreviewFollow", function()
     M.follow()
   end, { desc = "Toggle scrolling the preview with the cursor" })
+  vim.api.nvim_create_user_command("TypstPreviewTheme", function(opts)
+    M.set_theme(opts.args)
+  end, {
+    nargs = "?",
+    complete = function()
+      return { "auto", "light", "dark" }
+    end,
+    desc = "Typst preview colours: auto | light | dark (no argument toggles)",
+  })
   vim.api.nvim_create_user_command("TypstPreviewDebug", M.toggle_debug, { desc = "Toggle printing preview jumps" })
 end
 
