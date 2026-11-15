@@ -74,6 +74,10 @@ function M.check()
   end
   vim.health.info(("format on save: %s"):format(format.enabled() and "on" or "off"))
 
+  vim.health.start("core.projects")
+  vim.health.info("file: " .. require("core.config").get().projects.file)
+  vim.health.info(("%d saved project(s)"):format(#require("core.projects").list()))
+
   vim.health.start("core.lsp")
   local lsp = require("core.lsp")
   if #lsp.enabled == 0 then

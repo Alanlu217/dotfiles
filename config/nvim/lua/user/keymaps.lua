@@ -20,6 +20,15 @@ map({ "n", "v" }, "<leader>d", function() require("core.picker").diagnostics() e
 map({ "n", "v" }, "<leader>D", function() require("core.picker").buffer_diagnostics() end, { desc = "Pick diagnostics (buffer)" })
 map({ "n", "v" }, "<leader>k", function() require("core.picker").keymaps() end, { desc = "Pick keymaps" })
 
+-- Projects (lua/core/projects.lua) ------------------------------------------
+-- <leader>o rather than <leader>p, which would delay the clipboard paste below.
+-- In the picker <C-t> opens the project in a new tab, <C-s>/<C-v> in a split.
+map("n", "<leader>oo", function() require("core.projects").switch("global") end, { desc = "Project (global)" })
+map("n", "<leader>ot", function() require("core.projects").switch("tab") end, { desc = "Project (tab)" })
+map("n", "<leader>ow", function() require("core.projects").switch("window") end, { desc = "Project (window)" })
+map("n", "<leader>oa", function() require("core.projects").add() end, { desc = "Save cwd as project" })
+map("n", "<leader>od", function() require("core.projects").remove() end, { desc = "Remove project" })
+
 -- System clipboard ----------------------------------------------------------
 map({ "n", "v" }, "<leader>y", [["+y]], { desc = "Yank to system clipboard" })
 map("n", "<leader>Y", [["+Y]], { desc = "Yank line to system clipboard" })
