@@ -3,7 +3,16 @@ local util = require("core.util")
 
 local M = {}
 
-local float = { buf = nil, win = nil }
+--- One floating terminal per tabpage, keyed by tabpage handle.
+---@type table<integer, { buf: integer?, win: integer? }>
+local floats = {}
+
+---@return { buf: integer?, win: integer? }
+local function tab_float()
+  local tab = vim.api.nvim_get_current_tabpage()
+  floats[tab] = floats[tab] or {}
+  return floats[tab]
+end
 
 ---@param buf integer
 ---@return boolean
@@ -69,13 +78,15 @@ local function float_config()
   }
 end
 
-local function float_valid()
+---@param float { buf: integer?, win: integer? }
+local function float_valid(float)
   return float.win ~= nil and vim.api.nvim_win_is_valid(float.win)
 end
 
---- Toggle a floating terminal. The shell survives while hidden.
+--- Toggle the current tab's floating terminal. The shell survives while hidden.
 function M.toggle_float()
-  if float_valid() then
+  local float = tab_float()
+  if float_valid(float) then
     vim.api.nvim_win_hide(float.win)
     float.win = nil
     return
@@ -173,8 +184,26 @@ function M.setup()
   vim.api.nvim_create_autocmd("VimResized", {
     group = group,
     callback = function()
-      if float_valid() then
-        vim.api.nvim_win_set_config(float.win, float_config())
+      for _, float in pairs(floats) do
+        if float_valid(float) then
+          vim.api.nvim_win_set_config(float.win, float_config())
+        end
+      end
+    end,
+  })
+
+  -- A closed tab takes its floating terminal with it: wipe the hidden buffer
+  -- (which also stops its shell) instead of leaking it.
+  vim.api.nvim_create_autocmd("TabClosed", {
+    group = group,
+    callback = function()
+      for tab, float in pairs(floats) do
+        if not vim.api.nvim_tabpage_is_valid(tab) then
+          floats[tab] = nil
+          if float.buf and vim.api.nvim_buf_is_valid(float.buf) then
+            pcall(vim.api.nvim_buf_delete, float.buf, { force = true })
+          end
+        end
       end
     end,
   })
