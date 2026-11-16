@@ -43,7 +43,7 @@ lsp.on_attach(function(client, buf)
 
   map("gd", vim.lsp.buf.definition, "Go to definition")
   map("gD", vim.lsp.buf.declaration, "Go to declaration")
-  map("<leader>ld", vim.diagnostic.open_float, "Line diagnostics")
+  map("L", vim.diagnostic.open_float, "Line diagnostics")
 
   if client:supports_method("textDocument/inlayHint", buf) then
     map("<leader>lh", function()
