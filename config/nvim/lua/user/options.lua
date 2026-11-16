@@ -7,7 +7,7 @@ local opt = vim.opt
 -- UI
 opt.number = true
 opt.cursorline = true
-opt.signcolumn = "yes:2" -- diagnostics and git signs side by side
+opt.signcolumn = "number" -- no separate column; diagnostic signs replace the line number on their line
 opt.scrolloff = 8
 opt.splitright = true
 opt.splitbelow = true

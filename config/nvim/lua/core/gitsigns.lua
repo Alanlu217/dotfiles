@@ -96,9 +96,10 @@ local function place(buf, marks)
     if lnum >= 1 and lnum <= last then
       local hl = HL[kind]
       pcall(vim.api.nvim_buf_set_extmark, buf, ns, lnum - 1, 0, {
-        sign_text = cfg.text[kind],
-        sign_hl_group = hl,
-        number_hl_group = cfg.numhl and hl or nil,
+        sign_text = cfg.symbols and cfg.text[kind] or nil,
+        sign_hl_group = cfg.symbols and hl or nil,
+        -- Without symbols the line number is the only marker, so always colour it.
+        number_hl_group = (cfg.numhl or not cfg.symbols) and hl or nil,
         priority = cfg.priority,
       })
     end
