@@ -1,4 +1,3 @@
-#define _DEFAULT_SOURCE
 #include "internal.h"
 
 #include <stdlib.h>
@@ -15,6 +14,8 @@ static struct nv_index *index_new(void) {
 
 int nv_index_push(struct nv_index *idx, const char *s, size_t n) {
   if (idx->len == idx->cap) {
+    if (idx->cap > SIZE_MAX / 2 / sizeof(char *))
+      return -1;
     size_t cap = idx->cap ? idx->cap * 2 : 256;
     char **items = realloc(idx->items, cap * sizeof *items);
     if (!items)
@@ -124,6 +125,10 @@ NV_API size_t nv_index_filter(const nv_index *idx, const char *query,
     return n;
   }
 
+  if (idx->len > SIZE_MAX / sizeof(scored) || idx->len > UINT32_MAX) {
+    free(buf);
+    return 0;
+  }
   scored *hits = malloc((idx->len ? idx->len : 1) * sizeof *hits);
   if (!hits) {
     free(buf);

@@ -12,12 +12,18 @@ function M.check()
   end
 
   vim.health.start("core.native")
-  for _, exe in ipairs({ "make", "cc" }) do
-    if vim.fn.executable(exe) == 1 then
-      vim.health.ok(exe .. " found")
-    else
-      vim.health.warn(exe .. " not found; picker will use the Lua fallback")
-    end
+  local tc = native.toolchain()
+  if tc.make then
+    vim.health.ok(tc.make .. " found")
+  end
+  if tc.cc then
+    vim.health.ok(tc.cc .. " found")
+  end
+  if #tc.missing > 0 then
+    vim.health.warn(
+      table.concat(tc.missing, " and ") .. " not found; picker will use the Lua fallback",
+      vim.split("Install GNU make and a C compiler:\n" .. native.install_hint(true), "\n", { plain = true })
+    )
   end
   vim.health.info("sources: " .. native.paths.src)
   vim.health.info("library: " .. native.paths.lib)

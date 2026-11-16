@@ -20,7 +20,7 @@ local build_dir = vim.fs.joinpath(vim.fn.stdpath("data"), "native")
 local loaded_dir = vim.fs.joinpath(build_dir, "loaded")
 local ext = (jit.os == "OSX") and "dylib" or "so"
 local lib_path = vim.fs.joinpath(build_dir, "libnvcore." .. ext)
-local header_path = vim.fs.joinpath(src_dir, "include", "nvcore.h")
+local header_path = vim.fs.joinpath(src_dir, "nvcore.h")
 
 M.paths = { src = src_dir, build = build_dir, lib = lib_path }
 
@@ -39,12 +39,143 @@ local state = {
   waiters = {},
 }
 
+-- Toolchain ------------------------------------------------------------------
+
+-- How to install GNU make and a C compiler, per platform. Order matters only
+-- for the "all platforms" listing.
+local installers = {
+  { id = "termux", name = "Termux (Android)", cmd = "pkg install make clang" },
+  { id = "macos", name = "macOS", cmd = "xcode-select --install" },
+  { id = "debian", name = "Debian / Ubuntu / Mint", cmd = "sudo apt install build-essential" },
+  { id = "fedora", name = "Fedora / RHEL / CentOS", cmd = "sudo dnf install make gcc" },
+  { id = "arch", name = "Arch / Manjaro", cmd = "sudo pacman -S base-devel" },
+  { id = "alpine", name = "Alpine (musl)", cmd = "sudo apk add build-base" },
+  { id = "void", name = "Void", cmd = "sudo xbps-install -S base-devel" },
+  { id = "suse", name = "openSUSE", cmd = "sudo zypper install make gcc" },
+  { id = "gentoo", name = "Gentoo", cmd = "sudo emerge sys-devel/make sys-devel/gcc" },
+  { id = "nixos", name = "NixOS / Nix", cmd = "nix-shell -p gnumake gcc (or add gnumake and gcc to your packages)" },
+  { id = "bsd", name = "FreeBSD / OpenBSD / NetBSD", cmd = "pkg install gmake (OpenBSD: pkg_add gmake); the compiler is in the base system" },
+}
+
+--- ID and ID_LIKE words from /etc/os-release, as a set.
+---@return table<string, boolean>
+local function os_release_ids()
+  local ids = {}
+  local f = io.open("/etc/os-release", "r") or io.open("/usr/lib/os-release", "r")
+  if not f then
+    return ids
+  end
+  for line in f:lines() do
+    local key, val = line:match("^([%w_]+)=(.*)$")
+    if key == "ID" or key == "ID_LIKE" then
+      for word in (val:gsub("[\"']", "")):gmatch("%S+") do
+        ids[word:lower()] = true
+      end
+    end
+  end
+  f:close()
+  return ids
+end
+
+--- Which `installers` entry applies here, or nil when unknown.
+---@return string?
+local function detect_platform()
+  if vim.env.TERMUX_VERSION or (vim.env.PREFIX or ""):find("com.termux", 1, true) then
+    return "termux"
+  end
+  if jit.os == "OSX" then
+    return "macos"
+  end
+  if jit.os == "BSD" then
+    return "bsd"
+  end
+  local ids = os_release_ids()
+  local families = {
+    nixos = { "nixos" },
+    alpine = { "alpine" },
+    void = { "void" },
+    arch = { "arch", "archlinux", "manjaro" },
+    debian = { "debian", "ubuntu" },
+    fedora = { "fedora", "rhel", "centos" },
+    suse = { "suse", "opensuse" },
+    gentoo = { "gentoo" },
+  }
+  for id, names in pairs(families) do
+    for _, name in ipairs(names) do
+      if ids[name] then
+        return id
+      end
+    end
+  end
+  return nil
+end
+
+--- Install instructions. With `all`, or when the platform is not recognised,
+--- every platform is listed (one per line); otherwise just the detected one.
+---@param all? boolean
+---@return string
+function M.install_hint(all)
+  local id = not all and detect_platform() or nil
+  if id then
+    for _, it in ipairs(installers) do
+      if it.id == id then
+        return it.cmd
+      end
+    end
+  end
+  local lines = {}
+  for _, it in ipairs(installers) do
+    table.insert(lines, ("%s: %s"):format(it.name, it.cmd))
+  end
+  return table.concat(lines, "\n")
+end
+
+---@param names string[]
+---@return string?
+local function first_executable(names)
+  for _, name in ipairs(names) do
+    if vim.fn.executable(name) == 1 then
+      return name
+    end
+  end
+end
+
+--- The build tools found on this machine. The Makefile needs GNU make (`gmake`
+--- on the BSDs, whose `make` is different) and any C11 compiler: $CC if set,
+--- else cc, gcc or clang (the same order the Makefile uses).
+---@return { make: string?, cc: string?, missing: string[] }
+function M.toolchain()
+  local make = first_executable(jit.os == "BSD" and { "gmake" } or { "make", "gmake" })
+  local cc = first_executable(vim.list_extend({ (vim.env.CC or ""):match("%S+") or "cc" }, { "cc", "gcc", "clang" }))
+  local missing = {}
+  if not make then
+    table.insert(missing, jit.os == "BSD" and "gmake" or "make")
+  end
+  if not cc then
+    table.insert(missing, "a C compiler (cc, gcc or clang)")
+  end
+  return { make = make, cc = cc, missing = missing }
+end
+
+--- Why a build cannot start, or nil when the tools are there. One line, with the
+--- install command for this platform when it can be told.
+---@return string?
+local function toolchain_error()
+  local tc = M.toolchain()
+  if #tc.missing == 0 then
+    return nil
+  end
+  local hint = M.install_hint()
+  local sep = hint:find("\n", 1, true) and "; install one of:\n" or "; install with: "
+  return ("%s not found%s%s"):format(table.concat(tc.missing, " and "), sep, hint)
+end
+
 -- Build ----------------------------------------------------------------------
 
 ---@param targets string[]
 ---@return string[]
 local function make_cmd(targets)
-  local cmd = { "make", "-s", "-C", src_dir, "BUILD_DIR=" .. build_dir }
+  local cmd = { M.toolchain().make or "make", "-s", "-C", src_dir, "BUILD_DIR=" .. build_dir }
   return vim.list_extend(cmd, targets)
 end
 
@@ -57,6 +188,10 @@ end
 ---@param targets string[]
 ---@return boolean ok, string? err
 local function make_sync(targets)
+  local missing = toolchain_error()
+  if missing then
+    return false, missing
+  end
   local started, proc = pcall(vim.system, make_cmd(targets), { text = true })
   if not started then
     return false, "cannot run make: " .. tostring(proc)
@@ -71,6 +206,13 @@ end
 ---@param targets string[]
 ---@param cb fun(ok: boolean, err?: string)
 local function make_async(targets, cb)
+  local missing = toolchain_error()
+  if missing then
+    vim.schedule(function()
+      cb(false, missing)
+    end)
+    return
+  end
   local started, err = pcall(vim.system, make_cmd(targets), { text = true }, function(res)
     vim.schedule(function()
       if res.code == 0 then

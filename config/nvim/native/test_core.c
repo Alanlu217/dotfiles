@@ -1,4 +1,3 @@
-#define _DEFAULT_SOURCE
 #include "nvcore.h"
 
 #include <stdio.h>
@@ -25,6 +24,11 @@ static void touch(const char *dir, const char *rel) {
 }
 
 static void test_fuzzy(void) {
+  /* Classification is ASCII-only: UTF-8 bytes are ordinary non-word bytes and
+   * must not change with the process locale or libc. */
+  CHECK(nv_fuzzy_score("caf\xc3\xa9", "src/caf\xc3\xa9.lua") >= 0);
+  CHECK(nv_fuzzy_score("FOO", "foo") == -1); /* smartcase: uppercase is exact */
+  CHECK(nv_fuzzy_score("foo", "FOO") >= 0);
   CHECK(nv_fuzzy_score("", "anything") == 0);
   CHECK(nv_fuzzy_score("abc", "ab") == -1);
   CHECK(nv_fuzzy_score("xyz", "lua/core/ffi.lua") == -1);
@@ -56,9 +60,38 @@ static void test_filter(void) {
   nv_index_free(idx);
 }
 
+/* Fixture paths, relative to the temp root; removed by cleanup (children first). */
+static const char *const FILES[] = {"a.txt", ".hidden", "sub/b.txt", ".git/config", "target/junk.o", "loop"};
+static const char *const DIRS[] = {"sub", ".git", "target"};
+
+/* Create a fresh temp dir under $TMPDIR (Termux has no /tmp), else /tmp. */
+static int make_root(char *out, size_t cap) {
+  const char *base = getenv("TMPDIR");
+  if (!base || !*base)
+    base = "/tmp";
+  int n = snprintf(out, cap, "%s/nvcore-test-XXXXXX", base);
+  return n > 0 && (size_t)n < cap && mkdtemp(out) != NULL;
+}
+
+static void cleanup(const char *root) {
+  char p[1024];
+  for (size_t i = 0; i < sizeof FILES / sizeof *FILES; i++) {
+    snprintf(p, sizeof p, "%s/%s", root, FILES[i]);
+    unlink(p);
+  }
+  for (size_t i = 0; i < sizeof DIRS / sizeof *DIRS; i++) {
+    snprintf(p, sizeof p, "%s/%s", root, DIRS[i]);
+    rmdir(p);
+  }
+  rmdir(root);
+}
+
 static void test_scan(void) {
-  char root[] = "/tmp/nvcore-test-XXXXXX";
-  CHECK(mkdtemp(root) != NULL);
+  char root[512];
+  if (!make_root(root, sizeof root)) {
+    CHECK(!"cannot create temp dir (set TMPDIR to a writable directory)");
+    return;
+  }
   char p[1024];
   snprintf(p, sizeof p, "%s/sub", root);
   mkdir(p, 0755);
@@ -87,10 +120,7 @@ static void test_scan(void) {
   CHECK(idx && nv_index_truncated(idx) && nv_index_count(idx) == 1);
   nv_index_free(idx);
 
-  char cmd[1100];
-  snprintf(cmd, sizeof cmd, "rm -rf %s", root);
-  if (system(cmd) != 0)
-    fprintf(stderr, "cleanup failed\n");
+  cleanup(root);
 }
 
 int main(void) {

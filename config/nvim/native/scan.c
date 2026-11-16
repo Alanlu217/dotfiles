@@ -1,4 +1,3 @@
-#define _DEFAULT_SOURCE
 #include "internal.h"
 
 #include <dirent.h>
@@ -35,14 +34,23 @@ enum { KIND_NONE, KIND_FILE, KIND_DIR };
 
 static int kind_of(const struct dirent *e, const char *path) {
   struct stat st;
+  int is_link = 0;
+#ifdef DT_UNKNOWN /* d_type is an extension; without it every entry is lstat'ed */
   switch (e->d_type) {
   case DT_REG:
     return KIND_FILE;
   case DT_DIR:
     return KIND_DIR;
   case DT_LNK:
+    is_link = 1;
     break;
-  default:
+  default: /* DT_UNKNOWN (some filesystems) or a special file */
+    break;
+  }
+#else
+  (void)e;
+#endif
+  if (!is_link) {
     if (lstat(path, &st) != 0)
       return KIND_NONE;
     if (!S_ISLNK(st.st_mode))

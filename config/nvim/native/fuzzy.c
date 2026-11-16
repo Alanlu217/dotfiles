@@ -9,7 +9,6 @@
  */
 #include "internal.h"
 
-#include <ctype.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -28,6 +27,17 @@ enum {
   MAX_WINDOW = 1024
 };
 
+/* ASCII-only classification. <ctype.h> follows the process locale (Neovim calls
+ * setlocale), and bytes >= 128 are classified differently by glibc, musl and
+ * bionic, so scores would otherwise vary by libc. Non-ASCII bytes are plain
+ * non-word characters on every platform. */
+static int is_lower(unsigned char c) { return c >= 'a' && c <= 'z'; }
+static int is_upper(unsigned char c) { return c >= 'A' && c <= 'Z'; }
+static int is_digit(unsigned char c) { return c >= '0' && c <= '9'; }
+static unsigned char to_lower(unsigned char c) {
+  return is_upper(c) ? (unsigned char)(c - 'A' + 'a') : c;
+}
+
 enum { C_WHITE, C_DELIM, C_NONWORD, C_LOWER, C_UPPER, C_DIGIT };
 
 static int class_of(char ch) {
@@ -36,11 +46,11 @@ static int class_of(char ch) {
     return C_WHITE;
   if (c == '/')
     return C_DELIM;
-  if (islower(c))
+  if (is_lower(c))
     return C_LOWER;
-  if (isupper(c))
+  if (is_upper(c))
     return C_UPPER;
-  if (isdigit(c))
+  if (is_digit(c))
     return C_DIGIT;
   return C_NONWORD;
 }
@@ -68,7 +78,7 @@ static int bonus_for(int prev, int cur) {
 
 static int has_upper(const char *s) {
   for (; *s; s++)
-    if (isupper((unsigned char)*s))
+    if (is_upper((unsigned char)*s))
       return 1;
   return 0;
 }
@@ -76,7 +86,7 @@ static int has_upper(const char *s) {
 static int same(char p, char t, int cs) {
   if (cs)
     return p == t;
-  return tolower((unsigned char)p) == tolower((unsigned char)t);
+  return to_lower((unsigned char)p) == to_lower((unsigned char)t);
 }
 
 /* DP scratch, reused across calls. Thread-local: filtering runs on worker
