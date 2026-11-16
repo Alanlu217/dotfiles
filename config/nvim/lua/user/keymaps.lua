@@ -15,9 +15,12 @@ map({ "n", "v" }, "<leader>b", function() require("core.picker").buffers() end, 
 map({ "n", "v" }, "<leader>r", function() require("core.picker").recent() end, { desc = "Pick recent files" })
 map({ "n", "v" }, "<leader>h", function() require("core.picker").help() end, { desc = "Pick help tags" })
 map({ "n", "v" }, "<leader>s", function() require("core.picker").symbols() end, { desc = "Pick file symbols" })
-map({ "n", "v" }, "<leader>S", function() require("core.picker").workspace_symbols() end, { desc = "Pick workspace symbols" })
-map({ "n", "v" }, "<leader>d", function() require("core.picker").diagnostics() end, { desc = "Pick diagnostics (open buffers)" })
-map({ "n", "v" }, "<leader>D", function() require("core.picker").buffer_diagnostics() end, { desc = "Pick diagnostics (buffer)" })
+map({ "n", "v" }, "<leader>S", function() require("core.picker").workspace_symbols() end,
+  { desc = "Pick workspace symbols" })
+map({ "n", "v" }, "<leader>d", function() require("core.picker").diagnostics() end,
+  { desc = "Pick diagnostics (open buffers)" })
+map({ "n", "v" }, "<leader>D", function() require("core.picker").buffer_diagnostics() end,
+  { desc = "Pick diagnostics (buffer)" })
 map({ "n", "v" }, "<leader>k", function() require("core.picker").keymaps() end, { desc = "Pick keymaps" })
 
 -- Projects (lua/core/projects.lua) ------------------------------------------
@@ -40,7 +43,7 @@ map("t", "<Esc><Esc>", [[<C-\><C-n>]], { desc = "Exit terminal mode" })
 map("n", "<leader>x", function() require("core.terminal").open("bottom") end, { desc = "Terminal (bottom)" })
 map("n", "<leader>X", function() require("core.terminal").open("right") end, { desc = "Terminal (right)" })
 -- Note: mapping <C-\> means a typed <C-\><C-n> no longer works; use <Esc><Esc>.
-map({ "n", "t" }, "<C-\\>", function() require("core.terminal").toggle_float() end, { desc = "Terminal (floating)" })
+map({ "n", "i", "t" }, "<C-\\>", function() require("core.terminal").toggle_float() end, { desc = "Terminal (floating)" })
 
 -- Completion --------------------------------------------------------------
 -- <CR> accepts the highlighted entry; <Tab>/<S-Tab> move through entries without
