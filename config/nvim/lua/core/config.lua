@@ -35,7 +35,7 @@ M.defaults = {
   projects = {
     file = vim.fs.joinpath(vim.fn.stdpath("data"), "projects.json"),
     scope = "global",  -- default scope for :Project: "global" (:cd) | "tab" (:tcd) | "window" (:lcd)
-    open_files = true, -- open the file picker in the project after switching
+    open_files = false, -- open the file picker in the project after switching
   },
 
   terminal = {
