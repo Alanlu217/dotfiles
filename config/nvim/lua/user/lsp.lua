@@ -34,6 +34,12 @@ lsp.enable({
     filetypes = { "typst" },
     root_markers = { "typst.toml", ".git" },
   },
+
+  zls = {
+    cmd = { "zls" },
+    filetypes = { "zig" },
+    root_markers = { "build.zig", ".git" }
+  }
 })
 
 lsp.on_attach(function(client, buf)
