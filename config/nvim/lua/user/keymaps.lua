@@ -97,6 +97,23 @@ map("n", "]h", function() require("core.gitsigns").next_hunk() end, { desc = "Ne
 map("n", "[h", function() require("core.gitsigns").prev_hunk() end, { desc = "Previous git hunk" })
 map("n", "<leader>gp", function() require("core.gitsigns").preview_hunk() end, { desc = "Preview git hunk" })
 
+-- Read-only ------------------------------------------------------------------
+-- Sets both 'readonly' (warns on :w) and 'modifiable' (blocks edits) for the
+-- current buffer. Skips special buffers (terminals, help, picker).
+local function toggle_readonly()
+  if vim.bo.buftype ~= "" then
+    vim.notify("Not a normal file buffer", vim.log.levels.WARN)
+    return
+  end
+  local ro = vim.bo.modifiable -- currently editable -> make it read-only
+  vim.bo.readonly = ro
+  vim.bo.modifiable = not ro
+  vim.notify(ro and "Buffer: read-only" or "Buffer: writable")
+end
+
+vim.api.nvim_create_user_command("ToggleReadOnly", toggle_readonly, { desc = "Toggle read-only (buffer)" })
+map("n", "<leader>ur", toggle_readonly, { desc = "Toggle read-only (buffer)" })
+
 -- Windows -------------------------------------------------------------------
 map("n", "<leader>w", "<C-w>", { remap = false, desc = "Window commands" })
 
