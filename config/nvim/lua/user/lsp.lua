@@ -42,6 +42,13 @@ lsp.enable({
   }
 })
 
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = "zig",
+  callback = function()
+    vim.opt_local.iskeyword:remove("@-@")
+  end,
+})
+
 lsp.on_attach(function(client, buf)
   local function map(lhs, rhs, desc)
     vim.keymap.set("n", lhs, rhs, { buffer = buf, desc = desc })
@@ -56,5 +63,16 @@ lsp.on_attach(function(client, buf)
       local on = vim.lsp.inlay_hint.is_enabled({ bufnr = buf })
       vim.lsp.inlay_hint.enable(not on, { bufnr = buf })
     end, "Toggle inlay hints")
+  end
+
+  if client.name == "zls" then
+    local provider = client.server_capabilities.completionProvider
+    if provider then
+      local chars = provider.triggerCharacters or {}
+      if not vim.tbl_contains(chars, "@") then
+        table.insert(chars, "@")
+      end
+      provider.triggerCharacters = chars
+    end
   end
 end)
