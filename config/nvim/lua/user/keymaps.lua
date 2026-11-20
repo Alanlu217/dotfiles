@@ -56,13 +56,31 @@ local function cmp_expr(name)
     return require("core.completion")[name]()
   end
 end
-map("i", "<CR>", cmp_expr("enter"), { expr = true, desc = "Accept completion / newline" })
+-- <CR>: accept the highlighted entry, else the smart newline of core.indent
+-- (opens {|} into a block, indents after an opening bracket where nothing else does).
+map("i", "<CR>", function()
+  local keys = require("core.completion").enter()
+  if keys ~= "<CR>" then
+    return keys
+  end
+  return require("core.indent").enter()
+end, { expr = true, desc = "Accept completion / smart newline" })
 map("i", "<Tab>", cmp_expr("tab"), { expr = true, desc = "Next completion / next snippet stop / Tab" })
 map("i", "<S-Tab>", cmp_expr("s_tab"), { expr = true, desc = "Previous completion / previous snippet stop" })
 map("i", "<Up>", cmp_expr("up"), { expr = true, desc = "Up (closes completion)" })
 map("i", "<Down>", cmp_expr("down"), { expr = true, desc = "Down (closes completion)" })
 map("i", "<C-y>", cmp_expr("confirm"), { expr = true, desc = "Accept completion" })
 map("i", "<C-e>", cmp_expr("cancel"), { expr = true, desc = "Close completion" })
+-- Auto pairs (lua/core/autopairs.lua): one mapping per bracket / quote in config.autopairs.pairs.
+-- <BS> between a pair we inserted removes both. Toggle with :Autopairs.
+for _, k in ipairs(require("core.autopairs").keys()) do
+  map("i", k.key, function() return require("core.autopairs")[k.fn](k.key) end,
+    { expr = true, desc = "Auto pair " .. k.key })
+end
+local function pair_bs() return require("core.autopairs").backspace() end
+map("i", "<BS>", pair_bs, { expr = true, desc = "Backspace (removes an auto pair)" })
+map("i", "<C-h>", pair_bs, { expr = true, desc = "Backspace (removes an auto pair)" })
+
 local function open_menu()
   require("core.completion").trigger()
 end

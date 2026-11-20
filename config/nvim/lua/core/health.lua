@@ -128,6 +128,25 @@ function M.check()
     end
   end
 
+  vim.health.start("core.indent / core.autopairs")
+  local ccfg = require("core.config").get()
+  vim.health.info(("indent detection %s; expand pairs %s; indent after openers %s"):format(
+    ccfg.indent.detect.enabled and "on" or "off", ccfg.indent.expand_pairs and "on" or "off", ccfg.indent.openers.enabled and "on" or "off"))
+  local ap = require("core.autopairs")
+  if ccfg.autopairs.enabled and ap.enabled then
+    vim.health.ok("auto pairs on")
+  else
+    vim.health.info("auto pairs off")
+  end
+  local mapped = vim.fn.maparg("(", "i", false, true)
+  if ccfg.autopairs.enabled and (type(mapped) ~= "table" or mapped.expr ~= 1) then
+    vim.health.warn("no Insert mode mapping for '(': lua/user/keymaps.lua did not load, so auto pairs are inactive")
+  end
+  local cr = vim.fn.maparg("<CR>", "i", false, true)
+  if type(cr) == "table" and cr.desc and not cr.desc:find("smart newline", 1, true) then
+    vim.health.warn("Insert <CR> is mapped elsewhere (" .. cr.desc .. "); smart newline needs the mapping in lua/user/keymaps.lua")
+  end
+
   vim.health.start("core.git")
   if vim.fn.executable("git") == 1 then
     vim.health.ok("git found")

@@ -68,7 +68,7 @@ M.defaults = {
 
   terminal = {
     -- Fractions (0 < x < 1) of the editor, or absolute lines/columns (>= 1).
-    bottom_height = 0.4,  -- <leader>x
+    bottom_height = 0.3,  -- <leader>x
     right_width = 0.5,    -- <leader>X
     autoinsert = true,    -- enter terminal-mode when focusing a live terminal
     close_on_exit = true, -- close on exit status 0; failures stay visible
@@ -133,6 +133,45 @@ M.defaults = {
     disable = {},                                       -- filetypes that keep regex syntax
     max_bytes = 1048576,                                -- buffers larger than this keep regex syntax
     languages = { "lua", "c", "cpp", "rust", "typst" }, -- what :checkhealth core reports on
+  },
+
+  -- Smart indentation (core.indent): per-file indent style detection and a smarter <CR>.
+  indent = {
+    detect = {
+      enabled = true,
+      max_lines = 1000,                   -- lines read from the top of the file
+      min_votes = 3,                      -- indented lines that must agree before anything changes
+      sizes = { 2, 3, 4, 8 },             -- space widths worth considering
+      ignore = { "help", "gitcommit", "gitrebase", "diff" }, -- filetypes that keep your defaults
+    },
+    expand_pairs = true,                  -- <CR> between any auto pair ((), {}, "", $$ in typst, ...) opens an indented line between them
+    openers = {                           -- <CR> after ( [ { indents, where no indent script does it already
+      enabled = true,
+      skip = { "text", "markdown", "gitcommit", "help", "mail" },
+    },
+  },
+
+  -- Auto pairs (core.autopairs). Timid on purpose: when in doubt it types just the key.
+  autopairs = {
+    enabled = true,
+    pairs = { ["("] = ")", ["["] = "]", ["{"] = "}", ['"'] = '"', ["'"] = "'", ["`"] = "`" },
+    filetype_pairs = { typst = { ["$"] = "$" } }, -- extra pairs, only in that filetype (typst math)
+    next_chars = ")]},;", -- besides whitespace and end of line, what may follow the cursor for a pair to be made
+    -- Per filetype: false = no pairs at all, or { [key] = false } to drop single keys.
+    filetypes = {
+      text = false, gitcommit = false, gitrebase = false, help = false, mail = false,
+      vim = { ['"'] = false },                       -- " starts a comment
+      markdown = { ["'"] = false },
+      rust = { ["'"] = false },                      -- lifetimes
+      ocaml = { ["'"] = false },
+      haskell = { ["'"] = false },
+      lisp = { ["'"] = false, ["`"] = false },
+      scheme = { ["'"] = false, ["`"] = false },
+      clojure = { ["'"] = false, ["`"] = false },
+      fennel = { ["'"] = false, ["`"] = false },
+    },
+    -- Letters that may stand right before an opening quote (f"..", b'..'), per filetype.
+    string_prefixes = { python = "[rRbBfFuU]", rust = "[brc]" },
   },
 
   -- Git status in the statusline and inline blame (core.git).
