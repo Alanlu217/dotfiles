@@ -25,6 +25,19 @@ M.defaults = {
       max_filesize = 1048576, -- larger files are skipped
       max_text = 200,        -- bytes of each matching line shown
     },
+    -- File/text preview next to the list. Only pickers whose source provides a
+    -- preview resolver show it (files, recent, ...); it is hidden on narrow editors.
+    preview = {
+      enabled = true,         -- false = never show a preview
+      width = 0.5,            -- fraction of the picker taken by the preview pane
+      picker_width = 0.85,    -- fraction of the editor the picker spans while a preview is shown (replaces `width`)
+      min_columns = 100,      -- editors narrower than this get no preview
+      max_filesize = 1048576, -- bytes read per file; the rest is cut off (and said so in the title)
+      highlight_max_bytes = 262144, -- files larger than this are shown without treesitter highlighting
+      debounce = 40,          -- minimum ms between preview updates while moving or typing
+      cache = 20,             -- previewed files kept in memory per picker session
+      wrap = true,
+    },
     keys = {
       next = { "<C-n>", "<Down>", "<C-j>" },
       prev = { "<C-p>", "<Up>", "<C-k>" },
@@ -34,6 +47,9 @@ M.defaults = {
       split = { "<C-s>" },
       vsplit = { "<C-v>" },
       tab = { "<C-t>" },
+      preview_toggle = { "<tab>" },
+      preview_down = { "<A-d>" },
+      preview_up = { "<A-u>" },
     },
   },
 

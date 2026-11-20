@@ -22,6 +22,9 @@ function M.files(opts)
     on_select = function(item, action)
       open_file(vim.fs.joinpath(root, item), action)
     end,
+    preview = function(item)
+      return { kind = "file", path = vim.fs.joinpath(root, item) }
+    end,
   })
 end
 
@@ -63,6 +66,9 @@ function M.recent()
     matcher = matcher.from_list(items),
     on_select = function(item, action)
       open_file(vim.fn.fnamemodify(item, ":p"), action)
+    end,
+    preview = function(item)
+      return { kind = "file", path = vim.fn.fnamemodify(item, ":p") }
     end,
   })
 end
