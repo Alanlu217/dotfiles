@@ -14,6 +14,8 @@ local M = {}
 ---@field filter fun(query: string, limit: integer, cb: fun(items: string[]))
 ---@field subscribe fun(fn: fun()) called when loading finishes
 ---@field dispose fun() stop work and drop subscribers
+---@field cancel? fun() optional: the query changed while filter() was running
+---@field hint? string optional: short note shown next to the count (e.g. a search mode)
 
 ---@return core.Matcher
 local function new()
@@ -145,6 +147,10 @@ local function lua_scan(m, root, opts, done)
 
   vim.schedule(step)
 end
+
+--- Pure-Lua walk, for consumers that need the plain file list (grep fallback).
+--- `m` only needs a `disposed` field.
+M.lua_scan = lua_scan
 
 ---@param items string[] items must not contain newlines
 ---@return core.Matcher

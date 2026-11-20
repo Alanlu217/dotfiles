@@ -19,6 +19,12 @@ M.defaults = {
     hidden = true,
     ignore = { ".git", "node_modules", "target", ".direnv", "result", "__pycache__" },
     override_ui_select = true, -- route vim.ui.select (LSP code actions, etc.) through the picker
+    grep = {
+      regex = true,          -- patterns are regex (a leading ' in the query forces plain text); false = always plain text
+      min_query = 2,         -- characters typed before searching
+      max_filesize = 1048576, -- larger files are skipped
+      max_text = 200,        -- bytes of each matching line shown
+    },
     keys = {
       next = { "<C-n>", "<Down>", "<C-j>" },
       prev = { "<C-p>", "<Up>", "<C-k>" },

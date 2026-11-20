@@ -13,7 +13,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#define NV_ABI_VERSION 1
+#define NV_ABI_VERSION 2
 #if defined(__GNUC__) || defined(__clang__)
 #define NV_API __attribute__((visibility("default")))
 #else
@@ -53,5 +53,57 @@ NV_API const char *nv_index_get(const nv_index *idx, size_t i);
  * An empty query returns the first `limit` items in index order. */
 NV_API size_t nv_index_filter(const nv_index *idx, const char *query,
                               uint32_t *out, size_t limit);
+
+/* ---- Live grep ---------------------------------------------------------- */
+
+/* Cancellation token: another thread may call nv_cancel_set while a search
+ * using the token runs; the search then stops at its next check and reports
+ * NV_GREP_CANCELLED. The token must outlive the search. */
+typedef struct nv_cancel nv_cancel;
+
+NV_API nv_cancel *nv_cancel_new(void);
+NV_API void nv_cancel_set(nv_cancel *c);
+NV_API void nv_cancel_free(nv_cancel *c);
+
+typedef struct nv_grep nv_grep;
+
+/* nv_grep_run flags */
+#define NV_GREP_FIXED 1 /* the pattern is plain text, never a regex */
+
+/* nv_grep_status bits */
+#define NV_GREP_MORE 1      /* more matches exist than `limit` */
+#define NV_GREP_CANCELLED 2 /* stopped by the cancel token; results are partial */
+#define NV_GREP_LITERAL 4   /* pattern is not valid regex syntax: searched as text */
+
+/* Search the files of `files` (paths relative to `root`, as built by
+ * nv_index_scan) for `pattern` and collect up to `limit` matching lines, in
+ * index order, at most one per line.
+ *
+ * The pattern is a regex unless NV_GREP_FIXED is set or it has no regex
+ * syntax; the syntax is a small RE2-like subset (see grep.c), matched in
+ * linear time. An invalid pattern is searched as literal text. Smartcase:
+ * case-insensitive unless the pattern contains an uppercase ASCII letter.
+ *
+ * Files with a NUL byte, empty files and files larger than `max_file_bytes`
+ * (0 = 1 MiB) are skipped. Each hit's text is the line with surrounding
+ * blanks trimmed, cut to about `max_text` bytes (0 = 200). `cancel` may be
+ * NULL. Thread-safe: `files` is only read, so several searches may share one
+ * index. Returns NULL only on allocation failure; an empty or unusable
+ * pattern gives an empty result. Free with nv_grep_free. */
+NV_API nv_grep *nv_grep_run(const nv_index *files, const char *root, const char *pattern,
+                            int flags, size_t limit, size_t max_file_bytes,
+                            size_t max_text, const nv_cancel *cancel);
+
+NV_API void nv_grep_free(nv_grep *g);
+NV_API size_t nv_grep_count(const nv_grep *g);
+NV_API int nv_grep_status(const nv_grep *g);
+
+/* Hit i (0-based); NULL / 0 when out of range. Strings are owned by `g`.
+ * `line` and `col` are 1-based; `col` is the byte column of the match start
+ * in the original line (not in the trimmed text). */
+NV_API const char *nv_grep_path(const nv_grep *g, size_t i);
+NV_API const char *nv_grep_text(const nv_grep *g, size_t i);
+NV_API uint32_t nv_grep_line(const nv_grep *g, size_t i);
+NV_API uint32_t nv_grep_col(const nv_grep *g, size_t i);
 
 #endif

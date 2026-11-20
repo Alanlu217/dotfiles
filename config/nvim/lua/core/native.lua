@@ -399,7 +399,7 @@ end
 -- no upvalues (the function is dumped and re-loaded there). Only ffi and the C
 -- library are available; arguments and return values must be plain strings,
 -- numbers or booleans. Returns: id, ok, r1, r2, r3.
-local function worker(op, id, libpath, cdef, a, b, c, d)
+local function worker(op, id, libpath, cdef, a, b, c, d, e)
   local ok, r1, r2, r3 = pcall(function()
     local ffi = require("ffi")
     for stmt in cdef:gmatch("[^;]+;") do
@@ -413,6 +413,29 @@ local function worker(op, id, libpath, cdef, a, b, c, d)
         return 0, 0, false
       end
       return tonumber(ffi.cast("uintptr_t", ptr)), tonumber(lib.nv_index_count(ptr)), lib.nv_index_truncated(ptr) ~= 0
+    end
+
+    -- (uv work functions receive at most 9 arguments in total, hence the packed numbers)
+    if op == "grep" then -- a=index address b=root c=pattern d=cancel address e="limit,max_file_bytes,max_text,flags"
+      local limit, max_file, max_text, flags = e:match("^(%d+),(%d+),(%d+),(%d+)$")
+      local idx = ffi.cast("nv_index *", ffi.cast("uintptr_t", a))
+      local cancel = ffi.cast("nv_cancel *", ffi.cast("uintptr_t", d))
+      local res = lib.nv_grep_run(idx, b, c, tonumber(flags), tonumber(limit), tonumber(max_file), tonumber(max_text), cancel)
+      if res == nil then
+        return 0, "", 0
+      end
+      local n = tonumber(lib.nv_grep_count(res))
+      local parts = {}
+      for i = 0, n - 1 do
+        local k = i * 4
+        parts[k + 1] = ffi.string(lib.nv_grep_path(res, i))
+        parts[k + 2] = tostring(tonumber(lib.nv_grep_line(res, i)))
+        parts[k + 3] = tostring(tonumber(lib.nv_grep_col(res, i)))
+        parts[k + 4] = ffi.string(lib.nv_grep_text(res, i))
+      end
+      local status = tonumber(lib.nv_grep_status(res))
+      lib.nv_grep_free(res)
+      return n, table.concat(parts, "\0"), status
     end
 
     -- "filter": a=index address b=query c=limit
@@ -435,7 +458,7 @@ local work
 local jobs = {} ---@type table<integer, fun(ok: boolean, r1: any, r2: any, r3: any)>
 local next_id = 0
 
----@param op "scan"|"filter"
+---@param op "scan"|"filter"|"grep"
 ---@param cb fun(ok: boolean, r1: any, r2: any, r3: any)
 local function dispatch(op, cb, ...)
   work = work
@@ -501,6 +524,60 @@ function Index:filter_async(query, limit, cb)
       cb(vim.split(joined, "\0", { plain = true }))
     end
   end, self.addr, query, limit)
+end
+
+-- Mirrors of the NV_GREP_* constants in nvcore.h.
+M.GREP_MORE, M.GREP_CANCELLED, M.GREP_LITERAL = 1, 2, 4
+
+---@class core.native.GrepHit
+---@field path string relative to the index root
+---@field line integer 1-based
+---@field col integer 1-based byte column of the match
+---@field text string the line, trimmed
+
+--- Search the files of this index on a worker thread. The search stops at its
+--- next check once the returned handle is cancelled; `cb` still runs, on the
+--- main loop, with whatever was found (status has GREP_CANCELLED set).
+--- On failure `hits` is nil and `status` is the error message.
+---@param pattern string
+---@param opts { root: string, fixed?: boolean, limit: integer, max_file_bytes?: integer, max_text?: integer }
+---@param cb fun(hits: core.native.GrepHit[]?, status: integer|string)
+---@return { cancel: fun() }
+function Index:grep_async(pattern, opts, cb)
+  local lib = self.lib
+  local raw = lib.nv_cancel_new()
+  local token = raw ~= nil and ffi.gc(raw, lib.nv_cancel_free) or nil
+  local token_addr = token and tonumber(ffi.cast("uintptr_t", token)) or 0
+  local keep_alive = self -- the index must outlive the worker's read of it
+
+  dispatch("grep", function(ok, n, joined, status)
+    local _ = { keep_alive, token } -- and so must the cancel token
+    if not ok then
+      cb(nil, tostring(n))
+      return
+    end
+    local hits = {}
+    if n > 0 then
+      local f = vim.split(joined, "\0", { plain = true })
+      for i = 0, n - 1 do
+        hits[i + 1] = {
+          path = f[4 * i + 1],
+          line = tonumber(f[4 * i + 2]),
+          col = tonumber(f[4 * i + 3]),
+          text = f[4 * i + 4],
+        }
+      end
+    end
+    cb(hits, status)
+  end, self.addr, opts.root, pattern, token_addr, ("%d,%d,%d,%d"):format(opts.limit, opts.max_file_bytes or 0, opts.max_text or 0, opts.fixed and 1 or 0))
+
+  return {
+    cancel = function()
+      if token then
+        lib.nv_cancel_set(token)
+      end
+    end,
+  }
 end
 
 --- Walk `root` on a worker thread. Requires M.ready() to have succeeded.

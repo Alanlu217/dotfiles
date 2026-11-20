@@ -6,7 +6,7 @@
 #define MAX_TERMS 8
 
 NV_API int nv_abi_version(void) { return NV_ABI_VERSION; }
-NV_API const char *nv_version(void) { return "0.3.0"; }
+NV_API const char *nv_version(void) { return "0.4.0"; }
 
 static struct nv_index *index_new(void) {
   return calloc(1, sizeof(struct nv_index));

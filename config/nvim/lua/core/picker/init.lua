@@ -1,11 +1,11 @@
 -- Public picker API:
---   require("core.picker").files() / .buffers() / .recent() / .help()
+--   require("core.picker").files() / .buffers() / .recent() / .help() / .grep()
 --   require("core.picker").symbols() / .workspace_symbols()   -- LSP
 --   require("core.picker").diagnostics() / .buffer_diagnostics()
 --   require("core.picker").keymaps()
 --   require("core.picker").open({ title, matcher, on_select, on_cancel? })
 --   require("core.picker").select(items, opts, on_choice)   -- vim.ui.select
---   :Pick files|buffers|recent|help|symbols|workspace_symbols|diagnostics|buffer_diagnostics|keymaps
+--   :Pick files|buffers|recent|help|grep|symbols|workspace_symbols|diagnostics|buffer_diagnostics|keymaps
 local M = {}
 
 ---@param spec core.picker.Spec
@@ -20,6 +20,12 @@ end
 
 function M.buffers()
   require("core.picker.sources").buffers()
+end
+
+--- Live grep over the files under `root` (default: cwd).
+---@param opts? { root?: string }
+function M.grep(opts)
+  require("core.picker.grep").open(opts)
 end
 
 function M.recent()
@@ -108,6 +114,7 @@ function M.setup()
     "buffers",
     "recent",
     "help",
+    "grep",
     "symbols",
     "workspace_symbols",
     "diagnostics",
@@ -126,7 +133,7 @@ function M.setup()
     complete = function()
       return names
     end,
-    desc = "Open a picker (files|buffers|recent|help|symbols|workspace_symbols|diagnostics|buffer_diagnostics|keymaps)",
+    desc = "Open a picker (files|buffers|recent|help|grep|symbols|workspace_symbols|diagnostics|buffer_diagnostics|keymaps)",
   })
 end
 

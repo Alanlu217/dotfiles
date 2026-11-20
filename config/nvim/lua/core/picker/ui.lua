@@ -135,6 +135,9 @@ function M.open(spec)
     if matcher.loading then
       count = count .. "  scanning..."
     end
+    if matcher.hint then
+      count = count .. "  [" .. matcher.hint .. "]"
+    end
     local title = (" %s  %s "):format(spec.title, count)
     vim.api.nvim_win_set_config(prompt_win, vim.tbl_extend("force", prompt_cfg, { title = title, title_pos = "left" }))
   end
@@ -178,6 +181,9 @@ function M.open(spec)
     end
     if inflight then
       dirty = true
+      if matcher.cancel then
+        matcher.cancel() -- the running answer is stale; let a live matcher stop early
+      end
       return
     end
     inflight = true
