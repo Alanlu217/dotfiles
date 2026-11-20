@@ -39,13 +39,13 @@ local function define_highlights()
 end
 
 ---@param cfg table
----@param with_preview boolean
+---@param pcfg? table preview settings; nil = no preview pane
 ---@return table prompt, table list, table? preview
-local function layout(cfg, with_preview)
+local function layout(cfg, pcfg)
+  local with_preview = pcfg ~= nil
   local border = cfg.border
   local edge = border == "none" and 0 or 1
   local solid = border == "solid"
-  local pcfg = cfg.preview
 
   local status = vim.o.laststatus > 0 and 1 or 0
   local ui_height = vim.o.lines - vim.o.cmdheight - status
@@ -97,11 +97,12 @@ end
 
 ---@class core.picker.Spec
 ---@field title string
+---@field id? string source id for `picker.preview.sources` overrides (files, grep, ...)
 ---@field matcher core.Matcher
 ---@field on_select fun(item: string, action: "edit"|"split"|"vsplit"|"tabedit")
 ---@field on_cancel? fun()
 ---@field prompt? string
----@field preview? fun(item: string): core.picker.PreviewTarget? what to show for the selected item; no preview pane without it
+---@field preview? false|fun(item: string, query: string): core.picker.PreviewTarget? what to show for the selected item (`query` is the one that produced the list); no preview pane without it
 
 ---@param spec core.picker.Spec
 function M.open(spec)
@@ -116,6 +117,7 @@ function M.open(spec)
   local group = util.augroup("picker")
 
   local results = {} ---@type string[] best match first
+  local results_query = "" -- the query `results` answers (the prompt may have moved on since)
   local sel = 0 -- 1 = best match
   local closed = false
   local chosen = false -- true once an item was picked (vs. dismissed)
@@ -135,8 +137,11 @@ function M.open(spec)
   vim.fn.prompt_setprompt(prompt_buf, prompt_text)
 
   -- The preview pane only exists for sources that can resolve a preview, on wide enough editors.
-  local pcfg = cfg.preview
-  local resolver = type(spec.preview) == "function" and spec.preview or nil
+  -- `picker.preview.sources[id]` = false turns the pane off for that source; a table overrides
+  -- any preview setting (e.g. { width = 0.65 } for a wider pane).
+  local override = spec.id and cfg.preview.sources and cfg.preview.sources[spec.id]
+  local pcfg = type(override) == "table" and vim.tbl_extend("force", cfg.preview, override) or cfg.preview
+  local resolver = type(spec.preview) == "function" and override ~= false and spec.preview or nil
   local previewer ---@type table?
 
   local function preview_wanted()
@@ -148,7 +153,7 @@ function M.open(spec)
   end
 
   local want_preview = preview_wanted()
-  local prompt_cfg, list_cfg, preview_cfg = layout(cfg, want_preview)
+  local prompt_cfg, list_cfg, preview_cfg = layout(cfg, want_preview and pcfg or nil)
   local list_win = vim.api.nvim_open_win(list_buf, false, list_cfg)
   local prompt_win = vim.api.nvim_open_win(prompt_buf, true, prompt_cfg)
   for _, win in ipairs({ prompt_win, list_win }) do
@@ -177,7 +182,7 @@ function M.open(spec)
       previewer.clear()
       return
     end
-    local ok, target = pcall(resolver, item)
+    local ok, target = pcall(resolver, item, results_query)
     if ok then
       previewer.show(target)
     else
@@ -232,8 +237,9 @@ function M.open(spec)
   end
 
   ---@param items string[]
-  local function render(items)
-    results = items
+  ---@param for_query string
+  local function render(items, for_query)
+    results, results_query = items, for_query
     sel = #results > 0 and 1 or 0
 
     -- Best match first, so a short list stays pinned under the prompt.
@@ -267,7 +273,8 @@ function M.open(spec)
       return
     end
     inflight = true
-    matcher.filter(query(), cfg.max_results, function(items)
+    local asked = query()
+    matcher.filter(asked, cfg.max_results, function(items)
       inflight = false
       if closed then
         return
@@ -277,7 +284,7 @@ function M.open(spec)
         request()
         return
       end
-      render(items)
+      render(items, asked)
     end)
   end
 
@@ -299,7 +306,7 @@ function M.open(spec)
   --- Re-lay out after a resize or a preview toggle: opens or closes the pane as needed.
   local function apply_layout()
     local want = preview_wanted()
-    prompt_cfg, list_cfg, preview_cfg = layout(cfg, want)
+    prompt_cfg, list_cfg, preview_cfg = layout(cfg, want and pcfg or nil)
     vim.api.nvim_win_set_config(list_win, list_cfg)
     vim.api.nvim_win_set_config(prompt_win, prompt_cfg)
     if want then

@@ -14,15 +14,23 @@ local M = {}
 local NS = vim.api.nvim_create_namespace("core.picker.preview")
 local MAX_MARKED_LINES = 200
 
+---@class core.picker.PreviewSearch
+---@field pattern string
+---@field fixed boolean  plain text (true) or regex
+
 ---@class core.picker.PreviewTarget
----@field kind "file"|"text"
----@field path? string       file: absolute path
+---@field kind "file"|"buf"|"text"
+---@field path? string       file: absolute path (shown from its buffer instead when it is loaded)
+---@field bufnr? integer     buf: a loaded buffer, shown as it is now (unsaved edits included)
 ---@field lines? string[]    text: what to show
----@field title? string      text: border title (files use their path)
----@field lnum? integer      file: 1-based line to centre and mark
----@field col? integer       file: 1-based byte column of the match on `lnum`
----@field end_lnum? integer  file: last marked line (default `lnum`)
----@field end_col? integer   file: 1-based byte column after the match; with `col` marks a range
+---@field title? string      text: border title (files and buffers use their name)
+---@field note? string       file/buf: short text added to the border title
+---@field lnum? integer      file/buf: 1-based line to centre and mark
+---@field col? integer       file/buf: 1-based byte column of the match on `lnum`
+---@field end_lnum? integer  file/buf: last marked line (default `lnum`)
+---@field end_col? integer   file/buf: 1-based byte column after the match (on `end_lnum`); with `col` marks a range
+---@field search? core.picker.PreviewSearch file/buf: find the length of the match at `lnum`/`col` here (no `end_col` needed)
+---@field match_hl? string   file/buf: highlight group of the matched range (default PickerPreviewMatch)
 
 ---@param st uv.fs_stat.result
 ---@return string
@@ -34,6 +42,59 @@ end
 ---@return string
 local function rel(path)
   return vim.fn.fnamemodify(path, ":~:.")
+end
+
+--- The loaded, ordinary buffer editing `path`, if any: it holds the truth, unsaved edits included.
+---@param path string
+---@return integer?
+function M.loaded_buf(path)
+  path = vim.fs.normalize(path)
+  for _, nr in ipairs(vim.api.nvim_list_bufs()) do
+    if vim.api.nvim_buf_is_loaded(nr) and vim.bo[nr].buftype == "" and vim.api.nvim_buf_get_name(nr) == path then
+      return nr
+    end
+  end
+end
+
+local regex_cache = {} ---@type table<string, vim.regex|false>
+
+--- 1-based byte column after the match that starts at `col` of line `lnum`, or nil when
+--- it can't be told (the line changed, a regex flavour we can't translate, ...).
+---@param buf integer
+---@param lnum integer
+---@param col integer
+---@param search core.picker.PreviewSearch
+---@return integer?
+local function match_end(buf, lnum, col, search)
+  local pattern = search.pattern
+  if pattern == "" then
+    return nil
+  end
+  local icase = not pattern:find("%u") -- smartcase, like the search itself
+  if search.fixed then
+    local line = vim.api.nvim_buf_get_lines(buf, lnum - 1, lnum, false)[1] or ""
+    local found = line:sub(col, col + #pattern - 1)
+    if #found == #pattern and (found == pattern or (icase and found:lower() == pattern:lower())) then
+      return col + #pattern
+    end
+    return nil
+  end
+  -- The native search speaks a small RE2-like regex, which is close to Vim's very magic.
+  local key = (icase and "i" or "c") .. pattern
+  local re = regex_cache[key]
+  if re == nil then
+    local ok, compiled = pcall(vim.regex, "\\v" .. (icase and "\\c" or "\\C") .. pattern)
+    re = ok and compiled or false
+    regex_cache[key] = re
+  end
+  if not re then
+    return nil
+  end
+  local ok, s, e = pcall(re.match_line, re, buf, lnum - 1, col - 1)
+  if ok and s == 0 and e and e > s then
+    return col + e -- 1-based column after the match: it spans col .. col + e - 1
+  end
+  return nil
 end
 
 ---@return integer
@@ -91,27 +152,31 @@ local function read_file(path, st, max_bytes)
 end
 
 ---@param buf integer
----@param path string
----@param data { lines: string[], bytes: integer }
+---@param ft? string
+---@param bytes integer
 ---@param cfg table
-local function start_highlight(buf, path, data, cfg)
+local function start_highlight(buf, ft, bytes, cfg)
+  if not ft or ft == "" or bytes > cfg.highlight_max_bytes then
+    return
+  end
   local ts = config.get().treesitter
-  if not ts.enabled or data.bytes > cfg.highlight_max_bytes then
-    return
+  if ts.enabled and not vim.tbl_contains(ts.disable or {}, ft) then
+    -- 'filetype' stays unset on purpose: setting it would run ftplugins and user
+    -- FileType autocmds for a buffer nobody edits. Treesitter only needs the language.
+    local lang = vim.treesitter.language.get_lang(ft)
+    if lang then
+      local has_parser, has_query = require("core.treesitter").available(lang)
+      if has_parser and has_query and pcall(vim.treesitter.start, buf, lang) then
+        return
+      end
+    end
   end
-  local ok, ft = pcall(vim.filetype.match, { filename = path, contents = vim.list_slice(data.lines, 1, 100) })
-  if not ok or not ft or vim.tbl_contains(ts.disable or {}, ft) then
-    return
-  end
-  -- 'filetype' stays unset on purpose: setting it would run ftplugins and user
-  -- FileType autocmds for a buffer nobody edits. Treesitter only needs the language.
-  local lang = vim.treesitter.language.get_lang(ft)
-  if not lang then
-    return
-  end
-  local has_parser, has_query = require("core.treesitter").available(lang)
-  if has_parser and has_query then
-    pcall(vim.treesitter.start, buf, lang)
+  -- No usable parser: classic regex syntax, like the editor does. Setting only 'syntax'
+  -- (not 'filetype') loads syntax/<ft>.vim without running ftplugins or FileType autocmds.
+  if vim.g.syntax_on ~= nil or vim.fn.exists("g:syntax_on") == 1 then
+    pcall(vim.api.nvim_buf_call, buf, function()
+      vim.bo[buf].syntax = ft
+    end)
   end
 end
 
@@ -147,7 +212,6 @@ function M.new(opts)
     for _, name in ipairs({ "linebreak", "breakindent", "breakindentopt", "showbreak" }) do
       wo[name] = vim.o[name]
     end
-    wo.smoothscroll = true -- <C-e>/<C-y> then move by screen rows, so a wrapped line scrolls row by row
     wo.scrolloff = 0
     wo.signcolumn = "no"
     wo.number = false
@@ -286,16 +350,29 @@ function M.new(opts)
       return
     end
 
-    local first = math.min(math.max(t.lnum, 1), count)
-    local last = math.min(math.max(t.end_lnum or first, first), count, first + MAX_MARKED_LINES - 1)
+    if t.lnum > count then
+      -- Beyond what was loaded (a truncated big file): say nothing rather than mark the wrong line.
+      vim.api.nvim_win_call(win, function()
+        vim.fn.winrestview({ topline = 1, lnum = 1, col = 0, leftcol = 0, skipcol = 0, curswant = 0 })
+      end)
+      return
+    end
+    local first = math.max(t.lnum, 1)
+    local wanted = math.max(t.end_lnum or first, first)
+    local last = math.min(wanted, count, first + MAX_MARKED_LINES - 1)
     for l = first, last do
       vim.api.nvim_buf_set_extmark(buf, NS, l - 1, 0, { line_hl_group = "PickerPreviewLine", priority = 100 })
     end
-    if t.col and t.end_col then
+    local end_col = t.end_col
+    if t.col and not end_col and t.search then
+      end_col = match_end(buf, first, t.col, t.search)
+    end
+    -- A range cut short by the caps would end at the wrong place: mark only the lines then.
+    if t.col and end_col and last == wanted and (last > first or end_col > t.col) then
       vim.api.nvim_buf_set_extmark(buf, NS, first - 1, t.col - 1, {
         end_row = last - 1,
-        end_col = t.end_col - 1,
-        hl_group = "PickerPreviewMatch",
+        end_col = end_col - 1,
+        hl_group = t.match_hl or "PickerPreviewMatch",
         priority = 200,
         strict = false,
       })
@@ -363,8 +440,9 @@ function M.new(opts)
       local fresh = not (entry and vim.api.nvim_buf_is_valid(entry.buf))
       local buf = fresh and new_buf() or entry.buf
       set_lines(buf, data.lines)
-      if fresh or not vim.b[buf].ts_highlight then
-        start_highlight(buf, path, data, cfg)
+      if fresh or (not vim.b[buf].ts_highlight and vim.bo[buf].syntax == "") then
+        local ok, ft = pcall(vim.filetype.match, { filename = path, contents = vim.list_slice(data.lines, 1, 100) })
+        start_highlight(buf, ok and ft or nil, data.bytes, cfg)
       end
       entry = { buf = buf, key = key, truncated = data.truncated }
       files[path] = entry
@@ -374,9 +452,69 @@ function M.new(opts)
     touch(path)
     show_buf(entry.buf)
     mark_and_place(entry.buf, t)
-    local suffix = truncated and "  [truncated]" or (st.size == 0 and "  [empty]" or nil)
-    set_title(title, suffix)
+    local suffix = (t.note and ("  " .. t.note) or "") .. (truncated and "  [truncated]" or (st.size == 0 and "  [empty]" or ""))
+    set_title(title, suffix ~= "" and suffix or nil)
     evict() -- after the swap: the buffer that was on screen may now go
+  end
+
+  --- A loaded buffer, copied as it is now. The copy lives in a scratch buffer like a file's:
+  --- the real buffer never enters the float, so no autocmd or window option leaks either way.
+  ---@param t core.picker.PreviewTarget
+  local function show_buffer(t)
+    local nr = t.bufnr
+    if not (nr and vim.api.nvim_buf_is_valid(nr)) then
+      return notice("buffer", "buffer no longer exists")
+    end
+    local name = vim.api.nvim_buf_get_name(nr)
+    if not vim.api.nvim_buf_is_loaded(nr) then
+      if name ~= "" then
+        return show_file(vim.tbl_extend("force", t, { kind = "file", path = name }))
+      end
+      return notice("[No Name]", "buffer is not loaded")
+    end
+
+    local title = name ~= "" and rel(name) or "[No Name]"
+    local ckey = "buf:" .. nr
+    local key = tostring(vim.api.nvim_buf_get_changedtick(nr))
+    local entry = files[ckey]
+    local truncated
+    if entry and entry.key == key and vim.api.nvim_buf_is_valid(entry.buf) then
+      truncated = entry.truncated
+    else
+      local count = vim.api.nvim_buf_line_count(nr)
+      local bytes = math.max(vim.api.nvim_buf_get_offset(nr, count), 0)
+      local upto = count
+      truncated = bytes > cfg.max_filesize
+      if truncated then
+        upto = math.max(1, math.floor(count * cfg.max_filesize / bytes))
+      end
+      local lines = vim.api.nvim_buf_get_lines(nr, 0, upto, false)
+      for i, line in ipairs(lines) do
+        if line:find("\n", 1, true) then -- a NUL in the buffer; set_lines refuses newlines
+          lines[i] = line:gsub("\n", "^@")
+        end
+      end
+      if #lines == 0 then
+        lines = { "" }
+      end
+      local fresh = not (entry and vim.api.nvim_buf_is_valid(entry.buf))
+      local buf = fresh and new_buf() or entry.buf
+      set_lines(buf, lines)
+      if fresh or (not vim.b[buf].ts_highlight and vim.bo[buf].syntax == "") then
+        start_highlight(buf, vim.bo[nr].filetype, bytes, cfg)
+      end
+      entry = { buf = buf, key = key, truncated = truncated }
+      files[ckey] = entry
+    end
+
+    touch(ckey)
+    show_buf(entry.buf)
+    mark_and_place(entry.buf, t)
+    local suffix = (t.note and ("  " .. t.note) or "")
+      .. (vim.bo[nr].modified and "  [+]" or "")
+      .. (truncated and "  [truncated]" or "")
+    set_title(title, suffix ~= "" and suffix or nil)
+    evict()
   end
 
   -- API ---------------------------------------------------------------------
@@ -419,12 +557,34 @@ function M.new(opts)
       return self.clear()
     end
     if target.kind == "file" and target.path then
-      local sig = table.concat({ target.path, target.lnum or "", target.col or "", target.end_lnum or "", target.end_col or "" }, "\0")
+      -- A file that is open in an editor buffer is shown from there: unsaved edits count.
+      local nr = M.loaded_buf(target.path)
+      if nr then
+        target = vim.tbl_extend("force", target, { kind = "buf", bufnr = nr })
+      end
+    end
+    if (target.kind == "file" and target.path) or (target.kind == "buf" and target.bufnr) then
+      local sig = table.concat({
+        target.kind,
+        target.path or target.bufnr,
+        target.lnum or "",
+        target.col or "",
+        target.end_lnum or "",
+        target.end_col or "",
+        target.search and target.search.pattern or "",
+        target.search and tostring(target.search.fixed) or "",
+        target.note or "",
+        target.match_hl or "",
+      }, "\0")
       if sig == last_sig then
         return
       end
       last_sig = sig
-      show_file(target)
+      if target.kind == "buf" then
+        show_buffer(target)
+      else
+        show_file(target)
+      end
     else
       last_sig = nil
       show_text(target)
@@ -438,35 +598,48 @@ function M.new(opts)
     end
   end
 
-  --- Scroll by screen rows (a wrapped line counts once per row it takes); rows > 0 goes down.
-  --- Stops where the last line of the file reaches the bottom: no blank space beyond it.
-  ---@param rows integer
-  function self.scroll(rows)
-    if not alive() or rows == 0 then
+  --- Scroll by buffer lines; lines > 0 goes down. Works on an absolute topline instead of
+  --- nudging with <C-e>/<C-y>, so there is never an overshoot to snap back from: the view
+  --- stops where the last line of the file reaches the bottom.
+  ---@param lines integer
+  function self.scroll(lines)
+    if not alive() or lines == 0 then
       return
     end
     vim.api.nvim_win_call(win, function()
       local limit = max_top(vim.api.nvim_buf_line_count(0), vim.api.nvim_win_get_height(0))
       local view = vim.fn.winsaveview()
-      if rows > 0 and (view.topline > limit or (view.topline == limit and view.skipcol > 0)) then
-        return -- already at the end
+      local top = math.min(math.max(view.topline + lines, 1), math.max(limit, 1))
+      if top == view.topline and view.skipcol == 0 then
+        return
       end
-      vim.cmd.normal({ args = { math.abs(rows) .. (rows > 0 and "\5" or "\25") }, bang = true }) -- <C-e> / <C-y>
-      view = vim.fn.winsaveview()
-      if view.topline > limit or (view.topline == limit and view.skipcol > 0) then
-        view.topline, view.skipcol = limit, 0
-        view.lnum = math.max(view.lnum, limit)
-        vim.fn.winrestview(view)
-      end
+      view.topline, view.lnum, view.col, view.curswant, view.skipcol = top, top, 0, 0, 0
+      vim.fn.winrestview(view)
     end)
   end
 
-  --- Half a page; dir > 0 goes down.
+  --- Half a window of screen rows (wrapped lines count for every row they take); dir > 0 goes down.
   ---@param dir integer
   function self.page(dir)
-    if alive() then
-      self.scroll(dir * math.max(1, math.floor(vim.api.nvim_win_get_height(win) / 2)))
+    if not alive() then
+      return
     end
+    local half = math.max(1, math.floor(vim.api.nvim_win_get_height(win) / 2))
+    local count = vim.api.nvim_buf_line_count(vim.api.nvim_win_get_buf(win))
+    local top = vim.fn.getwininfo(win)[1].topline
+    local n, used = 0, 0
+    if dir > 0 then
+      while top + n <= count and used < half do
+        used = used + line_rows(top + n)
+        n = n + 1
+      end
+    else
+      while top - n - 1 >= 1 and used < half do
+        used = used + line_rows(top - n - 1)
+        n = n + 1
+      end
+    end
+    self.scroll(dir * math.max(1, n))
   end
 
   --- Scroll sideways; only meaningful without wrapping.

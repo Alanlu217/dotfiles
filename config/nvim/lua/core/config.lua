@@ -37,6 +37,12 @@ M.defaults = {
       debounce = 40,          -- minimum ms between preview updates while moving or typing
       cache = 20,             -- previewed files kept in memory per picker session
       wrap = true,
+      -- Per source (files, buffers, recent, grep, symbols, workspace_symbols, diagnostics,
+      -- keymaps): false = no preview there, or a table overriding any setting above.
+      sources = {
+        -- grep = { width = 0.6 },
+        -- keymaps = false,
+      },
     },
     keys = {
       next = { "<C-n>", "<Down>", "<C-j>" },

@@ -81,6 +81,8 @@ local function collect()
         lhs = lhs,
         lhsraw = map.lhsraw or vim.api.nvim_replace_termcodes(lhs, true, true, true),
         desc = describe(map),
+        rhs = map.rhs,
+        callback = map.callback,
         buffer = buffer,
         modes = {},
       }
@@ -109,6 +111,45 @@ local function collect()
     return a.lhs < b.lhs
   end)
   return entries
+end
+
+local MAX_MARKED = 30 -- lines of a callback marked in the preview
+
+--- A Lua callback shows its definition; anything else shows the mapping's details.
+---@param entry table
+---@return core.picker.PreviewTarget
+local function preview_target(entry)
+  local note = entry.mode_text .. "  " .. entry.shown_lhs
+  if entry.callback then
+    local info = debug.getinfo(entry.callback, "S")
+    local path = info and info.source:sub(1, 1) == "@" and info.source:sub(2) or nil
+    if path and info.linedefined > 0 and vim.uv.fs_stat(path) then
+      local last = info.lastlinedefined > 0 and info.lastlinedefined or info.linedefined
+      return {
+        kind = "file",
+        path = vim.fn.fnamemodify(path, ":p"),
+        lnum = info.linedefined,
+        end_lnum = math.min(last, info.linedefined + MAX_MARKED - 1),
+        note = note,
+      }
+    end
+  end
+
+  local lines = {
+    "",
+    "  mode    " .. entry.mode_text,
+    "  keys    " .. entry.shown_lhs,
+    "  scope   " .. (entry.buffer and "buffer" or "global"),
+  }
+  if entry.desc ~= "" then
+    lines[#lines + 1] = "  desc    " .. entry.desc
+  end
+  if entry.rhs and entry.rhs ~= "" then
+    lines[#lines + 1] = "  rhs     " .. entry.rhs
+  elseif entry.callback then
+    lines[#lines + 1] = "  rhs     <lua function> (no source available)"
+  end
+  return { kind = "text", title = "keymap", lines = lines }
 end
 
 function M.open()
@@ -140,7 +181,12 @@ function M.open()
 
   ui.open({
     title = "Keymaps",
+    id = "keymaps",
     matcher = matcher.from_list(labels),
+    preview = function(item)
+      local entry = lookup[item]
+      return entry and preview_target(entry) or nil
+    end,
     on_select = function(item)
       local entry = lookup[item]
       if not entry then

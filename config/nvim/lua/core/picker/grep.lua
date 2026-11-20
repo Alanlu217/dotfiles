@@ -279,9 +279,26 @@ function M.open(opts)
   local cfg = config.get().picker
   local root = (opts and opts.root) or uv.cwd()
 
+  local m = new_matcher(root, cfg)
   ui.open({
     title = "Grep",
-    matcher = new_matcher(root, cfg),
+    id = "grep",
+    matcher = m,
+    preview = function(item, query)
+      local path, line, col = parse_label(item)
+      if not path then
+        return nil
+      end
+      local target = { kind = "file", path = vim.fs.joinpath(root, path), lnum = line, col = col }
+      -- The whole line is always marked; the match itself too when the query says how long it is.
+      local pattern, fixed = parse_query(query, not cfg.grep.regex)
+      -- The matcher falls back to plain text for a pattern that is not a regex (yet).
+      fixed = fixed or (m.hint ~= nil and m.hint:find("plain text", 1, true) ~= nil)
+      if pattern ~= "" then
+        target.search = { pattern = pattern, fixed = fixed }
+      end
+      return target
+    end,
     on_select = function(item, action)
       local path, line, col = parse_label(item)
       if not path then

@@ -94,6 +94,40 @@ function M.check()
   end
   vim.health.info(("put extra parsers in %s/site/parser and queries in %s/site/queries/<lang>"):format(vim.fn.stdpath("data"), vim.fn.stdpath("data")))
 
+  vim.health.start("core.picker")
+  local pv = require("core.config").get().picker.preview
+  if not pv.enabled then
+    vim.health.info("preview pane disabled (picker.preview.enabled)")
+  else
+    vim.health.ok(("preview pane on for editors >= %d columns; %d files cached per picker"):format(pv.min_columns, pv.cache))
+    local tsc = require("core.config").get().treesitter
+    if not tsc.enabled then
+      vim.health.info("treesitter disabled: previews use regex syntax")
+    else
+      local with_ts, plain = {}, {}
+      for _, lang in ipairs(tsc.languages) do
+        local parser, query = ts.available(lang)
+        table.insert(parser and query and with_ts or plain, lang)
+      end
+      if #with_ts > 0 then
+        vim.health.ok("previews use treesitter for: " .. table.concat(with_ts, ", "))
+      end
+      if #plain > 0 then
+        vim.health.info("previews use regex syntax for: " .. table.concat(plain, ", ") .. " (no parser + highlights query)")
+      end
+    end
+    if vim.fn.exists("g:syntax_on") == 1 then
+      vim.health.ok("syntax is on (regex fallback in previews works)")
+    else
+      vim.health.warn("syntax is off: files without a treesitter parser are previewed unhighlighted")
+    end
+    local overrides = vim.tbl_keys(pv.sources or {})
+    if #overrides > 0 then
+      table.sort(overrides)
+      vim.health.info("per-source overrides: " .. table.concat(overrides, ", "))
+    end
+  end
+
   vim.health.start("core.git")
   if vim.fn.executable("git") == 1 then
     vim.health.ok("git found")

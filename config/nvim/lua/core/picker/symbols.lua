@@ -104,6 +104,30 @@ local function labels_for(syms, with_path, lookup, limit)
   return labels
 end
 
+local MAX_MARKED = 30 -- lines of a symbol marked in the preview
+
+--- What to show for a symbol. `buf` is the buffer to show it from when the symbol
+--- is known to live there; otherwise the file is shown (from its buffer if one is loaded).
+---@param sym core.picker.Symbol
+---@param buf? integer
+---@return core.picker.PreviewTarget
+local function preview_target(sym, buf)
+  local lnum, end_lnum
+  if sym.range then
+    lnum = sym.range.start.line + 1
+    end_lnum = math.min(math.max(sym.range["end"].line + 1, lnum), lnum + MAX_MARKED - 1)
+  end
+  if buf then
+    return { kind = "buf", bufnr = buf, lnum = lnum, end_lnum = end_lnum }
+  end
+  local scheme = sym.uri:match("^(%a[%w+.-]*):")
+  if scheme ~= "file" then
+    -- jdt://, zipfile:// and the like have no file to read.
+    return { kind = "text", title = sym.name, lines = { "", "  no preview for " .. (scheme or "this") .. ":// symbols" } }
+  end
+  return { kind = "file", path = vim.uri_to_fname(sym.uri), lnum = lnum, end_lnum = end_lnum }
+end
+
 ---@param method string
 ---@return vim.lsp.Client[]
 local function clients_for(method)
@@ -135,12 +159,18 @@ function M.document()
     local lookup = {}
     ui.open({
       title = "Symbols",
+    id = "symbols",
       matcher = matcher.from_list(labels_for(syms, false, lookup)),
       on_select = function(item, action)
         local sym = lookup[item]
         if sym then
           jump(sym, action)
         end
+      end,
+      -- Always the buffer the symbols came from: it is the one being edited.
+      preview = function(item)
+        local sym = lookup[item]
+        return sym and preview_target(sym, buf) or nil
       end,
     })
   end)
@@ -198,12 +228,17 @@ function M.workspace()
   local lookup = {}
   ui.open({
     title = "Workspace symbols",
+    id = "workspace_symbols",
     matcher = workspace_matcher(vim.api.nvim_get_current_buf(), clients, lookup),
     on_select = function(item, action)
       local sym = lookup[item]
       if sym then
         jump(sym, action)
       end
+    end,
+    preview = function(item)
+      local sym = lookup[item]
+      return sym and preview_target(sym) or nil
     end,
   })
 end

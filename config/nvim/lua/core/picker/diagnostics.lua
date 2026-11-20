@@ -13,6 +13,12 @@ local LETTER = {
   [severity.INFO] = "I",
   [severity.HINT] = "H",
 }
+local RANGE_HL = {
+  [severity.ERROR] = "DiagnosticUnderlineError",
+  [severity.WARN] = "DiagnosticUnderlineWarn",
+  [severity.INFO] = "DiagnosticUnderlineInfo",
+  [severity.HINT] = "DiagnosticUnderlineHint",
+}
 local CMDS = { edit = "buffer", split = "sbuffer", vsplit = "vertical sbuffer", tabedit = "tab sbuffer" }
 
 ---@param buf integer
@@ -51,6 +57,26 @@ local function jump(d, action)
   local text = vim.api.nvim_buf_get_lines(0, lnum - 1, lnum, false)[1] or ""
   vim.api.nvim_win_set_cursor(0, { lnum, math.min(d.col, math.max(#text - 1, 0)) })
   vim.cmd("normal! zvzz")
+end
+
+---@param d vim.Diagnostic
+---@return core.picker.PreviewTarget
+local function preview_target(d)
+  local lnum, col = d.lnum + 1, d.col + 1
+  local end_lnum = (d.end_lnum or d.lnum) + 1
+  local end_col = (d.end_col or d.col) + 1
+  if end_lnum == lnum and end_col <= col then
+    end_col = col + 1 -- an empty range would show nothing
+  end
+  return {
+    kind = "buf",
+    bufnr = d.bufnr,
+    lnum = lnum,
+    col = col,
+    end_lnum = end_lnum,
+    end_col = end_col,
+    match_hl = RANGE_HL[d.severity],
+  }
 end
 
 ---@param opts? { buffer?: boolean } restrict to the current buffer
@@ -102,12 +128,17 @@ function M.open(opts)
 
   ui.open({
     title = only_current and "Buffer diagnostics" or "Diagnostics",
+    id = "diagnostics",
     matcher = matcher.from_list(labels),
     on_select = function(item, action)
       local d = lookup[item]
       if d then
         jump(d, action)
       end
+    end,
+    preview = function(item)
+      local d = lookup[item]
+      return d and preview_target(d) or nil
     end,
   })
 end

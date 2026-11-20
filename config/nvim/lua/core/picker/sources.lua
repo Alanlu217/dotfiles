@@ -18,6 +18,7 @@ function M.files(opts)
   local root = (opts and opts.root) or vim.uv.cwd()
   ui.open({
     title = "Files",
+    id = "files",
     matcher = matcher.from_scan(root, { ignore = cfg.ignore, hidden = cfg.hidden, max_files = cfg.max_files }),
     on_select = function(item, action)
       open_file(vim.fs.joinpath(root, item), action)
@@ -44,12 +45,17 @@ function M.buffers()
   local cmds = { edit = "buffer", split = "sbuffer", vsplit = "vertical sbuffer", tabedit = "tab sbuffer" }
   ui.open({
     title = "Buffers",
+    id = "buffers",
     matcher = matcher.from_list(items),
     on_select = function(item, action)
       local nr = tonumber(item:match("^%[(%d+)%]"))
       if nr and vim.api.nvim_buf_is_valid(nr) then
         vim.cmd(("%s %d"):format(cmds[action], nr))
       end
+    end,
+    preview = function(item)
+      local nr = tonumber(item:match("^%[(%d+)%]"))
+      return nr and { kind = "buf", bufnr = nr } or nil
     end,
   })
 end
@@ -63,6 +69,7 @@ function M.recent()
   end
   ui.open({
     title = "Recent files",
+    id = "recent",
     matcher = matcher.from_list(items),
     on_select = function(item, action)
       open_file(vim.fn.fnamemodify(item, ":p"), action)
@@ -101,6 +108,7 @@ function M.help()
   local cmds = { edit = "help", split = "help", vsplit = "vertical help", tabedit = "tab help" }
   ui.open({
     title = "Help",
+    id = "help",
     matcher = matcher.from_list(help_tags()),
     on_select = function(tag, action)
       local ok, err = pcall(vim.cmd, ("%s %s"):format(cmds[action], tag))
