@@ -224,7 +224,10 @@ local function merge(f, use_buffer)
 
   local keys, lookup = {}, {}
   for _, it in ipairs(items) do
-    local key = (it.filter ~= "" and it.filter or it.label):gsub("[\r\n]+", " ")
+    local key = it.filter ~= "" and it.filter or it.label
+    if key:find("[\r\n]") then
+      key = key:gsub("[\r\n]+", " ")
+    end
     local bucket = lookup[key]
     if bucket then
       bucket[#bucket + 1] = it
@@ -302,6 +305,9 @@ local function show(ctx, list)
 
   local entries = {}
   for i, it in ipairs(list) do
+    if it.doc == nil and it.lsp then
+      it.doc = lsp_source.doc_text(it.lsp) -- only for what is displayed; see sources/lsp.lua
+    end
     entries[i] = {
       word = ctx.prefix, -- see the header comment
       abbr = it.abbr or it.label,

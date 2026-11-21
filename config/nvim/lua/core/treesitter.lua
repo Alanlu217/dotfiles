@@ -23,15 +23,27 @@ local util = require("core.util")
 
 local M = {}
 
+-- Looking for a parser that is not there searches the whole 'runtimepath' every time,
+-- and most filetypes have none. Negative answers are remembered briefly.
+local missing = {} ---@type table<string, { at: integer, parser: boolean, query: boolean }>
+local MISSING_TTL = 10000 -- ms; a parser dropped in during the session is found within this
+
 --- Is there a parser for `lang`, and a highlights query for it?
 ---@param lang string
+---@param fresh? boolean ignore remembered negative answers (for :TSInfo and :checkhealth)
 ---@return boolean has_parser, boolean has_query
-function M.available(lang)
-  if not pcall(vim.treesitter.language.inspect, lang) then
-    return false, false
+function M.available(lang, fresh)
+  local hit = missing[lang]
+  if hit and not fresh and vim.uv.now() - hit.at < MISSING_TTL then
+    return hit.parser, hit.query
   end
-  local ok, query = pcall(vim.treesitter.query.get, lang, "highlights")
-  return true, ok and query ~= nil
+  local has_parser, has_query = false, false
+  if pcall(vim.treesitter.language.inspect, lang) then
+    local ok, query = pcall(vim.treesitter.query.get, lang, "highlights")
+    has_parser, has_query = true, ok and query ~= nil
+  end
+  missing[lang] = (has_parser and has_query) and nil or { at = vim.uv.now(), parser = has_parser, query = has_query }
+  return has_parser, has_query
 end
 
 --- Start treesitter highlighting for `buf` when it can work. Returns whether it is running.
@@ -75,7 +87,7 @@ function M.info(buf)
   if not lang then
     lines[#lines + 1] = "language: (none)"
   else
-    local has_parser, has_query = M.available(lang)
+    local has_parser, has_query = M.available(lang, true)
     lines[#lines + 1] = "language: " .. lang
     lines[#lines + 1] = "parser: " .. (has_parser and "found" or "missing")
     lines[#lines + 1] = "highlights query: " .. (has_query and "found" or "missing")

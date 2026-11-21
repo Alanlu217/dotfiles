@@ -44,6 +44,7 @@ local ns = vim.api.nvim_create_namespace("core_git_signs")
 ---@field reload? boolean another read was asked for while one was running
 ---@field stale? boolean the index may have changed; read it again on the next BufEnter
 ---@field timer? uv.uv_timer_t
+---@field tick? integer changedtick the current hunks were computed for
 
 local state = {} ---@type table<integer, core.gitsigns.State>
 
@@ -113,6 +114,7 @@ local function clear(buf)
   end
   if state[buf] then
     state[buf].hunks = {}
+    state[buf].tick = nil
   end
 end
 
@@ -125,6 +127,12 @@ local function update(buf)
   end
   if not M.enabled() or s.base == nil then
     clear(buf)
+    return
+  end
+
+  -- TextChangedI and the TextChanged after leaving Insert mode report the same text.
+  local tick = vim.api.nvim_buf_get_changedtick(buf)
+  if s.tick == tick then
     return
   end
 
@@ -144,6 +152,7 @@ local function update(buf)
   end
   local hunks, marks = M._classify(indices)
   s.hunks = hunks
+  s.tick = tick
   place(buf, marks)
 end
 
@@ -186,7 +195,7 @@ local function load_base(buf)
     if state[buf] ~= s or not vim.api.nvim_buf_is_valid(buf) then
       return
     end
-    s.base, s.base_lines = base, nil
+    s.base, s.base_lines, s.tick = base, nil, nil
     if s.reload then
       s.reload = false
       load_base(buf)

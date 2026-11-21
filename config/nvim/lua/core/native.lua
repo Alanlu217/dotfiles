@@ -324,6 +324,31 @@ local function resolve(lib, err)
   end
 end
 
+--- Is the built library newer than every source file? Then `make` has nothing to do and
+--- starting a process just to learn that is skipped. (Test drivers don't count: they are
+--- not part of the library, so touching one must not keep this false forever.)
+---@return boolean
+local function up_to_date()
+  local lib = uv.fs_stat(lib_path)
+  if not lib then
+    return false
+  end
+  local req = uv.fs_scandir(src_dir)
+  while req do
+    local name = uv.fs_scandir_next(req)
+    if not name then
+      break
+    end
+    if (name:find("%.[ch]$") and not name:find("^test_")) or name == "Makefile" then
+      local st = uv.fs_stat(vim.fs.joinpath(src_dir, name))
+      if not st or st.mtime.sec > lib.mtime.sec or (st.mtime.sec == lib.mtime.sec and st.mtime.nsec > lib.mtime.nsec) then
+        return false
+      end
+    end
+  end
+  return true
+end
+
 --- Build (if needed) and load the library without blocking. `cb` always runs
 --- on the main loop, never synchronously.
 ---@param cb fun(lib: table?, err: string?)
@@ -340,7 +365,7 @@ function M.ready(cb)
   end
   state.building = true
 
-  if not config.get().native.auto_build then
+  if not config.get().native.auto_build or up_to_date() then
     resolve(init_lib())
     return
   end
@@ -625,8 +650,19 @@ function M.setup()
     end)
   end, { desc = "Clean and rebuild the native C library" })
 
-  -- Start building/loading in the background so it is ready before first use.
-  M.ready(function() end)
+  -- Warm up in the background so the library is ready before first use, but only once the
+  -- editor is up: the first screen never waits for it, and a session that never opens a
+  -- picker pays nothing more (the first use starts the load itself).
+  local function warm()
+    vim.defer_fn(function()
+      M.ready(function() end)
+    end, 50)
+  end
+  if vim.v.vim_did_enter == 1 then
+    warm()
+  else
+    vim.api.nvim_create_autocmd("VimEnter", { group = util.augroup("native"), once = true, callback = warm })
+  end
 end
 
 return M

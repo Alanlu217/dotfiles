@@ -141,7 +141,7 @@ local function run_status(root)
         entry.again = false
         run_status(root)
       else
-        vim.cmd("redrawstatus!")
+        vim.cmd("redrawstatus") -- git shows in the current window only
       end
     end)
   )

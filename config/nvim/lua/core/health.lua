@@ -83,7 +83,7 @@ function M.check()
   vim.health.start("core.treesitter")
   local ts = require("core.treesitter")
   for _, lang in ipairs(require("core.config").get().treesitter.languages) do
-    local parser, query = ts.available(lang)
+    local parser, query = ts.available(lang, true)
     if parser and query then
       vim.health.ok(("%s: parser and highlights query found"):format(lang))
     elseif parser then
@@ -106,7 +106,7 @@ function M.check()
     else
       local with_ts, plain = {}, {}
       for _, lang in ipairs(tsc.languages) do
-        local parser, query = ts.available(lang)
+        local parser, query = ts.available(lang, true)
         table.insert(parser and query and with_ts or plain, lang)
       end
       if #with_ts > 0 then
