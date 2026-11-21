@@ -146,6 +146,51 @@ local function lua_search(root, files, query, opts, token, cb)
   vim.schedule(step)
 end
 
+-- Narrowing --------------------------------------------------------------------
+--
+-- Typing extends the query, and every line matching "foobar" also matches "foo". So when
+-- the shorter plain-text search found *all* its matches (it was neither cut at the hit
+-- limit nor cancelled), the longer one only has to look in the files that had hits. That
+-- turns most keystrokes from "read the whole tree" into "read a handful of files". The
+-- last few complete results are kept, so backspacing narrows from an earlier one too.
+
+---@param pattern string
+---@param fixed boolean the query was marked plain text (or regex is switched off)
+---@return boolean
+local function is_plain(pattern, fixed)
+  -- The characters native/grep.c treats as regex syntax.
+  return fixed or not pattern:find("[\\%.%^%$%*%+%?%(%)%[%]{}|]")
+end
+
+--- ASCII-only, like the search itself (never the process locale).
+---@param str string
+---@return string
+local function ascii_lower(str)
+  return (str:gsub("[A-Z]", function(c)
+    return string.char(c:byte() + 32)
+  end))
+end
+
+---@class core.grep.Result
+---@field pattern string
+---@field icase boolean smartcase: no uppercase ASCII letter in the pattern
+---@field paths string[] every file that had a match, in index order
+---@field sub? core.native.Index paths as an index, built when first needed
+
+---@param old core.grep.Result
+---@param new { pattern: string, icase: boolean }
+---@return boolean whether every line matching `new` also matches `old`
+local function narrows(old, new)
+  if old.icase then
+    return ascii_lower(new.pattern):find(ascii_lower(old.pattern), 1, true) ~= nil
+  end
+  -- A case-sensitive old search says nothing about a case-insensitive new one.
+  return not new.icase and new.pattern:find(old.pattern, 1, true) ~= nil
+end
+M._is_plain, M._narrows = is_plain, narrows
+
+local HISTORY_MAX = 6
+
 -- Matcher ----------------------------------------------------------------------
 
 ---@param root string
@@ -160,6 +205,46 @@ local function new_matcher(root, cfg)
   local last_count = 0
   local running ---@type { cancel: fun() }?
   local scan_truncated = false
+  local history = {} ---@type core.grep.Result[] complete plain-text results, newest last
+
+  --- Keep the file list of a complete plain-text search for narrowing later ones.
+  ---@param pattern string
+  ---@param hits table[]
+  local function remember(pattern, hits)
+    local paths, last = {}, nil
+    for _, hit in ipairs(hits) do
+      if hit.path:find("\n", 1, true) then
+        return -- a native index is newline-separated text: such a path can't be listed in one
+      end
+      if hit.path ~= last then -- hits come grouped by file
+        paths[#paths + 1] = hit.path
+        last = hit.path
+      end
+    end
+    for i = #history, 1, -1 do
+      if history[i].pattern == pattern then
+        table.remove(history, i)
+      end
+    end
+    history[#history + 1] = { pattern = pattern, icase = not pattern:find("[A-Z]"), paths = paths }
+    if #history > HISTORY_MAX then
+      table.remove(history, 1)
+    end
+  end
+
+  --- The remembered result with the fewest files that every match of `pattern` must be in.
+  ---@param pattern string
+  ---@return core.grep.Result?
+  local function narrowest(pattern)
+    local cur = { pattern = pattern, icase = not pattern:find("[A-Z]") }
+    local best
+    for _, h in ipairs(history) do
+      if narrows(h, cur) and (not best or #h.paths < #best.paths) then
+        best = h
+      end
+    end
+    return best
+  end
 
   m.count = function()
     return last_count
@@ -204,7 +289,20 @@ local function new_matcher(root, cfg)
       native.warn_unavailable(err)
       return use_lua_files()
     end
-    native.scan_async(root, { ignore = cfg.ignore, hidden = cfg.hidden, max_files = cfg.max_files }, function(idx, scan_err)
+    native.scan_async(root, {
+      ignore = cfg.ignore,
+      hidden = cfg.hidden,
+      max_files = cfg.max_files,
+      -- The list shown first may be from an earlier open: swap in the fresh one for later
+      -- searches, and forget narrowing history built on the old list.
+      on_refresh = function(fresh)
+        if m.disposed then
+          return
+        end
+        index, scan_truncated = fresh, fresh:truncated()
+        history = {}
+      end,
+    }, function(idx, scan_err)
       if m.disposed then
         return
       end
@@ -244,8 +342,22 @@ local function new_matcher(root, cfg)
 
     local opts = { root = root, fixed = fixed, limit = limit, max_file_bytes = gcfg.max_filesize, max_text = gcfg.max_text }
 
+    local plain = is_plain(pattern, fixed)
+    local base = plain and narrowest(pattern) or nil
+
     if index then
-      running = index:grep_async(pattern, opts, function(hits, status)
+      local target = index
+      if base then
+        if #base.paths == 0 then
+          -- The shorter query matched nothing, so neither does this one.
+          remember(pattern, {})
+          deliver({}, false, fixed and "plain text" or nil, cb)
+          return
+        end
+        base.sub = base.sub or native.from_list(base.paths)
+        target = base.sub or index
+      end
+      running = target:grep_async(pattern, opts, function(hits, status)
         if not hits then
           running = nil
           require("core.util").notify("Grep failed: " .. tostring(status), vim.log.levels.ERROR)
@@ -254,9 +366,14 @@ local function new_matcher(root, cfg)
           return
         end
         local cancelled = band(status, native.GREP_CANCELLED) ~= 0
-        local hint = fixed and "plain text" or (band(status, native.GREP_LITERAL) ~= 0 and "plain text (not a regex)" or nil)
+        local literal = band(status, native.GREP_LITERAL) ~= 0
+        local more = band(status, native.GREP_MORE) ~= 0
+        local hint = fixed and "plain text" or (literal and "plain text (not a regex)" or nil)
+        if not cancelled and not more and (plain or literal) then
+          remember(pattern, hits)
+        end
         -- A cancelled search is partial; the picker discards it for the newer query.
-        deliver(cancelled and {} or hits, band(status, native.GREP_MORE) ~= 0 and not cancelled, hint, cb)
+        deliver(cancelled and {} or hits, more and not cancelled, hint, cb)
       end)
       return
     end
@@ -264,7 +381,12 @@ local function new_matcher(root, cfg)
     -- Fallback: no regex, only plain text.
     local token = { cancelled = false }
     running = { cancel = function() token.cancelled = true end }
-    lua_search(root, files or {}, pattern, opts, token, function(hits, more)
+    -- (Here every query is plain text, so narrowing always applies.)
+    base = narrowest(pattern)
+    lua_search(root, base and base.paths or files or {}, pattern, opts, token, function(hits, more)
+      if not token.cancelled and not more then
+        remember(pattern, hits)
+      end
       deliver(hits, more, "plain text (native core unavailable)", cb)
     end)
   end

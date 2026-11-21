@@ -68,15 +68,25 @@ local function diagnostics(buf)
   return table.concat(out, " ")
 end
 
+local lsp_cache = {} ---@type table<integer, string> buffer -> text; dropped when a client attaches or detaches
+
 ---@param buf integer
 ---@return string
 local function lsp_names(buf)
+  local hit = lsp_cache[buf]
+  if hit then
+    return hit
+  end
   local names = {}
   for _, client in ipairs(vim.lsp.get_clients({ bufnr = buf })) do
     names[#names + 1] = client.name
   end
-  return #names > 0 and hl("CoreSlDim", esc(table.concat(names, ","))) or ""
+  local text = #names > 0 and hl("CoreSlDim", esc(table.concat(names, ","))) or ""
+  lsp_cache[buf] = text
+  return text
 end
+
+local git_cache = {} ---@type table<integer, { status: table, text: string }>
 
 --- "main ^1 +2 ~3 ?4", each count in its own colour; "" outside a repository.
 ---@param buf integer
@@ -85,6 +95,11 @@ local function git_section(buf)
   local s = require("core.git").status(buf)
   if not s then
     return ""
+  end
+  -- Every refresh builds a new status table, so identity says whether the text is current.
+  local hit = git_cache[buf]
+  if hit and hit.status == s then
+    return hit.text
   end
   local sym = config.get().git.symbols
   local parts = { hl("CoreSlBranch", esc(s.branch)) }
@@ -100,7 +115,9 @@ local function git_section(buf)
       parts[#parts + 1] = hl(item[1], esc(item[2] .. item[3]))
     end
   end
-  return table.concat(parts, " ")
+  local text = table.concat(parts, " ")
+  git_cache[buf] = { status = s, text = text }
+  return text
 end
 
 ---@param buf integer
@@ -217,18 +234,28 @@ function M.setup()
 
   local group = util.augroup("statusline")
   vim.api.nvim_create_autocmd("ColorScheme", { group = group, callback = set_hl })
+  -- Mode, diagnostics, LSP and git are only shown in the current window's statusline, so
+  -- redrawing that one is enough (`redrawstatus!` would rebuild every window's).
   vim.api.nvim_create_autocmd({ "DiagnosticChanged", "ModeChanged" }, {
     group = group,
     callback = function()
-      vim.cmd("redrawstatus!")
+      vim.cmd("redrawstatus")
     end,
   })
   vim.api.nvim_create_autocmd({ "LspAttach", "LspDetach" }, {
     group = group,
     callback = function()
+      lsp_cache = {}
       vim.schedule(function()
-        vim.cmd("redrawstatus!")
+        lsp_cache = {} -- LspDetach fires before the client is gone from get_clients()
+        vim.cmd("redrawstatus")
       end)
+    end,
+  })
+  vim.api.nvim_create_autocmd("BufWipeout", {
+    group = group,
+    callback = function(ev)
+      lsp_cache[ev.buf], git_cache[ev.buf] = nil, nil
     end,
   })
 end

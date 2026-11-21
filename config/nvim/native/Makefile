@@ -20,7 +20,7 @@ endif
 BUILD_DIR ?= build
 CFLAGS    ?= -O2
 WARN      := -Wall -Wextra -Wpedantic -Wshadow
-CFLAGS    += -std=c11 -D_DEFAULT_SOURCE $(WARN) -fPIC -fvisibility=hidden -I. -MMD -MP
+CFLAGS    += -std=c11 -D_DEFAULT_SOURCE -pthread $(WARN) -fPIC -fvisibility=hidden -I. -MMD -MP
 
 # All C lives in this directory; test_*.c is the test driver, not the library.
 SRC  := $(filter-out test_%.c,$(wildcard *.c))
@@ -40,7 +40,7 @@ all: $(LIB)
 # Link to a temp name then rename: replacing a mapped .so in place can crash a
 # running Neovim, while rename gives the new file a fresh inode.
 $(LIB): $(OBJ)
-	$(CC) -shared -o $@.tmp $(OBJ)
+	$(CC) -shared -pthread -o $@.tmp $(OBJ)
 	mv -f $@.tmp $@
 
 $(BUILD_DIR)/obj/%.o: %.c | $(BUILD_DIR)/obj

@@ -324,6 +324,31 @@ local function resolve(lib, err)
   end
 end
 
+--- Is the built library newer than every source file? Then `make` has nothing to do and
+--- starting a process just to learn that is skipped. (Test drivers don't count: they are
+--- not part of the library, so touching one must not keep this false forever.)
+---@return boolean
+local function up_to_date()
+  local lib = uv.fs_stat(lib_path)
+  if not lib then
+    return false
+  end
+  local req = uv.fs_scandir(src_dir)
+  while req do
+    local name = uv.fs_scandir_next(req)
+    if not name then
+      break
+    end
+    if (name:find("%.[ch]$") and not name:find("^test_")) or name == "Makefile" then
+      local st = uv.fs_stat(vim.fs.joinpath(src_dir, name))
+      if not st or st.mtime.sec > lib.mtime.sec or (st.mtime.sec == lib.mtime.sec and st.mtime.nsec > lib.mtime.nsec) then
+        return false
+      end
+    end
+  end
+  return true
+end
+
 --- Build (if needed) and load the library without blocking. `cb` always runs
 --- on the main loop, never synchronously.
 ---@param cb fun(lib: table?, err: string?)
@@ -340,7 +365,7 @@ function M.ready(cb)
   end
   state.building = true
 
-  if not config.get().native.auto_build then
+  if not config.get().native.auto_build or up_to_date() then
     resolve(init_lib())
     return
   end
@@ -373,6 +398,13 @@ function M.load()
   return state.lib, state.err
 end
 
+--- The loaded library if it is ready right now, else nil. Never builds or blocks;
+--- for hot paths that have a Lua fallback.
+---@return table? lib
+function M.loaded()
+  return state.done and state.lib or nil
+end
+
 local warned = false
 
 --- Tell the user once per session that the Lua fallback is in use.
@@ -402,10 +434,21 @@ end
 local function worker(op, id, libpath, cdef, a, b, c, d, e)
   local ok, r1, r2, r3 = pcall(function()
     local ffi = require("ffi")
-    for stmt in cdef:gmatch("[^;]+;") do
-      pcall(ffi.cdef, stmt)
+    -- The thread's Lua state outlives the job: declare and load once per staged library
+    -- (the path changes with every rebuild) instead of on every keystroke.
+    local cache = package.loaded["nvcore.worker"]
+    if not cache then
+      cache = {}
+      package.loaded["nvcore.worker"] = cache
     end
-    local lib = ffi.load(libpath)
+    local lib = cache[libpath]
+    if not lib then
+      for stmt in cdef:gmatch("[^;]+;") do
+        pcall(ffi.cdef, stmt)
+      end
+      lib = ffi.load(libpath)
+      cache[libpath] = lib
+    end
 
     if op == "scan" then -- a=root b=ignore csv c=hidden d=max_files
       local ptr = lib.nv_index_scan(a, b, c, d)
@@ -580,11 +623,11 @@ function Index:grep_async(pattern, opts, cb)
   }
 end
 
---- Walk `root` on a worker thread. Requires M.ready() to have succeeded.
+-- Walk `root` on a worker thread. Requires M.ready() to have succeeded.
 ---@param root string
 ---@param opts { ignore: string[], hidden: boolean, max_files: integer }
 ---@param cb fun(idx: core.native.Index?, err: string?)
-function M.scan_async(root, opts, cb)
+local function scan_walk(root, opts, cb)
   local lib = state.lib
   if not lib then
     cb(nil, state.err or "native core not loaded")
@@ -599,6 +642,156 @@ function M.scan_async(root, opts, cb)
       cb(wrap(lib, ffi.cast("nv_index *", ffi.cast("uintptr_t", addr))))
     end
   end, root, table.concat(opts.ignore, ","), opts.hidden and 1 or 0, opts.max_files)
+end
+
+
+--- File list from git: tracked plus untracked-but-not-ignored files, so .gitignore is
+--- honoured and no directory tree is walked. Calls `cb(idx)`, or `cb(nil)` when git is
+--- unavailable, `root` is not in a work tree, or the list exceeds max_files (the walk
+--- then takes over, which knows how to truncate).
+---@param root string
+---@param opts { ignore: string[], hidden: boolean, max_files: integer }
+---@param cb fun(idx: core.native.Index?)
+local function scan_git(root, opts, cb)
+  local lib = state.lib
+  if not lib or vim.fn.executable("git") ~= 1 then
+    return cb(nil)
+  end
+  local list = { "git", "-C", root, "ls-files", "-z", "--cached", "--others", "--exclude-standard", "--", "." }
+  for _, name in ipairs(opts.ignore) do
+    list[#list + 1] = ":(exclude,glob)**/" .. name .. "/**"
+  end
+  if not opts.hidden then
+    list[#list + 1] = ":(exclude,glob)**/.*"
+    list[#list + 1] = ":(exclude,glob)**/.*/**"
+  end
+  local pending, files, deleted, failed = 2, nil, nil, false
+  local function done()
+    pending = pending - 1
+    if pending > 0 then
+      return
+    end
+    vim.schedule(function()
+      if failed or not files then
+        return cb(nil)
+      end
+      local text = files:gsub("%z", "\n")
+      if deleted and deleted ~= "" then
+        -- Tracked files that are gone from disk still show in ls-files.
+        local gone = {}
+        for path in deleted:gmatch("[^%z]+") do
+          gone[path] = true
+        end
+        local kept = {}
+        for path in text:gmatch("[^\n]+") do
+          if not gone[path] then
+            kept[#kept + 1] = path
+          end
+        end
+        text = table.concat(kept, "\n")
+      end
+      -- More files than max_files: let the walker truncate and flag it.
+      local pos = 0
+      for _ = 1, opts.max_files do
+        pos = text:find("\n", pos + 1, true)
+        if not pos then
+          break
+        end
+      end
+      if pos and text:find("[^\n]", pos + 1) then
+        return cb(nil)
+      end
+      cb(wrap(lib, lib.nv_index_from_text(text, #text)))
+    end)
+  end
+  local ok = pcall(function()
+    vim.system(list, { text = false }, function(res)
+      if res.code == 0 then
+        files = res.stdout or ""
+      else
+        failed = true
+      end
+      done()
+    end)
+    vim.system({ "git", "-C", root, "ls-files", "-z", "--deleted" }, { text = false }, function(res)
+      deleted = res.code == 0 and (res.stdout or "") or nil
+      done()
+    end)
+  end)
+  if not ok then
+    -- vim.system threw before both callbacks were registered: finish on the walker.
+    pending = math.huge
+    cb(nil)
+  end
+end
+
+-- Last file index per scan (root + options), most recently used last. Opening a
+-- picker on a root seen before starts from it at once and refreshes in the background.
+local scan_cache, scan_order, SCAN_CACHE_MAX = {}, {}, 3
+
+---@param key string
+---@param idx core.native.Index
+local function cache_store(key, idx)
+  scan_cache[key] = idx
+  for i = #scan_order, 1, -1 do
+    if scan_order[i] == key then
+      table.remove(scan_order, i)
+    end
+  end
+  scan_order[#scan_order + 1] = key
+  while #scan_order > SCAN_CACHE_MAX do
+    scan_cache[table.remove(scan_order, 1)] = nil
+  end
+end
+
+--- Scan without the cache.
+local function scan_fresh(root, opts, cb)
+  if not config.get().picker.use_git then
+    return scan_walk(root, opts, cb)
+  end
+  scan_git(root, opts, function(idx)
+    if idx then
+      cb(idx)
+    else
+      scan_walk(root, opts, cb)
+    end
+  end)
+end
+
+--- Index the files under `root`. With `picker.use_git` (default) a git work tree is
+--- listed through git, which honours .gitignore; everything else is walked on a worker
+--- thread. Requires M.ready() to have succeeded.
+---
+--- With `picker.scan_cache` (default) and an `opts.on_refresh`, a root scanned before answers
+--- `cb` immediately with the previous result while a fresh scan runs; `on_refresh(idx)` then
+--- receives the fresh index (not called when nothing was cached: `cb` already has it).
+--- Callers that cannot swap an index later (no on_refresh) always get a fresh scan.
+---@param root string
+---@param opts { ignore: string[], hidden: boolean, max_files: integer, on_refresh?: fun(idx: core.native.Index) }
+---@param cb fun(idx: core.native.Index?, err: string?)
+function M.scan_async(root, opts, cb)
+  local key = table.concat({ root, table.concat(opts.ignore, ","), tostring(opts.hidden), tostring(opts.max_files) }, "\0")
+  local use_cache = config.get().picker.scan_cache
+  local hit = use_cache and opts.on_refresh and scan_cache[key] or nil
+  if hit then
+    cache_store(key, hit) -- most recently used
+    cb(hit)
+    scan_fresh(root, opts, function(idx)
+      if idx then
+        cache_store(key, idx)
+        if opts.on_refresh then
+          opts.on_refresh(idx)
+        end
+      end
+    end)
+    return
+  end
+  scan_fresh(root, opts, function(idx, err)
+    if idx and use_cache then
+      cache_store(key, idx)
+    end
+    cb(idx, err)
+  end)
 end
 
 --- Items must not contain newlines. Requires M.ready() to have succeeded.
@@ -625,8 +818,19 @@ function M.setup()
     end)
   end, { desc = "Clean and rebuild the native C library" })
 
-  -- Start building/loading in the background so it is ready before first use.
-  M.ready(function() end)
+  -- Warm up in the background so the library is ready before first use, but only once the
+  -- editor is up: the first screen never waits for it, and a session that never opens a
+  -- picker pays nothing more (the first use starts the load itself).
+  local function warm()
+    vim.defer_fn(function()
+      M.ready(function() end)
+    end, 50)
+  end
+  if vim.v.vim_did_enter == 1 then
+    warm()
+  else
+    vim.api.nvim_create_autocmd("VimEnter", { group = util.augroup("native"), once = true, callback = warm })
+  end
 end
 
 return M

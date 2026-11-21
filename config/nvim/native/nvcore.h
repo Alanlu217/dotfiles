@@ -13,7 +13,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#define NV_ABI_VERSION 2
+#define NV_ABI_VERSION 3
 #if defined(__GNUC__) || defined(__clang__)
 #define NV_API __attribute__((visibility("default")))
 #else
@@ -21,6 +21,7 @@
 #endif
 
 typedef struct nv_index nv_index;
+typedef struct nv_words nv_words;
 
 NV_API int nv_abi_version(void);
 NV_API const char *nv_version(void);
@@ -53,6 +54,20 @@ NV_API const char *nv_index_get(const nv_index *idx, size_t i);
  * An empty query returns the first `limit` items in index order. */
 NV_API size_t nv_index_filter(const nv_index *idx, const char *query,
                               uint32_t *out, size_t limit);
+
+/* ---- Words (buffer completion) ------------------------------------------ */
+
+/* Distinct words of `text` in first-seen order, with occurrence counts. A word
+ * is a run of ASCII letters/digits, '_' and bytes >= 128; runs starting with a
+ * digit or shorter than `min_len` are skipped. Stops once `max_words` distinct
+ * words are held (0 = no limit). Returns NULL on allocation failure. */
+NV_API nv_words *nv_words_collect(const char *text, size_t len, size_t min_len,
+                                  size_t max_words);
+NV_API size_t nv_words_count(const nv_words *w);
+/* Word i (NUL-terminated, owned by `w`) or NULL when out of range. */
+NV_API const char *nv_words_get(const nv_words *w, size_t i);
+NV_API uint32_t nv_words_occurrences(const nv_words *w, size_t i);
+NV_API void nv_words_free(nv_words *w);
 
 /* ---- Live grep ---------------------------------------------------------- */
 
@@ -88,7 +103,10 @@ typedef struct nv_grep nv_grep;
  * (0 = 1 MiB) are skipped. Each hit's text is the line with surrounding
  * blanks trimmed, cut to about `max_text` bytes (0 = 200). `cancel` may be
  * NULL. Thread-safe: `files` is only read, so several searches may share one
- * index. Returns NULL only on allocation failure; an empty or unusable
+ * index. Large file lists are searched on several threads (online CPUs, at most 8;
+ * the NV_GREP_THREADS environment variable overrides, 1 = one thread); the hits are
+ * the same, and in the same order, whatever the thread count. Returns NULL only on
+ * allocation failure; an empty or unusable
  * pattern gives an empty result. Free with nv_grep_free. */
 NV_API nv_grep *nv_grep_run(const nv_index *files, const char *root, const char *pattern,
                             int flags, size_t limit, size_t max_file_bytes,

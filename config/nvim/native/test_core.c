@@ -1,4 +1,5 @@
 #include "nvcore.h"
+#include "internal.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -58,6 +59,92 @@ static void test_filter(void) {
   CHECK(n == 2);
   CHECK(nv_index_get(idx, 99) == NULL);
   nv_index_free(idx);
+}
+
+/* The character-mask prefilter must never change results. */
+static void test_filter_prefilter(void) {
+  srand(7);
+  char *text = malloc(64 * 1024);
+  size_t len = 0;
+  const char alpha[] = "abcdeABCDE/._-xyz09\xc3\xa9";
+  for (int i = 0; i < 2000; i++) {
+    int n = 1 + rand() % 24;
+    for (int j = 0; j < n; j++)
+      text[len++] = alpha[rand() % (int)(sizeof alpha - 1)];
+    text[len++] = '\n';
+  }
+  nv_index *idx = nv_index_from_text(text, len);
+  CHECK(idx && idx->masks && idx->lens);
+  const char *queries[] = {"a", "ab", "AB", "a/b", "x y", "e\xc3\xa9", "zz9", "._", "dcba", "Abc d"};
+  static uint32_t a[2000], b[2000];
+  for (size_t q = 0; q < sizeof queries / sizeof *queries; q++) {
+    size_t na = nv_index_filter(idx, queries[q], a, 2000);
+    uint64_t *m = idx->masks;
+    idx->masks = NULL; /* reference run without the prefilter */
+    size_t nb = nv_index_filter(idx, queries[q], b, 2000);
+    idx->masks = m;
+    CHECK(na == nb && memcmp(a, b, na * sizeof *a) == 0);
+  }
+  nv_index_free(idx);
+  free(text);
+}
+
+static void test_words(void) {
+  const char *t = "foo bar_baz foo 12ab ab x_y foo caf\xc3\xa9 caf\xc3\xa9\n\tfoo+bar_baz";
+  nv_words *w = nv_words_collect(t, strlen(t), 3, 0);
+  CHECK(w && nv_words_count(w) == 4);
+  CHECK(strcmp(nv_words_get(w, 0), "foo") == 0 && nv_words_occurrences(w, 0) == 4);
+  CHECK(strcmp(nv_words_get(w, 1), "bar_baz") == 0 && nv_words_occurrences(w, 1) == 2);
+  CHECK(strcmp(nv_words_get(w, 2), "x_y") == 0);
+  CHECK(strcmp(nv_words_get(w, 3), "caf\xc3\xa9") == 0 && nv_words_occurrences(w, 3) == 2);
+  CHECK(nv_words_get(w, 4) == NULL);
+  nv_words_free(w);
+  w = nv_words_collect(t, strlen(t), 3, 2); /* stops at two distinct words */
+  CHECK(w && nv_words_count(w) == 2);
+  nv_words_free(w);
+  w = nv_words_collect("", 0, 3, 0);
+  CHECK(w && nv_words_count(w) == 0);
+  nv_words_free(w);
+  /* many distinct words: table growth */
+  char *big = malloc(400000);
+  size_t len = 0;
+  for (int i = 0; i < 30000; i++)
+    len += (size_t)sprintf(big + len, "w%d_%d ", i, i % 7);
+  w = nv_words_collect(big, len, 3, 0);
+  CHECK(w && nv_words_count(w) == 30000);
+  nv_words_free(w);
+  free(big);
+}
+
+/* Threaded and sequential filtering must give the same answer. */
+static void test_filter_threads(void) {
+  srand(11);
+  size_t cap = 4 << 20, len = 0;
+  char *text = malloc(cap);
+  const char alpha[] = "abcdefgABC/._-xyz019";
+  for (int i = 0; i < 60000; i++) { /* above FILTER_PAR_MIN */
+    int n = 3 + rand() % 30;
+    for (int j = 0; j < n; j++)
+      text[len++] = alpha[rand() % (int)(sizeof alpha - 1)];
+    text[len++] = '\n';
+  }
+  nv_index *idx = nv_index_from_text(text, len);
+  CHECK(idx && nv_index_count(idx) == 60000);
+  const char *queries[] = {"a", "ab c", "zz", "AB", "x/y", "ge"};
+  static uint32_t a[500], b[500];
+  const size_t limits[] = {1, 50, 500};
+  for (size_t q = 0; q < sizeof queries / sizeof *queries; q++) {
+    for (size_t l = 0; l < 3; l++) {
+      setenv("NV_FILTER_THREADS", "1", 1);
+      size_t na = nv_index_filter(idx, queries[q], a, limits[l]);
+      setenv("NV_FILTER_THREADS", "4", 1);
+      size_t nb = nv_index_filter(idx, queries[q], b, limits[l]);
+      CHECK(na == nb && memcmp(a, b, na * sizeof *a) == 0);
+    }
+  }
+  unsetenv("NV_FILTER_THREADS");
+  nv_index_free(idx);
+  free(text);
 }
 
 /* Fixture paths, relative to the temp root; removed by cleanup (children first). */
@@ -340,6 +427,13 @@ static void test_grep(void) {
   g = nv_grep_run(idx, root, "^\\s*return \\d+;", 0, 50, 2000, 0, NULL);
   CHECK(g && nv_grep_count(g) == 1 && strcmp(fmt_hit(g, 0), "b.c:2:1:return 0;") == 0);
   nv_grep_free(g);
+  /* the longest plain run ("retu", "n 0;") pre-filters lines; results must not change */
+  g = nv_grep_run(idx, root, "retu.n 0;", 0, 50, 2000, 0, NULL);
+  CHECK(g && nv_grep_count(g) == 1 && nv_grep_line(g, 0) == 2);
+  nv_grep_free(g);
+  g = nv_grep_run(idx, root, "RETU.n 0;", 0, 50, 2000, 0, NULL); /* uppercase: case-sensitive */
+  CHECK(g && nv_grep_count(g) == 0);
+  nv_grep_free(g);
   g = nv_grep_run(idx, root, "a$", 0, 50, 2000, 0, NULL); /* CRLF: "$" sits before the CR */
   CHECK(g && nv_grep_count(g) == 2); /* alpha, beta */
   CHECK(g && strcmp(nv_grep_path(g, 0), "crlf.txt") == 0 && strcmp(nv_grep_text(g, 0), "alpha") == 0);
@@ -391,13 +485,67 @@ static void test_grep(void) {
   grep_cleanup(root);
 }
 
+/* The same search on 1 and on several threads must give the same hits, in the same order,
+ * whatever the limit (the parallel search merges per-chunk results). */
+static void test_grep_threads(void) {
+  enum { NFILES = 300 };
+  char root[512];
+  if (!make_root(root, sizeof root)) {
+    CHECK(!"cannot create temp dir (set TMPDIR to a writable directory)");
+    return;
+  }
+  static char names[NFILES][32];
+  char text[256], list[NFILES * 32], p[1024];
+  size_t lp = 0;
+  for (int i = 0; i < NFILES; i++) {
+    snprintf(names[i], sizeof names[i], "f%03d.txt", i);
+    snprintf(text, sizeof text, "alpha %d\nneedle %d here\n%s\nneedle again\n", i,
+             i, i % 7 == 0 ? "no match" : "needle tail");
+    write_file(root, names[i], text, strlen(text));
+    lp += (size_t)snprintf(list + lp, sizeof list - lp, "%s\n", names[i]);
+  }
+  nv_index *idx = nv_index_from_text(list, lp);
+  CHECK(idx != NULL);
+  static const size_t limits[] = {1, 7, 100, 5000};
+  static const char *const pats[] = {"needle", "need.e \\d+", "zzz"};
+  for (size_t pi = 0; pi < sizeof pats / sizeof *pats; pi++) {
+    for (size_t li = 0; li < sizeof limits / sizeof *limits; li++) {
+      char one[1 << 16] = "", many[1 << 16] = "";
+      for (int pass = 0; pass < 2; pass++) {
+        setenv("NV_GREP_THREADS", pass ? "4" : "1", 1);
+        nv_grep *g = nv_grep_run(idx, root, pats[pi], 0, limits[li], 0, 0, NULL);
+        CHECK(g != NULL);
+        char *out = pass ? many : one;
+        size_t o = (size_t)snprintf(out, 1 << 16, "n=%zu st=%d\n", g ? nv_grep_count(g) : 0,
+                                    g ? nv_grep_status(g) : -1);
+        for (size_t k = 0; g && k < nv_grep_count(g) && o < (1 << 16) - 128; k++)
+          o += (size_t)snprintf(out + o, (1 << 16) - o, "%s:%u:%u\n", nv_grep_path(g, k),
+                                nv_grep_line(g, k), nv_grep_col(g, k));
+        nv_grep_free(g);
+      }
+      CHECK(strcmp(one, many) == 0);
+    }
+  }
+  unsetenv("NV_GREP_THREADS");
+  nv_index_free(idx);
+  for (int i = 0; i < NFILES; i++) {
+    snprintf(p, sizeof p, "%s/%s", root, names[i]);
+    unlink(p);
+  }
+  rmdir(root);
+}
+
 int main(void) {
   CHECK(nv_abi_version() == NV_ABI_VERSION);
   test_fuzzy();
   test_filter();
+  test_filter_prefilter();
+  test_words();
+  test_filter_threads();
   test_scan();
   test_regex();
   test_grep();
+  test_grep_threads();
   if (failures) {
     fprintf(stderr, "%d check(s) failed\n", failures);
     return 1;

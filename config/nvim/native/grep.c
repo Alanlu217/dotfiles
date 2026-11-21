@@ -25,6 +25,7 @@
 
 #include <errno.h>
 #include <fcntl.h>
+#include <pthread.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
@@ -112,7 +113,8 @@ enum {
   MAX_PROG = 12000,    /* instructions */
   MAX_REP = 1000,      /* largest {m,n} bound */
   MAX_DEPTH = 64,      /* group nesting */
-  MAX_RE_PATTERN = 512 /* longer patterns are searched as literals */
+  MAX_RE_PATTERN = 512, /* longer patterns are searched as literals */
+  MAX_LIT = 64          /* longest required literal kept for the prefilter */
 };
 
 typedef struct {
@@ -576,6 +578,8 @@ typedef struct {
   uint8_t first[256]; /* bytes a match can start with (when !nullable) */
   int nullable;       /* may match without consuming input, or ends in assertions */
   int icase;
+  unsigned char lit[MAX_LIT]; /* a byte string every match must contain (lower-cased when icase) */
+  size_t litlen;              /* 0 = none found */
   int err;
   inst dummy;   /* written instead of out-of-range code once err is set */
   int shared[4]; /* lazily created UTF-8 lead2/lead3/lead4/continuation sets */
@@ -854,6 +858,34 @@ static void re_free(re_prog *C) {
   free(C);
 }
 
+/* The longest run of plain characters that every match must contain, taken
+ * from the top-level concatenation (anything else ends a run, which only makes
+ * the answer shorter, never wrong). Lets the search skip every line without it. */
+static void required_literal(re_prog *C, const node *nodes, int root) {
+  C->litlen = 0;
+  if (nodes[root].kind != N_CAT)
+    return;
+  unsigned char run[MAX_LIT];
+  size_t n = 0;
+  for (int it = nodes[root].a; it >= 0; it = nodes[it].next) {
+    const node *nd = &nodes[it];
+    int plain = nd->kind == N_CHAR && nd->c != '\n' && nd->c != '\r';
+    if (plain && n < MAX_LIT)
+      run[n++] = C->icase ? lower_of((unsigned char)nd->c) : (unsigned char)nd->c;
+    if (!plain || n == MAX_LIT) {
+      if (n > C->litlen) {
+        memcpy(C->lit, run, n);
+        C->litlen = n;
+      }
+      n = 0;
+    }
+  }
+  if (n > C->litlen) {
+    memcpy(C->lit, run, n);
+    C->litlen = n;
+  }
+}
+
 /* Returns NULL when the pattern is invalid, unsupported or too big. */
 static re_prog *re_compile(const char *pat, size_t n) {
   parser P;
@@ -885,6 +917,7 @@ static re_prog *re_compile(const char *pat, size_t n) {
     C->shared[k] = -1;
   C->icase = !P.has_upper;
   emit(C, P.nodes, root);
+  required_literal(C, P.nodes, root);
   push(C, OP_MATCH, 0, 0, 0);
   free(P.nodes);
   if (C->err) {
@@ -1244,12 +1277,53 @@ typedef struct {
   litpat lit;
   /* regex mode */
   re_vm *vm;
+  litpat pre; /* prefilter: lines without it cannot match */
+  int use_pre;
 } searcher;
 
 /* Search one file buffer. Returns 1 to stop the whole search (limit reached,
  * cancelled or out of memory). */
 static int search_buffer(searcher *S, const unsigned char *buf, size_t n) {
   nv_grep *g = S->g;
+  if (S->vm && S->use_pre) {
+    size_t pos = 0, counted = 0;
+    uint32_t line = 1;
+    unsigned counter = 0;
+    while (pos < n) {
+      const unsigned char *found = lit_find(&S->pre, buf + pos, n - pos);
+      if (!found)
+        break;
+      size_t at_off = (size_t)(found - buf);
+      size_t ls = at_off;
+      while (ls > 0 && buf[ls - 1] != '\n')
+        ls--;
+      const unsigned char *nl = memchr(buf + at_off, '\n', n - at_off);
+      size_t le = nl ? (size_t)(nl - buf) : n;
+      while (counted < ls) { /* count the line breaks before this line */
+        const unsigned char *brk = memchr(buf + counted, '\n', ls - counted);
+        if (!brk)
+          break;
+        line++;
+        counted = (size_t)(brk - buf) + 1;
+      }
+      size_t mlen = le - ls;
+      if (mlen > 0 && buf[le - 1] == '\r')
+        mlen--; /* "$" matches before a CRLF */
+      size_t ms, me;
+      if (vm_search(S->vm, buf + ls, mlen, &ms, &me)) {
+        if (add_hit(g, S->rel, line, buf, ls, le, ls + ms, S->max_text) != 0)
+          return 1;
+        if (g->len > S->limit)
+          return 1;
+      }
+      pos = le + 1;
+      if ((++counter % CANCEL_LINES) == 0 && is_cancelled(S->cancel)) {
+        g->status |= NV_GREP_CANCELLED;
+        return 1;
+      }
+    }
+    return 0;
+  }
   if (S->vm) {
     size_t p = 0;
     uint32_t line = 1;
@@ -1347,6 +1421,220 @@ static size_t read_file(const char *path, size_t max, unsigned char **buf, size_
   return got;
 }
 
+/* ---- parallel search ----------------------------------------------------- */
+
+/* The file list is cut into chunks of consecutive files. Threads take chunks in
+ * ascending order and each collects the hits of its chunk privately; the chunks
+ * are then concatenated in order, so the result is exactly what a sequential
+ * search would give: the first `limit` hits in index order. Once the finished
+ * chunks at the front hold more than `limit` hits, later chunks are not needed
+ * and are no longer started. */
+enum { CHUNK_FILES = 16, MAX_THREADS = 8, PAR_MIN_FILES = 64 };
+
+typedef struct {
+  const nv_index *files;
+  const char *root;
+  size_t rlen;
+  size_t max_file;
+  size_t limit;
+  const re_prog *prog;
+  const searcher *tmpl; /* read-only; every thread works on its own copy */
+  size_t nchunks;
+  nv_grep **res; /* per chunk; NULL = not searched */
+  unsigned char *done;
+  pthread_mutex_t mu;
+  size_t next;        /* next chunk to hand out */
+  size_t cut;         /* chunks >= cut are not needed */
+  size_t prefix;      /* chunks [0, prefix) are all finished */
+  size_t prefix_hits; /* hits in those chunks */
+} par_ctx;
+
+typedef struct {
+  par_ctx *P;
+  int id;
+} par_arg;
+
+static void *par_worker(void *p) {
+  par_arg *arg = p;
+  par_ctx *P = arg->P;
+  searcher S = *P->tmpl;
+  re_vm *own = NULL;
+  if (P->prog) {
+    if (arg->id == 0) {
+      S.vm = P->tmpl->vm; /* thread 0 is the caller, which already has one */
+    } else {
+      own = vm_new(P->prog);
+      if (!own)
+        return NULL; /* the others will cover its chunks */
+      S.vm = own;
+    }
+  }
+  unsigned char *buf = NULL;
+  size_t bufcap = 0;
+  char *full = NULL;
+  size_t fullcap = 0;
+  size_t nfiles = nv_index_count(P->files);
+
+  for (;;) {
+    pthread_mutex_lock(&P->mu);
+    size_t c = P->next;
+    int stop = c >= P->nchunks || c >= P->cut;
+    if (!stop)
+      P->next++;
+    pthread_mutex_unlock(&P->mu);
+    if (stop)
+      break;
+
+    nv_grep *cg = calloc(1, sizeof *cg);
+    if (!cg)
+      break;
+    S.g = cg;
+    size_t f1 = (c + 1) * CHUNK_FILES;
+    if (f1 > nfiles)
+      f1 = nfiles;
+    for (size_t f = c * CHUNK_FILES; f < f1; f++) {
+      if (is_cancelled(S.cancel)) {
+        cg->status |= NV_GREP_CANCELLED;
+        break;
+      }
+      const char *rel = nv_index_get(P->files, f);
+      size_t need = P->rlen + 1 + strlen(rel) + 1;
+      if (need > fullcap) {
+        char *grown = realloc(full, need + 256);
+        if (!grown)
+          break;
+        full = grown;
+        fullcap = need + 256;
+      }
+      memcpy(full, P->root, P->rlen);
+      full[P->rlen] = '/';
+      strcpy(full + P->rlen + 1, rel);
+
+      size_t n = read_file(full, P->max_file, &buf, &bufcap);
+      if (n == 0 || memchr(buf, 0, n))
+        continue; /* empty, unreadable or binary */
+      S.rel = rel;
+      if (search_buffer(&S, buf, n))
+        break; /* limit reached, cancelled or out of memory */
+    }
+
+    pthread_mutex_lock(&P->mu);
+    P->res[c] = cg;
+    P->done[c] = 1;
+    while (P->prefix < P->nchunks && P->done[P->prefix]) {
+      P->prefix_hits += P->res[P->prefix]->len;
+      P->prefix++;
+      if (P->prefix_hits > P->limit && P->cut > P->prefix)
+        P->cut = P->prefix;
+    }
+    pthread_mutex_unlock(&P->mu);
+  }
+
+  free(buf);
+  free(full);
+  vm_free(own);
+  return NULL;
+}
+
+/* How many threads a search over `nfiles` files uses. NV_GREP_THREADS
+ * overrides the default (the online CPUs, at most MAX_THREADS); 1 = sequential. */
+static size_t thread_count(size_t nfiles) {
+  long n = 1;
+#ifdef _SC_NPROCESSORS_ONLN
+  n = sysconf(_SC_NPROCESSORS_ONLN);
+#endif
+  const char *env = getenv("NV_GREP_THREADS");
+  if (env && *env) {
+    long v = strtol(env, NULL, 10);
+    if (v >= 1)
+      n = v;
+  }
+  if (n < 1)
+    n = 1;
+  if (n > MAX_THREADS)
+    n = MAX_THREADS;
+  if (nfiles < PAR_MIN_FILES)
+    n = 1;
+  size_t chunks = (nfiles + CHUNK_FILES - 1) / CHUNK_FILES;
+  return (size_t)n > chunks ? chunks : (size_t)n;
+}
+
+/* Search all files, appending the hits of `g` in index order. */
+static void search_files(const nv_index *files, const char *root, size_t rlen, size_t max_file,
+                         size_t limit, const re_prog *prog, const searcher *tmpl, nv_grep *g) {
+  size_t nfiles = nv_index_count(files);
+  par_ctx P;
+  memset(&P, 0, sizeof P);
+  P.files = files;
+  P.root = root;
+  P.rlen = rlen;
+  P.max_file = max_file;
+  P.limit = limit;
+  P.prog = prog;
+  P.tmpl = tmpl;
+  P.nchunks = (nfiles + CHUNK_FILES - 1) / CHUNK_FILES;
+  P.cut = P.nchunks;
+  if (P.nchunks == 0)
+    return;
+  P.res = calloc(P.nchunks, sizeof *P.res);
+  P.done = calloc(P.nchunks, 1);
+  if (!P.res || !P.done || pthread_mutex_init(&P.mu, NULL) != 0) {
+    free(P.res);
+    free(P.done);
+    return;
+  }
+
+  size_t nthreads = thread_count(nfiles);
+  pthread_t tid[MAX_THREADS];
+  par_arg args[MAX_THREADS];
+  int started[MAX_THREADS] = {0};
+  for (size_t t = 0; t < nthreads; t++) {
+    args[t].P = &P;
+    args[t].id = (int)t;
+  }
+  for (size_t t = 1; t < nthreads; t++)
+    started[t] = pthread_create(&tid[t], NULL, par_worker, &args[t]) == 0;
+  par_worker(&args[0]); /* the caller works too: with no extra threads this is the whole search */
+  for (size_t t = 1; t < nthreads; t++)
+    if (started[t])
+      pthread_join(tid[t], NULL);
+
+  /* Concatenate in chunk order, keeping at most limit + 1 hits. */
+  size_t total = 0;
+  for (size_t c = 0; c < P.nchunks && P.res[c]; c++) {
+    total += P.res[c]->len;
+    if (total > limit)
+      break;
+  }
+  size_t keep = total > limit + 1 ? limit + 1 : total;
+  hit *all = keep ? malloc(keep * sizeof *all) : NULL;
+  size_t n = 0;
+  int ok = all != NULL || keep == 0;
+  for (size_t c = 0; c < P.nchunks; c++) {
+    nv_grep *cg = P.res[c];
+    if (!cg)
+      continue;
+    g->status |= cg->status & NV_GREP_CANCELLED;
+    for (size_t i = 0; i < cg->len; i++) {
+      if (ok && n < keep) {
+        all[n++] = cg->hits[i];
+      } else {
+        free(cg->hits[i].path);
+        free(cg->hits[i].text);
+      }
+    }
+    free(cg->hits);
+    free(cg);
+  }
+  free(g->hits);
+  g->hits = all;
+  g->len = n;
+  g->cap = keep;
+  free(P.res);
+  free(P.done);
+  pthread_mutex_destroy(&P.mu);
+}
+
 NV_API nv_grep *nv_grep_run(const nv_index *files, const char *root, const char *pattern,
                             int flags, size_t limit, size_t max_file_bytes, size_t max_text,
                             const nv_cancel *cancel) {
@@ -1385,6 +1673,10 @@ NV_API nv_grep *nv_grep_run(const nv_index *files, const char *root, const char 
         re_free(prog);
         return g;
       }
+      if (prog->litlen >= 2) {
+        lit_init(&S.pre, prog->lit, prog->litlen, prog->icase);
+        S.use_pre = 1;
+      }
     } else {
       g->status |= NV_GREP_LITERAL; /* not a valid pattern (yet): search it as text */
     }
@@ -1408,37 +1700,7 @@ NV_API nv_grep *nv_grep_run(const nv_index *files, const char *root, const char 
   while (rlen > 0 && root[rlen - 1] == '/')
     rlen--; /* "/" collapses to length 0 */
 
-  unsigned char *buf = NULL;
-  size_t bufcap = 0;
-  char *full = NULL;
-  size_t fullcap = 0;
-  size_t nfiles = nv_index_count(files);
-
-  for (size_t f = 0; f < nfiles; f++) {
-    if (is_cancelled(cancel)) {
-      g->status |= NV_GREP_CANCELLED;
-      break;
-    }
-    const char *rel = nv_index_get(files, f);
-    size_t need = rlen + 1 + strlen(rel) + 1;
-    if (need > fullcap) {
-      char *grown = realloc(full, need + 256);
-      if (!grown)
-        break;
-      full = grown;
-      fullcap = need + 256;
-    }
-    memcpy(full, root, rlen);
-    full[rlen] = '/';
-    strcpy(full + rlen + 1, rel);
-
-    size_t n = read_file(full, max_file_bytes, &buf, &bufcap);
-    if (n == 0 || memchr(buf, 0, n))
-      continue; /* empty, unreadable or binary */
-    S.rel = rel;
-    if (search_buffer(&S, buf, n))
-      break;
-  }
+  search_files(files, root, rlen, max_file_bytes, limit, prog, &S, g);
 
   if (g->len > limit) { /* one extra hit was collected only to learn there is more */
     free(g->hits[g->len - 1].path);
@@ -1447,8 +1709,6 @@ NV_API nv_grep *nv_grep_run(const nv_index *files, const char *root, const char 
     g->status |= NV_GREP_MORE;
   }
 
-  free(buf);
-  free(full);
   free(lit);
   vm_free(S.vm);
   re_free(prog);

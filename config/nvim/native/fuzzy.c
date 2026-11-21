@@ -9,6 +9,7 @@
  */
 #include "internal.h"
 
+#include <pthread.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -94,6 +95,12 @@ static int same(char p, char t, int cs) {
 static _Thread_local int *scratch;
 static _Thread_local size_t scratch_cap;
 
+/* The scratch must be freed when a thread ends: the parallel filter starts
+ * short-lived threads. A pthread key's destructor does that. */
+static pthread_key_t scratch_key;
+static pthread_once_t scratch_once = PTHREAD_ONCE_INIT;
+static void scratch_key_make(void) { pthread_key_create(&scratch_key, free); }
+
 static int *scratch_get(size_t n) {
   if (n > scratch_cap) {
     int *p = realloc(scratch, n * sizeof *p);
@@ -101,6 +108,8 @@ static int *scratch_get(size_t n) {
       return NULL;
     scratch = p;
     scratch_cap = n;
+    pthread_once(&scratch_once, scratch_key_make);
+    pthread_setspecific(scratch_key, p); /* destructor frees the latest block */
   }
   return scratch;
 }
@@ -141,11 +150,11 @@ NV_API int nv_fuzzy_score(const char *pattern, const char *text) {
   size_t W = end - start + 1;
 
   int *buf =
-      (m <= MAX_PATTERN && W <= MAX_WINDOW) ? scratch_get(2 * m * W + W) : NULL;
+      (m <= MAX_PATTERN && W <= MAX_WINDOW) ? scratch_get(5 * W) : NULL;
   if (!buf) /* pathological input: flat score */
     return SCORE_MATCH * (int)m;
 
-  int *H = buf, *C = buf + m * W, *bon = buf + 2 * m * W;
+  int *Hp = buf, *Hc = buf + W, *Cp = buf + 2 * W, *Cc = buf + 3 * W, *bon = buf + 4 * W;
 
   for (size_t w = 0; w < W; w++) {
     size_t idx = start + w;
@@ -157,7 +166,7 @@ NV_API int nv_fuzzy_score(const char *pattern, const char *text) {
 
   for (size_t i = 0; i < m; i++) {
     int in_gap = 0, hleft = 0;
-    int *Hr = H + i * W, *Cr = C + i * W;
+    int *Hr = Hc, *Cr = Cc;
     for (size_t w = 0; w < W; w++) {
       if (w < first[i]) {
         Hr[w] = Cr[w] = 0;
@@ -179,8 +188,8 @@ NV_API int nv_fuzzy_score(const char *pattern, const char *text) {
       } else {
         int s1 = 0, s2 = hleft - gap;
         if (match) {
-          s1 = H[(i - 1) * W + w - 1] + SCORE_MATCH;
-          cons = C[(i - 1) * W + w - 1] + 1;
+          s1 = Hp[w - 1] + SCORE_MATCH;
+          cons = Cp[w - 1] + 1;
           int b = bon[w];
           if (cons > 1) {
             int fb = bon[w - (size_t)cons + 1];
@@ -203,10 +212,11 @@ NV_API int nv_fuzzy_score(const char *pattern, const char *text) {
       Cr[w] = cons;
       hleft = score;
     }
+    { int *t = Hp; Hp = Hc; Hc = t; t = Cp; Cp = Cc; Cc = t; }
   }
 
   int best = 0;
   for (size_t w = 0; w < W; w++)
-    best = max2(best, H[(m - 1) * W + w]);
+    best = max2(best, Hp[w]);
   return best;
 }

@@ -1,7 +1,9 @@
 #include "internal.h"
 
+#include <pthread.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 #define MAX_TERMS 8
 
@@ -36,9 +38,50 @@ static int cmp_str(const void *a, const void *b) {
   return strcmp(*(char *const *)a, *(char *const *)b);
 }
 
+uint64_t nv_char_mask(const char *s) {
+  uint64_t m = 0;
+  for (const unsigned char *p = (const unsigned char *)s; *p; p++) {
+    unsigned c = *p;
+    if (c >= 'A' && c <= 'Z')
+      c += 'a' - 'A';
+    unsigned bit;
+    if (c >= 'a' && c <= 'z')
+      bit = c - 'a';
+    else if (c >= '0' && c <= '9')
+      bit = 26 + (c - '0');
+    else
+      bit = 36 + (c % 28); /* punctuation and non-ASCII share bits: only false positives */
+    m |= (uint64_t)1 << bit;
+  }
+  return m;
+}
+
+void nv_index_seal(struct nv_index *idx) {
+  free(idx->masks);
+  free(idx->lens);
+  idx->masks = NULL;
+  idx->lens = NULL;
+  if (idx->len == 0 || idx->len > SIZE_MAX / sizeof(uint64_t))
+    return;
+  uint64_t *masks = malloc(idx->len * sizeof *masks);
+  uint32_t *lens = malloc(idx->len * sizeof *lens);
+  if (!masks || !lens) {
+    free(masks);
+    free(lens);
+    return;
+  }
+  for (size_t i = 0; i < idx->len; i++) {
+    masks[i] = nv_char_mask(idx->items[i]);
+    lens[i] = (uint32_t)strlen(idx->items[i]);
+  }
+  idx->masks = masks;
+  idx->lens = lens;
+}
+
 void nv_index_sort(struct nv_index *idx) {
   if (idx->len > 1)
     qsort(idx->items, idx->len, sizeof *idx->items, cmp_str);
+  nv_index_seal(idx);
 }
 
 NV_API nv_index *nv_index_from_text(const char *text, size_t len) {
@@ -59,6 +102,7 @@ NV_API nv_index *nv_index_from_text(const char *text, size_t len) {
     }
     i = j + 1;
   }
+  nv_index_seal(idx);
   return idx;
 }
 
@@ -68,6 +112,8 @@ NV_API void nv_index_free(nv_index *idx) {
   for (size_t i = 0; i < idx->len; i++)
     free(idx->items[i]);
   free(idx->items);
+  free(idx->masks);
+  free(idx->lens);
   free(idx);
 }
 
@@ -93,6 +139,104 @@ static int cmp_scored(const void *a, const void *b) {
   if (x->len != y->len)
     return x->len < y->len ? -1 : 1;
   return x->idx < y->idx ? -1 : (x->idx > y->idx);
+}
+
+typedef struct {
+  const nv_index *idx;
+  const char *const *terms;
+  const uint64_t *tmask;
+  size_t nterms;
+  size_t lo, hi, limit;
+  scored *hits; /* capacity `limit` */
+  size_t nhits;
+} range_job;
+
+/* Best `limit` hits among items [lo, hi): a bounded max-heap whose root is the
+ * worst hit kept, so a new hit only has to beat the root. */
+static void filter_range(range_job *j) {
+  const nv_index *idx = j->idx;
+  scored *hits = j->hits;
+  size_t nhits = 0, limit = j->limit, nterms = j->nterms;
+  const char *const *terms = j->terms;
+  const uint64_t *tmask = j->tmask;
+#define WORSE(a, b) (cmp_scored(&(a), &(b)) > 0)
+  for (size_t i = j->lo; i < j->hi; i++) {
+    int total = 0; size_t t;
+    if (idx->masks) {
+      uint64_t have = idx->masks[i];
+      for (t = 0; t < nterms; t++)
+        if (tmask[t] & ~have)
+          break;
+      if (t < nterms)
+        continue; /* a term has a character this item lacks */
+    }
+    for (t = 0; t < nterms; t++) {
+      int s = nv_fuzzy_score(terms[t], idx->items[i]);
+      if (s < 0) break;
+      total += s;
+    }
+    if (t < nterms) continue;
+    scored c = {total, idx->lens ? idx->lens[i] : (uint32_t)strlen(idx->items[i]), (uint32_t)i};
+    if (nhits < limit) { /* sift up */
+      size_t k = nhits++;
+      hits[k] = c;
+      while (k > 0) {
+        size_t parent = (k - 1) / 2;
+        if (!WORSE(hits[k], hits[parent]))
+          break;
+        scored swap = hits[k];
+        hits[k] = hits[parent];
+        hits[parent] = swap;
+        k = parent;
+      }
+    } else if (cmp_scored(&c, &hits[0]) < 0) { /* replace the root, sift down */
+      hits[0] = c;
+      size_t k = 0;
+      for (;;) {
+        size_t l = 2 * k + 1, r = l + 1, worst = k;
+        if (l < nhits && WORSE(hits[l], hits[worst]))
+          worst = l;
+        if (r < nhits && WORSE(hits[r], hits[worst]))
+          worst = r;
+        if (worst == k)
+          break;
+        scored swap = hits[k];
+        hits[k] = hits[worst];
+        hits[worst] = swap;
+        k = worst;
+      }
+    }
+  }
+  j->nhits = nhits;
+}
+
+static void *range_worker(void *arg) {
+  filter_range(arg);
+  return NULL;
+}
+
+#define FILTER_PAR_MIN 50000 /* items; below this threads cost more than they save */
+#define FILTER_MAX_THREADS 8
+
+/* NV_FILTER_THREADS overrides the default (online CPUs); 1 = sequential. */
+static size_t filter_threads(size_t len) {
+  long n = 1;
+#ifdef _SC_NPROCESSORS_ONLN
+  n = sysconf(_SC_NPROCESSORS_ONLN);
+#endif
+  const char *env = getenv("NV_FILTER_THREADS");
+  if (env && *env) {
+    long v = strtol(env, NULL, 10);
+    if (v >= 1)
+      n = v;
+  }
+  if (n < 1)
+    n = 1;
+  if (n > FILTER_MAX_THREADS)
+    n = FILTER_MAX_THREADS;
+  if (len < FILTER_PAR_MIN)
+    n = 1;
+  return (size_t)n;
 }
 
 NV_API size_t nv_index_filter(const nv_index *idx, const char *query,
@@ -129,33 +273,51 @@ NV_API size_t nv_index_filter(const nv_index *idx, const char *query,
     free(buf);
     return 0;
   }
-  scored *hits = malloc((idx->len ? idx->len : 1) * sizeof *hits);
-  if (!hits) {
+  if (limit > idx->len)
+    limit = idx->len; /* never keep more than exist */
+  uint64_t tmask[MAX_TERMS];
+  for (size_t t = 0; t < nterms; t++)
+    tmask[t] = nv_char_mask(terms[t]);
+
+  size_t nthreads = filter_threads(idx->len);
+  if (nthreads < 1 || limit > SIZE_MAX / FILTER_MAX_THREADS / sizeof(scored))
+    nthreads = 1;
+  range_job jobs[FILTER_MAX_THREADS];
+  pthread_t tid[FILTER_MAX_THREADS];
+  int started[FILTER_MAX_THREADS] = {0};
+  scored *all = malloc(nthreads * limit * sizeof *all);
+  if (!all) {
     free(buf);
     return 0;
   }
-  size_t nhits = 0;
-  for (size_t i = 0; i < idx->len; i++) {
-    int total = 0;
-    size_t t;
-    for (t = 0; t < nterms; t++) {
-      int s = nv_fuzzy_score(terms[t], idx->items[i]);
-      if (s < 0)
-        break;
-      total += s;
-    }
-    if (t < nterms)
-      continue;
-    hits[nhits].score = total;
-    hits[nhits].len = (uint32_t)strlen(idx->items[i]);
-    hits[nhits].idx = (uint32_t)i;
-    nhits++;
+  size_t per = (idx->len + nthreads - 1) / nthreads;
+  for (size_t t = 0; t < nthreads; t++) {
+    jobs[t] = (range_job){idx, terms, tmask, nterms,
+                          t * per < idx->len ? t * per : idx->len,
+                          (t + 1) * per < idx->len ? (t + 1) * per : idx->len,
+                          limit, all + t * limit, 0};
   }
-  qsort(hits, nhits, sizeof *hits, cmp_scored);
+  for (size_t t = 1; t < nthreads; t++)
+    started[t] = pthread_create(&tid[t], NULL, range_worker, &jobs[t]) == 0;
+  filter_range(&jobs[0]);
+  for (size_t t = 1; t < nthreads; t++) {
+    if (started[t])
+      pthread_join(tid[t], NULL);
+    else
+      filter_range(&jobs[t]); /* could not start a thread: do it here */
+  }
+  /* Merge: compact every part's hits, then one sort. The order is total (score,
+   * length, index), so the result does not depend on the thread count. */
+  size_t nhits = jobs[0].nhits;
+  for (size_t t = 1; t < nthreads; t++) {
+    memmove(all + nhits, jobs[t].hits, jobs[t].nhits * sizeof *all);
+    nhits += jobs[t].nhits;
+  }
+  qsort(all, nhits, sizeof *all, cmp_scored); /* at most threads * limit entries */
   for (; n < limit && n < nhits; n++)
-    out[n] = hits[n].idx;
+    out[n] = all[n].idx;
 
-  free(hits);
+  free(all);
   free(buf);
   return n;
 }

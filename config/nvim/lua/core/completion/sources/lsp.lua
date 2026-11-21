@@ -71,7 +71,10 @@ local function convert(item, defaults, client)
     end
   end
 
-  local label = tostring(item.label):gsub("[\r\n]+", " ")
+  local label = tostring(item.label)
+  if label:find("[\r\n]") then
+    label = label:gsub("[\r\n]+", " ")
+  end
   local details = item.labelDetails
   local abbr = label .. ((details and details.detail) or "")
 
@@ -83,7 +86,8 @@ local function convert(item, defaults, client)
     sort = item.sortText or label,
     kind = KIND[item.kind],
     menu = client.name,
-    doc = M.doc_text(item),
+    -- `doc` is filled in by session.show() for the entries that are displayed: servers
+    -- send thousands of items and most are never seen.
     lsp = item,
     client_id = client.id,
     enc = client.offset_encoding,

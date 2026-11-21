@@ -4,6 +4,7 @@
 -- moves, i.e. at most once per fetch (a fetch happens at the start of a word,
 -- not on every keystroke).
 local config = require("core.config")
+local native = require("core.native")
 
 local M = {}
 
@@ -31,6 +32,22 @@ local function counts_for(buf, cfg)
   end
 
   local counts, n = {}, 0
+  local lib = native.loaded()
+  if lib then
+    -- One C pass over the text instead of a gmatch per line; only distinct words
+    -- come back into Lua.
+    local ffi = require("ffi")
+    local text = table.concat(vim.api.nvim_buf_get_lines(buf, 0, -1, false), "\n")
+    local w = lib.nv_words_collect(text, #text, MIN_LENGTH, cfg.max_words)
+    if w ~= nil then
+      for i = 0, tonumber(lib.nv_words_count(w)) - 1 do
+        counts[ffi.string(lib.nv_words_get(w, i))] = tonumber(lib.nv_words_occurrences(w, i))
+      end
+      lib.nv_words_free(w)
+      cache[buf] = { tick = tick, counts = counts }
+      return counts
+    end
+  end
   for _, line in ipairs(vim.api.nvim_buf_get_lines(buf, 0, -1, false)) do
     for word in line:gmatch("[%w_\128-\255]+") do
       if #word >= MIN_LENGTH and not word:find("^%d") then
