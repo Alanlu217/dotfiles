@@ -12,9 +12,9 @@
 -- behaviour when there is nothing for it to do:
 --   enter()    accept the selected item | <CR> (newline)
 --   confirm()  accept the selected item | <C-y>
---   tab()      next menu entry | next snippet placeholder | <Tab>
---   s_tab()    previous menu entry | previous snippet placeholder | <S-Tab>
---   up()/down() close the menu and move the cursor | plain <Up>/<Down>
+--   tab()      accept the selected item | next snippet placeholder | <Tab>
+--   s_tab()    previous snippet placeholder | <S-Tab>
+--   up()/down() previous / next menu entry | plain <Up>/<Down>
 --   cancel()   close the menu (or cancel a pending request) | <C-e>
 -- Moving through entries never edits the buffer; only accepting does.
 --
@@ -46,8 +46,9 @@ end
 
 ---@return string
 function M.tab()
-  if session.visible() then
-    return "<C-n>" -- native: highlight the next entry; the buffer text is unchanged
+  local accept = session.visible() and accept_keys() or nil
+  if accept then
+    return accept
   end
   if vim.snippet.active({ direction = 1 }) then
     return "<Cmd>lua vim.snippet.jump(1)<CR>"
@@ -57,9 +58,6 @@ end
 
 ---@return string
 function M.s_tab()
-  if session.visible() then
-    return "<C-p>"
-  end
   if vim.snippet.active({ direction = -1 }) then
     return "<Cmd>lua vim.snippet.jump(-1)<CR>"
   end
@@ -89,26 +87,26 @@ function M.enter()
   return accept_keys() or "<CR>"
 end
 
---- Arrow keys are not completion keys: natively they would move the menu
---- highlight, so with our menu open, close it and move the cursor instead.
+--- With our menu open the arrow keys move the highlight (natively <C-n>/<C-p>, which
+--- never edits the text); otherwise they are plain cursor keys.
+---@param menu_key string
 ---@param key string
 ---@return string
-local function arrow(key)
+local function arrow(menu_key, key)
   if session.visible() then
-    session.reset(false)
-    return "<C-e>" .. key
+    return menu_key
   end
   return key
 end
 
 ---@return string
 function M.up()
-  return arrow("<Up>")
+  return arrow("<C-p>", "<Up>")
 end
 
 ---@return string
 function M.down()
-  return arrow("<Down>")
+  return arrow("<C-n>", "<Down>")
 end
 
 --- Open the menu now, even with nothing typed.

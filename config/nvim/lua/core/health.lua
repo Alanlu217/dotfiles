@@ -50,7 +50,7 @@ function M.check()
     vim.health.warn("'completeopt' lacks 'popup'; completion documentation will not be shown")
   end
   if vim.tbl_contains(copt, "noselect") then
-    vim.health.warn("'completeopt' has noselect; <CR> still accepts the first entry when none is highlighted")
+    vim.health.warn("'completeopt' has noselect; <Tab> still accepts the first entry when none is highlighted")
   end
   if vim.snippet and vim.snippet.expand then
     vim.health.ok("vim.snippet available")
@@ -143,7 +143,7 @@ function M.check()
     vim.health.warn("no Insert mode mapping for '(': lua/user/keymaps.lua did not load, so auto pairs are inactive")
   end
   local cr = vim.fn.maparg("<CR>", "i", false, true)
-  if type(cr) == "table" and cr.desc and not cr.desc:find("smart newline", 1, true) then
+  if type(cr) == "table" and cr.desc and not cr.desc:lower():find("smart newline", 1, true) then
     vim.health.warn("Insert <CR> is mapped elsewhere (" .. cr.desc .. "); smart newline needs the mapping in lua/user/keymaps.lua")
   end
 

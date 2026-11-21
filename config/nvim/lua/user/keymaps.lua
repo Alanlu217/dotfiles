@@ -47,28 +47,23 @@ map("n", "<leader>X", function() require("core.terminal").open("right") end, { d
 map({ "n", "i", "t" }, "<C-\\>", function() require("core.terminal").toggle_float() end, { desc = "Terminal (floating)" })
 
 -- Completion --------------------------------------------------------------
--- <CR> accepts the highlighted entry; <Tab>/<S-Tab> move through entries without
--- editing the text; arrows are plain cursor keys. <C-n>/<C-p> also move.
--- The <expr> functions fall back to the key's normal action when idle
--- (<Tab>/<S-Tab> then jump between snippet stops).
+-- <Up>/<Down> move through the entries without editing the text (<C-n>/<C-p> too);
+-- <Tab> accepts the highlighted entry; <CR> is always a newline.
+-- The <expr> functions fall back to the key's normal action when the menu is closed
+-- (<Up>/<Down> move the cursor; <Tab>/<S-Tab> jump between snippet stops).
 local function cmp_expr(name)
   return function()
     return require("core.completion")[name]()
   end
 end
--- <CR>: accept the highlighted entry, else the smart newline of core.indent
--- (opens {|} into a block, indents after an opening bracket where nothing else does).
-map("i", "<CR>", function()
-  local keys = require("core.completion").enter()
-  if keys ~= "<CR>" then
-    return keys
-  end
-  return require("core.indent").enter()
-end, { expr = true, desc = "Accept completion / smart newline" })
-map("i", "<Tab>", cmp_expr("tab"), { expr = true, desc = "Next completion / next snippet stop / Tab" })
-map("i", "<S-Tab>", cmp_expr("s_tab"), { expr = true, desc = "Previous completion / previous snippet stop" })
-map("i", "<Up>", cmp_expr("up"), { expr = true, desc = "Up (closes completion)" })
-map("i", "<Down>", cmp_expr("down"), { expr = true, desc = "Down (closes completion)" })
+-- <CR>: the smart newline of core.indent (opens {|} into a block, indents after an
+-- opening bracket where nothing else does). It never accepts a completion.
+map("i", "<CR>", function() return require("core.indent").enter() end,
+  { expr = true, desc = "Smart newline" })
+map("i", "<Tab>", cmp_expr("tab"), { expr = true, desc = "Accept completion / next snippet stop / Tab" })
+map("i", "<S-Tab>", cmp_expr("s_tab"), { expr = true, desc = "Previous snippet stop" })
+map("i", "<Up>", cmp_expr("up"), { expr = true, desc = "Previous completion / Up" })
+map("i", "<Down>", cmp_expr("down"), { expr = true, desc = "Next completion / Down" })
 map("i", "<C-y>", cmp_expr("confirm"), { expr = true, desc = "Accept completion" })
 map("i", "<C-e>", cmp_expr("cancel"), { expr = true, desc = "Close completion" })
 -- Auto pairs (lua/core/autopairs.lua): one mapping per bracket / quote in config.autopairs.pairs.
