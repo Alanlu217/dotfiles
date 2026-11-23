@@ -64,7 +64,7 @@ M.defaults = {
   -- Saved directories and switching between them (core.projects).
   projects = {
     file = vim.fs.joinpath(vim.fn.stdpath("data"), "projects.json"),
-    scope = "global",  -- default scope for :Project: "global" (:cd) | "tab" (:tcd) | "window" (:lcd)
+    scope = "global",   -- default scope for :Project: "global" (:cd) | "tab" (:tcd) | "window" (:lcd)
     open_files = false, -- open the file picker in the project after switching
   },
 

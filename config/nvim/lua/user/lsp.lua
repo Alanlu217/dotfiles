@@ -39,7 +39,51 @@ lsp.enable({
     cmd = { "zls" },
     filetypes = { "zig" },
     root_markers = { "build.zig", ".git" }
-  }
+  },
+
+  -- Python: ruff handles lint, fixes, formatting and import sorting; ty handles
+  -- types, hover, completion and navigation. Install: `uv tool install ruff ty`.
+  ruff = {
+    cmd = { "ruff", "server" },
+    filetypes = { "python" },
+    root_markers = { "pyproject.toml", "ruff.toml", ".ruff.toml", ".git" },
+  },
+
+  ty = {
+    cmd = { "ty", "server" },
+    filetypes = { "python" },
+    root_markers = { "ty.toml", "pyproject.toml", ".git" },
+  },
+
+  -- Julia: LanguageServer.jl from its own environment so it never pollutes a
+  -- project. One-time install:
+  --   julia --project=@nvim-lspconfig -e 'using Pkg; Pkg.add("LanguageServer")'
+  julials = {
+    cmd = {
+      "julia",
+      "--startup-file=no",
+      "--history-file=no",
+      "-e",
+      [[
+        # Load LanguageServer from its own env, then restore the load path so the
+        # project it analyses is the user's, not the server's.
+        pushfirst!(LOAD_PATH, joinpath(DEPOT_PATH[1], "environments", "nvim-lspconfig"))
+        using LanguageServer
+        popfirst!(LOAD_PATH)
+        depot_path = get(ENV, "JULIA_DEPOT_PATH", "")
+        project_path = dirname(something(
+          Base.current_project(),
+          get(Base.load_path(), 1, nothing),
+          Base.load_path_expand("@v#.#"),
+        ))
+        server = LanguageServer.LanguageServerInstance(stdin, stdout, project_path, depot_path)
+        server.runlinter = true
+        run(server)
+      ]],
+    },
+    filetypes = { "julia" },
+    root_markers = { "Project.toml", "JuliaProject.toml", ".git" },
+  },
 })
 
 vim.api.nvim_create_autocmd("FileType", {
@@ -52,6 +96,11 @@ vim.api.nvim_create_autocmd("FileType", {
 lsp.on_attach(function(client, buf)
   local function map(lhs, rhs, desc)
     vim.keymap.set("n", lhs, rhs, { buffer = buf, desc = desc })
+  end
+
+  -- ty owns hover; ruff's hover would only duplicate it.
+  if client.name == "ruff" then
+    client.server_capabilities.hoverProvider = false
   end
 
   map("gd", vim.lsp.buf.definition, "Go to definition")

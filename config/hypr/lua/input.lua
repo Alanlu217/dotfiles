@@ -17,7 +17,7 @@ hl.config({
     repeat_delay  = 240,
     repeat_rate   = 24,
 
-    sensitivity   = 0,   -- -1.0 - 1.0, 0 means no modification.
+    sensitivity   = 0, -- -1.0 - 1.0, 0 means no modification.
 
     touchpad      = {
       natural_scroll = true,
@@ -83,6 +83,12 @@ hl.bind(mainMod .. " + B", hl.dsp.exec_cmd(browser))
 hl.bind(mainMod .. " + E", hl.dsp.exec_cmd(fileManager))
 
 hl.bind(mainMod .. " + F", hl.dsp.window.fullscreen())
+hl.bind(mainMod .. " + ALT + F", hl.dsp.window.fullscreen_state({
+  internal = 0,
+  client = 2,
+  action = "toggle"
+}))
+
 
 hl.bind(mainMod .. " + G", hl.dsp.exec_cmd("grim -g \"$(slurp -d)\" - | wl-copy"))
 
@@ -135,7 +141,7 @@ hl.bind(mainMod .. " + SHIFT + C", hl.dsp.workspace.move({ monitor = "r" }))
 -- Switch workspaces with mainMod + [0-9]
 -- Move active window to a workspace with mainMod + SHIFT + [0-9]
 for i = 1, 10 do
-  local key = i % 10   -- 10 maps to key 0
+  local key = i % 10 -- 10 maps to key 0
   hl.bind(mainMod .. " + " .. key, hl.dsp.focus({ workspace = i }))
   hl.bind(mainMod .. " + SHIFT + " .. key, hl.dsp.window.move({ workspace = i, follow = false }))
 end

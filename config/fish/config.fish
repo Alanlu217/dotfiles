@@ -23,7 +23,7 @@ end
 
 # Abbreviations
 
-if command -v eza >/dev/null
+if type -q eza
     alias ls="eza --icons --git"
     alias l="eza --icons -l --git --no-user --no-permissions"
 end
@@ -55,17 +55,20 @@ alias nd="nix develop --command $SHELL"
 
 alias edot='$EDITOR $(fzf --walker-root ~/dotfiles)'
 
-starship init fish | source
-enable_transience
+if type -q starship
+  starship init fish | source
+  enable_transience
+end
 
-zoxide init fish | source
+if type -q zoxide
+  zoxide init fish | source
+end
 
-# enable_transience
+if test -f ~/.profile.fish
+  source ~/.profile.fish
+end
 
-# source ~/.local/share/bob/env/env.fish
-source ~/.profile.fish
-
-if [ -f ~/.local/share/bob/env/env.fish ]
+if test -f ~/.local/share/bob/env/env.fish
     source ~/.local/share/bob/env/env.fish
 end
 
@@ -76,6 +79,3 @@ set -gx PATH $PATH "$ZVM_INSTALL/"
 
 # uv
 fish_add_path "/home/aln/.local/bin"
-
-# Added by Antigravity CLI installer
-set -gx PATH "/home/aln/.local/bin" $PATH
