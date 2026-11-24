@@ -3,7 +3,7 @@ local map = vim.keymap.set
 -- General -------------------------------------------------------------------
 map("n", "<leader>R", "<cmd>ReloadConfig<CR>", { desc = "Reload config" })
 -- Note: shadows the built-in <C-a> number increment.
-map("n", "<C-a>", "ggVG", { desc = "Select whole file" })
+map({ "n", "v" }, "<C-a>", "ggVG", { desc = "Select whole file" })
 map("n", "<Esc>", "<cmd>nohlsearch<CR>", { desc = "Clear search highlight" })
 -- Built-in gc / gcc, so remap = true. Visual mode needs `gc`, not `gcc`.
 map("n", "<leader>c", "gcc", { remap = true, desc = "Toggle comment" })
@@ -27,11 +27,11 @@ map({ "n", "v" }, "<leader>k", function() require("core.picker").keymaps() end, 
 -- Projects (lua/core/projects.lua) ------------------------------------------
 -- <leader>o rather than <leader>p, which would delay the clipboard paste below.
 -- In the picker <C-t> opens the project in a new tab, <C-s>/<C-v> in a split.
-map("n", "<leader>oo", function() require("core.projects").switch("global") end, { desc = "Project (global)" })
-map("n", "<leader>ot", function() require("core.projects").switch("tab") end, { desc = "Project (tab)" })
-map("n", "<leader>ow", function() require("core.projects").switch("window") end, { desc = "Project (window)" })
-map("n", "<leader>oa", function() require("core.projects").add() end, { desc = "Save cwd as project" })
-map("n", "<leader>od", function() require("core.projects").remove() end, { desc = "Remove project" })
+map({ "n", "v" }, "<leader>oo", function() require("core.projects").switch("global") end, { desc = "Project (global)" })
+map({ "n", "v" }, "<leader>ot", function() require("core.projects").switch("tab") end, { desc = "Project (tab)" })
+map({ "n", "v" }, "<leader>ow", function() require("core.projects").switch("window") end, { desc = "Project (window)" })
+map({ "n", "v" }, "<leader>oa", function() require("core.projects").add() end, { desc = "Save cwd as project" })
+map({ "n", "v" }, "<leader>od", function() require("core.projects").remove() end, { desc = "Remove project" })
 
 -- System clipboard ----------------------------------------------------------
 map({ "n", "v" }, "<leader>y", [["+y]], { desc = "Yank to system clipboard" })
@@ -44,7 +44,7 @@ map("t", "<Esc><Esc>", [[<C-\><C-n>]], { desc = "Exit terminal mode" })
 map("n", "<leader>x", function() require("core.terminal").open("bottom") end, { desc = "Terminal (bottom)" })
 map("n", "<leader>X", function() require("core.terminal").open("right") end, { desc = "Terminal (right)" })
 -- Note: mapping <C-\> means a typed <C-\><C-n> no longer works; use <Esc><Esc>.
-map({ "n", "i", "t" }, "<C-\\>", function() require("core.terminal").toggle_float() end, { desc = "Terminal (floating)" })
+map({ "n", "i", "t", "v" }, "<C-\\>", function() require("core.terminal").toggle_float() end, { desc = "Terminal (floating)" })
 
 -- Completion --------------------------------------------------------------
 -- <Up>/<Down> move through the entries without editing the text (<C-n>/<C-p> too);
