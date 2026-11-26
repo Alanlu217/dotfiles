@@ -1,0 +1,77 @@
+#!/usr/bin/env -S uv run --quiet --script
+# /// script
+# requires-python = ">=3.10"
+# dependencies = [
+#     "ipython",
+#     "numpy",
+#     "scipy",
+#     "matplotlib",
+# ]
+# ///
+# ruff: noqa: F401
+
+from cmath import acos, asin, atan, cos, exp, log, log10, polar, rect, sin, sqrt, tan
+from math import degrees, e, pi, radians
+
+import matplotlib.pyplot as plt
+import numpy as np
+from scipy import optimize, signal
+
+plt.ion()
+
+j = 1j
+
+
+def pol(num):
+    """Rectangular -> (magnitude, angle in degrees)."""
+    p = polar(num)
+    return (p[0], degrees(p[1]))
+
+
+def rectd(mag, ang):
+    """Polar (angle in degrees) -> rectangular. rect(20, 120) is 20∠120°."""
+    return rect(mag, radians(ang))
+
+
+def ang(num):
+    """Angle of num in degrees."""
+    return pol(num)[1]
+
+
+def sind(x):
+    return sin(radians(x))
+
+
+def cosd(x):
+    return cos(radians(x))
+
+
+def tand(x):
+    return tan(radians(x))
+
+
+def clean(num, tol=1e-12):
+    """Zero out float noise and drop a zero imaginary part."""
+    num = complex(num)
+    re = 0.0 if abs(num.real) < tol else num.real
+    im = 0.0 if abs(num.imag) < tol else num.imag
+    return re if im == 0 else complex(re, im)
+
+
+def solve(M, b):
+    """Solve M x = b with complex entries."""
+    return np.linalg.solve(np.array(M, dtype=complex), np.array(b, dtype=complex))
+
+
+def show(v):
+    """Each phasor as (magnitude, angle in degrees), rounded."""
+    return [tuple(round(x, 4) for x in pol(z)) for z in np.atleast_1d(v)]
+
+
+if __name__ == "__main__":
+    import IPython
+
+    IPython.start_ipython(
+        argv=["--no-banner", "--TerminalInteractiveShell.confirm_exit=False"],
+        user_ns=dict(globals()),
+    )
