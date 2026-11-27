@@ -1,3 +1,4 @@
+-- Fallback for any output not listed below: placed to the left of the laptop panel.
 hl.monitor({
   output   = "",
   mode     = "highres",

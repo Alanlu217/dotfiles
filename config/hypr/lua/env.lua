@@ -1,15 +1,15 @@
 local env = {
-    HYPRCURSOR_THEME = "Adwaita",
-    HYPRCURSOR_SIZE = "24",
-    XCURSOR_THEME = "Adwaita",
-    XCURSOR_SIZE = "24",
-    XDG_CURRENT_DESKTOP = "Hyprland",
-    XDG_SESSION_TYPE = "wayland",
-    XDG_SESSION_DESKTOP = "Hyprland",
-    QT_QPA_PLATFORMTHEME = "qt6ct",
-    GTK_THEME_VARIANT = "dark",
+  HYPRCURSOR_THEME = "Adwaita",
+  HYPRCURSOR_SIZE = "24",
+  XCURSOR_THEME = "Adwaita",
+  XCURSOR_SIZE = "24",
+  XDG_CURRENT_DESKTOP = "Hyprland",
+  XDG_SESSION_TYPE = "wayland",
+  XDG_SESSION_DESKTOP = "Hyprland",
+  QT_QPA_PLATFORMTHEME = "qt6ct",
+  GTK_THEME_VARIANT = "dark",
 }
 
 for k, v in pairs(env) do
-    hl.env(k, v)
+  hl.env(k, v)
 end
