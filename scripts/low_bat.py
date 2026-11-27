@@ -1,20 +1,28 @@
 #!/usr/bin/env python3
+"""Send a critical notification when the battery is low and discharging."""
 
-from datetime import timedelta
+import subprocess
+from pathlib import Path
 from time import sleep
-from os import system
 
-theshold = 20
-interval = timedelta(minutes=2)
+BATTERY = Path("/sys/class/power_supply/BAT0")
+THRESHOLD = 20  # percent
+INTERVAL = 120  # seconds
 
-while True:
-    with open("/sys/class/power_supply/BAT0/capacity") as f:
-        p = int(f.readline())
 
-    with open("/sys/class/power_supply/BAT0/status") as f:
-        status = f.readline().strip()
+def check() -> None:
+    try:
+        percent = int((BATTERY / "capacity").read_text())
+        discharging = (BATTERY / "status").read_text().strip() == "Discharging"
+        if discharging and percent < THRESHOLD:
+            subprocess.run(
+                ["notify-send", "-u", "critical", f"Low Battery: {percent}%"]
+            )
+    except (OSError, ValueError):
+        pass  # transient sysfs read error or notify-send missing; retry next interval
 
-    if p < theshold and "Discharging" in status:
-        system(f'notify-send -u critical "Low Battery: {p}%"')
 
-    sleep(interval.total_seconds())
+if __name__ == "__main__":
+    while True:
+        check()
+        sleep(INTERVAL)

@@ -1,0 +1,15 @@
+#!/usr/bin/env -S julia -i --banner=no
+
+const j = im
+
+"Rectangular -> (magnitude, angle in degrees)."
+pol(z) = (abs(z), rad2deg(angle(z)))
+
+"Polar (angle in degrees) -> rectangular. rectd(20, 120) is 20∠120°."
+rectd(mag, deg) = mag * cis(deg2rad(deg))
+
+"Angle of z in degrees."
+ang(z) = rad2deg(angle(z))
+
+"Each phasor as (magnitude, angle in degrees), rounded."
+showp(v) = [Tuple(round(x, digits = 4) for x in pol(z)) for z in (v isa Number ? [v] : v)]
